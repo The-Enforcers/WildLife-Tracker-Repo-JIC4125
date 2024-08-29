@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getPosts } from '../services/postService';
+import PostCard from '../components/PostCard';
 import { Link } from 'react-router-dom';
+import '../styles/MainPage.css'; // Import the CSS file for styling
 
 const MainPage = () => {
     const [posts, setPosts] = useState([]);
@@ -18,13 +20,9 @@ const MainPage = () => {
             <h1>Wildlife Tracking Posts</h1>
             <div className="grid">
                 {posts.map(post => (
-                    <div key={post._id}>
-                        <h2>{post.title}</h2>
-                        <p>{post.description}</p>
-                    </div>
+                    <PostCard key={post._id} post={post} />
                 ))}
             </div>
-            {/* Add the button to navigate to the Create Post page */}
             <Link to="/create">
                 <button>Create New Post</button>
             </Link>
