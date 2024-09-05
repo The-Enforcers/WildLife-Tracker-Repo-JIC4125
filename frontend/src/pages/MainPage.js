@@ -1,6 +1,6 @@
 import React from "react";
-import Main from "./Main/Main";
-import Sidebar from "./Sidebar/Sidebar";
+import Main from "../components/Main/Main";
+import Sidebar from "../components/Sidebar/Sidebar";
 
 const MainPage = () => {
   return (
