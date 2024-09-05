@@ -20,7 +20,13 @@ const PostDetailsPage = () => {
     return (
         <div>
             <h1>{post.title}</h1>
-            <p>{post.description}</p>
+            <p>Author: {post.author}</p>
+            <p>Common names: {post.common_names}</p>
+            <p>Description: {post.description}</p>
+            <p>Tracker Type: {post.tracker_type}</p>
+            <p>Enclosure Type: {post.enclosure_type}</p>
+            <p>Attachment Type: {post.attachment_type}</p>
+            <p>Recommendations: {post.recommendations}</p>
             {/* Button to navigate back to the main page */}
             <button onClick={() => navigate('/')}>Back to Main Page</button>
         </div>

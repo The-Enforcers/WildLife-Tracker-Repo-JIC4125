@@ -7,7 +7,9 @@ const PostCard = ({ post }) => {
             <Link to={`/post/${post._id}`}>
                 <h2>{post.title}</h2>
             </Link>
+            <p>Common Names: {post.common_names}</p>
             <p>{post.description}</p>
+            <p>{post.date}</p>
         </div>
     );
 };
