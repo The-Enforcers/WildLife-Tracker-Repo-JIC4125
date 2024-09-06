@@ -16,8 +16,15 @@ app.use("/api/posts", postRoutes);
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
+  .then(() => {
+    const PORT = process.env.PORT || 5001;
+    app.listen(PORT, () => {
+      console.log(`
+      ----------------------------------
+      |   MongoDB connected!           |
+      |   Server running on port ${PORT}  |
+      ----------------------------------
+      `);
+    });
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
-
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
