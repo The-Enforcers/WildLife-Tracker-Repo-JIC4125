@@ -10,11 +10,14 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
-import UploadIcon from "@mui/icons-material/Upload"; // MUI upload icon
+
+// MUI icons
+import UploadIcon from "@mui/icons-material/Upload";
 import Sidebar from "../../components/Sidebar/Sidebar";
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState("");
+  const [tracker, setTracker] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
@@ -35,7 +38,7 @@ const CreatePostPage = () => {
       return;
     }
 
-    const newPost = { title, description }; // Exclude image from the form data
+    const newPost = { title, tracker, description }; // Exclude image from the form data
 
     try {
       await createPost(newPost);
@@ -48,9 +51,9 @@ const CreatePostPage = () => {
   return (
     <>
       <Sidebar />
-      <Container maxWidth="md" sx={{ marginTop: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Create a New Post
+      <Container maxWidth="md" sx={{ marginTop: 4, paddingBottom: 6 }}>
+        <Typography variant="h4" gutterBottom fontFamily={"monospace"}>
+          New Post
         </Typography>
         <Grid container spacing={4}>
           {/* Left Side: Image Upload */}
@@ -69,6 +72,15 @@ const CreatePostPage = () => {
               color="primary"
               aria-label="upload picture"
               component="label"
+              sx={{
+                backgroundColor: "#e0e0e0",
+                borderRadius: "50%",
+                width: 100,
+                height: 100,
+                "&:hover": {
+                  backgroundColor: "#c0c0c0",
+                },
+              }}
             >
               <input
                 hidden
@@ -76,7 +88,7 @@ const CreatePostPage = () => {
                 type="file"
                 onChange={handleImageChange}
               />
-              <UploadIcon sx={{ fontSize: 80 }} />
+              <UploadIcon sx={{ fontSize: 50 }} />
             </IconButton>
 
             {/* Display the selected image */}
@@ -87,7 +99,11 @@ const CreatePostPage = () => {
                 <img
                   src={image}
                   alt="Uploaded Preview"
-                  style={{ maxHeight: 200, objectFit: "contain" }}
+                  style={{
+                    maxHeight: 200,
+                    objectFit: "contain",
+                    borderRadius: "10px",
+                  }}
                 />
               </Box>
             )}
@@ -98,7 +114,15 @@ const CreatePostPage = () => {
             <Box
               component="form"
               onSubmit={handleSubmit}
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                backgroundColor: "#f9f9f9",
+                padding: 3,
+                borderRadius: "10px",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
             >
               {error && (
                 <Typography color="error" variant="body2">
@@ -106,11 +130,22 @@ const CreatePostPage = () => {
                 </Typography>
               )}
               <TextField
-                label="Title"
+                label="Animal"
                 variant="outlined"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
+              />
+              <TextField
+                label="Tracker"
+                variant="outlined"
+                value={tracker}
+                onChange={(e) => setTracker(e.target.value)}
+                required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
               />
               <TextField
                 label="Description"
@@ -120,8 +155,22 @@ const CreatePostPage = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
               />
-              <Button variant="contained" color="primary" type="submit">
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                sx={{
+                  borderRadius: "20px",
+                  padding: "10px 20px",
+                  backgroundColor: "#3f51b5",
+                  "&:hover": {
+                    backgroundColor: "#303f9f",
+                  },
+                }}
+              >
                 Submit
               </Button>
             </Box>

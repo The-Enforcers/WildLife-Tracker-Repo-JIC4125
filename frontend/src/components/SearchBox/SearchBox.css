@@ -1,4 +1,4 @@
- .search-box {
+.search-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -7,7 +7,7 @@
   padding: 4px 20px;
   border-radius: 50px;
 }
- .search-box span {
+.search-box span {
   width: 30px;
   height: 48px;
   border-radius: 50px;
@@ -15,15 +15,15 @@
   align-items: center;
   justify-content: center;
 }
- .search-box img {
+.search-box img {
   width: 24px;
   cursor: pointer;
   transition: transform 1s ease;
 }
- .search-box span:hover {
+.search-box span:hover {
   background-color: #e2e6eb;
 }
- .search-box input {
+.search-box input {
   flex: 1;
   background: transparent;
   border: none;
@@ -32,16 +32,14 @@
   line-height: 24px;
   font-size: 18px;
 }
- .search-box div {
+.search-box div {
   display: flex;
   align-items: center;
   transition: transform 0.3s ease;
 }
 
 @media (max-width: 600px) {
-
-
-   .search-box {
+  .search-box {
     padding: 5px 10px;
   }
 

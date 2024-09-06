@@ -6,6 +6,10 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    tracker: {
+        type: String,
+        required: true,
+    },
     description: {
         type: String,
         required: true,

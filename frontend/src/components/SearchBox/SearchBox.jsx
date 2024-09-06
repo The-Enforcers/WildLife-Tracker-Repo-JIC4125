@@ -1,7 +1,7 @@
-import React from 'react';
-import { Tooltip } from 'react-tooltip';
-import SearchIcon from '@mui/icons-material/Search'; // Import MUI Search Icon
-import './SearchBox.css';
+import React from "react";
+import { Tooltip } from "react-tooltip";
+import SearchIcon from "@mui/icons-material/Search";
+import "./SearchBox.css";
 
 const SearchBox = ({ input, setInput, onSearch }) => {
   return (
