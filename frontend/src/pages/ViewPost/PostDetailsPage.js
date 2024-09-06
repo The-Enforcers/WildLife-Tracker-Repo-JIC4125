@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import ImageCard from "../components/Card/Card"; // Adjust the path to your actual ImageCard component
-import Sidebar from "../components/Sidebar/Sidebar"; // Adjust path
-import SearchBox from "../components/SearchBox/SearchBox"; // Adjust path
+import ImageCard from "../../components/Card/Card"; // Adjust the path to your actual ImageCard component
+import Sidebar from "../../components/Sidebar/Sidebar"; // Adjust path
+import SearchBox from "../../components/SearchBox/SearchBox"; // Adjust path
 
-const VideoGridPage = () => {
+const PostPage = () => {
   const [input, setInput] = useState("");
   const [animals, setAnimals] = useState([]); // State to hold data from MongoDB
 
@@ -45,7 +45,9 @@ const VideoGridPage = () => {
                   <ImageCard
                     title={animal.title} // Title from MongoDB
                     description={animal.description} // Description from MongoDB
-                    image={"https://plus.unsplash.com/premium_photo-1675432656807-216d786dd468?q=80&w=3090&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} // Placeholder image
+                    image={
+                      "https://plus.unsplash.com/premium_photo-1675432656807-216d786dd468?q=80&w=3090&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    } // Placeholder image
                   />
                 </Grid>
               ))}
@@ -57,4 +59,4 @@ const VideoGridPage = () => {
   );
 };
 
-export default VideoGridPage;
+export default PostPage;

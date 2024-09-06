@@ -4,20 +4,23 @@ import React, { useState } from "react";
 import "./Main.css";
 
 // Importing MUI outlined icons
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
-import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
-import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
+import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
+import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 
 // Custom components
-import SearchBox from "../SearchBox/SearchBox";
+import SearchBox from "../../components/SearchBox/SearchBox";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 
 const Main = () => {
   const [input, setInput] = useState("");
 
   return (
+    <>
+    <Sidebar/>
     <div className="main">
       <div className="nav">
         <p>Wildlife Tracker</p>
@@ -68,6 +71,7 @@ const Main = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
