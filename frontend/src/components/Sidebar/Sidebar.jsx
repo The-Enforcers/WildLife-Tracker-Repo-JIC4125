@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import { Tooltip } from "react-tooltip";
 
@@ -11,6 +12,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 const Sidebar = () => {
   const [extended, setExtended] = useState(true);
+  const navigate = useNavigate();
 
   let sidebarWidth = extended ? "75px" : "18%";
   
@@ -29,7 +31,7 @@ const Sidebar = () => {
           style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
         />
         <div
-          onClick={console.log('new post!')}
+          onClick={() => navigate("/create")}
           className="new-post"
           data-tooltip-id="new-post"
           data-tooltip-content="New Post"
@@ -40,7 +42,7 @@ const Sidebar = () => {
             place={"bottom"}
             style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
           />
-          {!extended && <p>New Chat</p>}
+          {!extended && <p>New Post</p>}
         </div>
       </div>
       <div className="bottom">
