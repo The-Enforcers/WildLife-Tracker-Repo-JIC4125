@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography } from '@mui/material';
 
-const ImageCard = ({ title, description, image }) => {
+const ImageCard = ({ title, description, image, post_id }) => {
   return (
     <Card
       sx={{
@@ -17,6 +17,7 @@ const ImageCard = ({ title, description, image }) => {
         },
       }}
     >
+      <a href={"/post/" + post_id}>
       <CardMedia
         component="img"
         height="110"
@@ -36,6 +37,7 @@ const ImageCard = ({ title, description, image }) => {
           {description}
         </Typography>
       </CardContent>
+      </a>
     </Card>
   );
 };

@@ -42,7 +42,7 @@ const CreatePostPage = () => {
 
     try {
       await createPost(newPost);
-      navigate("/post");
+      navigate("/results");
     } catch (error) {
       console.error("Error creating post:", error);
     }

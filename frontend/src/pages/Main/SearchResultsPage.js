@@ -5,7 +5,7 @@ import ImageCard from "../../components/Card/Card";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
-const SearchResults = () => {
+const SearchResultsPage = () => {
   const [input, setInput] = useState("");
   const [animals, setAnimals] = useState([]); 
 
@@ -71,4 +71,4 @@ const SearchResults = () => {
   );
 };
 
-export default SearchResults``;
+export default SearchResultsPage;
