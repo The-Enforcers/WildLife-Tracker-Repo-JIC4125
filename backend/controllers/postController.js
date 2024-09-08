@@ -21,8 +21,8 @@ exports.getPostById = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-    const { title, description } = req.body;
-    const newPost = new Post({ title, description });
+    const { title, tracker, description } = req.body;
+    const newPost = new Post({ title, tracker, description });
 
     try {
         const savedPost = await newPost.save();

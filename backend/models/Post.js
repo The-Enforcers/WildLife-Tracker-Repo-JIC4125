@@ -1,6 +1,6 @@
 // backend/models/Post.js
 const mongoose = require('mongoose');
-
+//needs modification in the next sprint.This is verry different from seans pull request. we may need to do a new pull request for sean. 
 const PostSchema = new mongoose.Schema({
     // Should there be a separate title and scientific name?
     title: {
