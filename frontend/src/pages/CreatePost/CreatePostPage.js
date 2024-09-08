@@ -53,7 +53,7 @@ const CreatePostPage = () => {
       <Sidebar />
       <Container maxWidth="md" sx={{ marginTop: 4, paddingBottom: 6 }}>
         <Typography variant="h4" gutterBottom fontFamily={"monospace"}>
-          New Post
+          New Animal Profile
         </Typography>
         <Grid container spacing={4}>
           {/* Left Side: Image Upload */}
