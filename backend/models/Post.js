@@ -6,11 +6,23 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    tracker: {
+    commonName: {
         type: String,
         required: true,
     },
-    description: {
+    trackerType: {
+        type: String,
+        required: true,
+    },
+    enclosureType: {
+        type: String,
+        required: true,
+    },
+    attachmentType: {
+        type: String,
+        required: true,
+    },
+    recommendations: {
         type: String,
         required: true,
     },

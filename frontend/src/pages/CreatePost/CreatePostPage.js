@@ -17,8 +17,11 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState("");
-  const [tracker, setTracker] = useState("");
-  const [description, setDescription] = useState("");
+  const [commonName, setCommonName] = useState("");
+  const [trackerType, setTrackerType] = useState("");
+  const [enclosureType, setEnclosureType] = useState("");
+  const [attachmentType, setAttachmentType] = useState("");
+  const [recommendations, setRecommendations] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -33,12 +36,12 @@ const CreatePostPage = () => {
     e.preventDefault();
 
     // Basic frontend validation
-    if (!title || !description) {
+    if (!title || !recommendations) {
       setError("Both fields are required.");
       return;
     }
 
-    const newPost = { title, tracker, description }; // Exclude image from the form data
+     const newPost = {title, commonName, trackerType, enclosureType, attachmentType, recommendations}; // Exclude image from the form data
 
     try {
       await createPost(newPost);
@@ -130,7 +133,7 @@ const CreatePostPage = () => {
                 </Typography>
               )}
               <TextField
-                label="Animal"
+                label="Scientific Name"
                 variant="outlined"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -139,21 +142,48 @@ const CreatePostPage = () => {
                 sx={{ borderRadius: "10px" }}
               />
               <TextField
-                label="Tracker"
+                label="Common Name(s)"
                 variant="outlined"
-                value={tracker}
-                onChange={(e) => setTracker(e.target.value)}
+                value={commonName}
+                onChange={(e) => setCommonName(e.target.value)}
                 required
                 fullWidth
                 sx={{ borderRadius: "10px" }}
               />
               <TextField
-                label="Description"
+                label="Tracker Type"
+                variant="outlined"
+                value={trackerType}
+                onChange={(e) => setTrackerType(e.target.value)}
+                required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
+              />
+              <TextField
+                label="Enclosure Type"
+                variant="outlined"
+                value={enclosureType}
+                onChange={(e) => setEnclosureType(e.target.value)}
+                required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
+              />
+              <TextField
+                label="Attachment Type"
+                variant="outlined"
+                value={attachmentType}
+                onChange={(e) => setAttachmentType(e.target.value)}
+                required
+                fullWidth
+                sx={{ borderRadius: "10px" }}
+              />
+              <TextField
+                label="Recommendations"
                 variant="outlined"
                 multiline
                 rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={recommendations}
+                onChange={(e) => setRecommendations(e.target.value)}
                 required
                 fullWidth
                 sx={{ borderRadius: "10px" }}
