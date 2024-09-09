@@ -67,7 +67,7 @@ const Sidebar = () => {
 
         {/* View Posts */}
         <div
-          onClick={() => navigate("/post")}
+          onClick={() => navigate("/results")}
           className="view-posts"
           data-tooltip-id="view-posts"
           data-tooltip-content="View Posts"
