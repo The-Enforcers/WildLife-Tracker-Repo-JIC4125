@@ -1,46 +1,52 @@
-// backend/models/Post.js
 const mongoose = require('mongoose');
-//needs modification in the next sprint.This is verry different from seans pull request. we may need to do a new pull request for sean. 
+
 const PostSchema = new mongoose.Schema({
-    // Should there be a separate title and scientific name?
+    // Separate title and scientific name
     title: {
         type: String,
         required: true,
     },
+    // Common name added from sri-addFormFields
+    commonName: {
+        type: String,
+        required: true,
+    },
+    // Author field from the main branch
     author: {
         type: String,
-        required: true
+        required: true,
     },
-    // This may be modified to simply be a string if we need
-    common_names: [new mongoose.Schema({ 
+    // Common names array from the main branch
+    common_names: [new mongoose.Schema({
         common_name: {
             type: String,
             required: true,
         }
     })],
+    // Description from the main branch
     description: {
         type: String,
         required: true,
     },
-    // Each of these types will have images associated with them
-    // which will likely be icons.
-    tracker_type: {
+    // Tracker, enclosure, and attachment types from sri-addFormFields
+    trackerType: {
         type: String,
         required: true,
     },
-    enclosure_type: {
+    enclosureType: {
         type: String,
         required: true,
     },
-    attachment_type: {
+    attachmentType: {
         type: String,
         required: true,
     },
+    // Recommendations from sri-addFormFields
     recommendations: {
         type: String,
         required: true,
     },
-    // TODO: Find out what client wants regarding Other Profiles before adding to schema
+    // Date field as is from both branches
     date: {
         type: Date,
         default: Date.now,
