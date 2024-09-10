@@ -1,5 +1,23 @@
-# Wildlife Tracking App
+# WildTrack: The Wildlife Tracker Wikipedia
+This project is designed to serve as a centralized repository for information on wildlife trackers, making information that was previously either paywalled or scattered across the web in papers, blogs, and project githubs more accessible to the wildlife researcher community. It is based around the concept of user-created "animal profiles"/"posts" where researchers can independetly outline tracking equipment, methods, recommendations, etc. from their experience.
 
+# Release Notes
+
+## Version 0.1.0
+### Features 
+- **Navigation**: Home page with site navigation (animal categories, sidebar with shortcuts to results page, creating a post)
+- **Post results and Viewing**: Results page that shows all created post on platform - with ability to click through to posts.
+- **Post Creation**: Create post page where users can fill out post fields, submit the post, and then have it viewable on the results page.
+
+### Bug Fixes
+- N/A
+
+### Known Issues
+- Incomplete "Post" page UI
+- Simplified Post creation and Post Viewing UX from final intended design.
+
+
+# Development Instructions & Notes
 This project is a full-stack application for creating, viewing, and managing wildlife tracking posts. The frontend is built with React, and the backend uses Node.js with Express and MongoDB.
 
 ## Prerequisites
@@ -63,10 +81,12 @@ This will start the React development server on http://localhost:3000.
 
 Now you should be able to access the application by navigating to http://localhost:3000 in your web browser. The frontend will interact with the backend to create and display posts.
 
-### Usage
+### Usage (Depreceated)
 
 Main Page: Displays a list of wildlife tracking posts.
 
 Page Details Page: Will show all post info
 
 Create Post Page: Click the "Create New Post" button on the main page to add a new post. After submitting the form, the new post will be displayed on the main page.
+
+
