@@ -15,6 +15,7 @@ import icon1 from "../../assets/Mammals.png";
 import icon4 from "../../assets/Birds.png";
 import icon3 from "../../assets/Amphibians.png";
 import icon2 from "../../assets/Reptiles.png";
+import icon5 from "../../assets/Fish.png";
 
 const Main = () => {
   const [input, setInput] = useState("");
@@ -26,7 +27,10 @@ const Main = () => {
         <div className="nav">
           <p>Wildlife Tracker</p>
           <a href="https://accounts.google.com/">
-            <AccountCircleOutlinedIcon fontSize="large" />
+            <AccountCircleOutlinedIcon
+              fontSize="large"
+              sx={{ color: "black" }}
+            />
           </a>
         </div>
         <div className="main-container">
@@ -53,6 +57,10 @@ const Main = () => {
             <div className="icon-wrapper">
               <img src={icon3} alt="Amphibians Icon" className="icon-image" />
               <p className="icon-label">Amphibians</p>
+            </div>
+            <div className="icon-wrapper">
+              <img src={icon5} alt="Fish Icon" className="icon-image" />
+              <p className="icon-label">Fish</p>
             </div>
             <div className="icon-wrapper">
               <img src={icon4} alt="Birds Icon" className="icon-image" />
