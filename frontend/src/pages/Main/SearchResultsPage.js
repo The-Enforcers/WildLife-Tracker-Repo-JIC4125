@@ -21,7 +21,7 @@ const SearchResultsPage = () => {
   useEffect(() => {
     const fetchAnimals = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/posts");
+        const response = await fetch("https://localhost:5001/api/posts");
         const data = await response.json();
         console.log(data);
         setAnimals(data);
