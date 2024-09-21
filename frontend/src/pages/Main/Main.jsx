@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // CSS file
 import "./Main.css";
@@ -19,6 +19,25 @@ import icon5 from "../../assets/Fish.png";
 
 const Main = () => {
   const [input, setInput] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('https://localhost:5001/api/user', {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -26,20 +45,26 @@ const Main = () => {
       <div className="main">
         <div className="nav">
           <p>Wildlife Tracker</p>
-          <a href="https://accounts.google.com/">
-            <AccountCircleOutlinedIcon
-              fontSize="large"
-              sx={{ color: "black" }}
-            />
-          </a>
+          {user ? (
+            <span>{user.displayName}</span>
+          ) : (
+            <a href="https://localhost:5001/auth/google">
+              <AccountCircleOutlinedIcon
+                fontSize="large"
+                sx={{ color: "black" }}
+              />
+            </a>
+          )}
         </div>
         <div className="main-container">
-          <div className="greet">
-            <p>
-              <span>Hello, Joe</span>
-            </p>
-            <p className="sub-greet">Search for animals or trackers</p>
-          </div>
+          {user && (
+            <div className="greet">
+              <p>
+                <span>Hello, {user.displayName}</span>
+              </p>
+              <p className="sub-greet">Search for animals or trackers</p>
+            </div>
+          )}
 
           {/* Search Box */}
           <SearchBox input={input} setInput={setInput} />
