@@ -31,7 +31,10 @@ const SearchResultsPage = () => {
     };
 
     fetchAnimals();
+  
   }, []);
+
+  
 
   // Function to pick a random image from the imageUrls array
   const getRandomImage = () => {
@@ -46,7 +49,7 @@ const SearchResultsPage = () => {
       <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         {/* SearchBox */}
         <Box sx={{ padding: 2 }}>
-          <SearchBox input={input} setInput={setInput} />
+          <SearchBox input={input} setInput={setInput}  />
         </Box>
 
         {/* Grid */}
