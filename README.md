@@ -69,7 +69,8 @@ Replace YYYYYYY and ZZZZ with the information provided by google. follow these s
 2. click configure project. 
 3. type project name in and next.
 4. select web browser as your calling from.
-5.copy and past the client id and secret into the .env 
+5. the url will be https://localhost:5001/auth/google/callback for testing 
+6.copy and past the client id and secret into the .env 
 
 ### 5. Starting the Application
 
