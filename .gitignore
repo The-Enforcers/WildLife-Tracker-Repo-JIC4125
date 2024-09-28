@@ -1,3 +1,4 @@
 # Ignore environment variables in backend
 backend/.env
+backend/.DS_Store
 .DS_Store
