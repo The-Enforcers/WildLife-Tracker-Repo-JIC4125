@@ -62,7 +62,7 @@ const Main = () => {
               <p>
                 <span>Hello, {user.displayName}</span>
               </p>
-              <p className="sub-greet">Search for animals or trackers</p>
+              <p className="sub-greet">Search Animal Tracker Repository</p>
             </div>
           )}
 

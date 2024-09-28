@@ -68,8 +68,9 @@ Replace YYYYYYY and ZZZZ with the information provided by google. follow these s
 1. navigate to https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid
 2. click configure project. 
 3. type project name in and next.
-4. select web browser as your calling from.
-5.copy and past the client id and secret into the .env 
+4. select web server as your calling from.
+5. the url will be https://localhost:5001/auth/google/callback for testing 
+6.copy and past the client id and secret into the .env 
 
 ### 5. Starting the Application
 
