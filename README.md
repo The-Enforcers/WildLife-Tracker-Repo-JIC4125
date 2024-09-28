@@ -50,6 +50,10 @@ The project requires an enviroment variable to be set up. In the backend directo
 
 ```plaintext
 MONGO_URI=XXXXXXX
+GOOGLE_CLIENT_ID=YYYYYYY
+GOOGLE_CLIENT_SECRET=ZZZZZZZZ
+HTTPS_PORT=5001
+SESSION_SECRET=a_secure_random_string
 ```
 
 Replace XXXXXX with your MongoDB connection string. To find this string, follow these steps:
@@ -58,6 +62,15 @@ Replace XXXXXX with your MongoDB connection string. To find this string, follow 
 2. Click on "Connect" for Cluster0 (this should be visible on the project overview page).
 3. Choose "Drivers" to view the connection string.
    Replace `<password>` in the string with your actual password.
+
+Replace YYYYYYY and ZZZZ with the information provided by google. follow these steps:
+
+1. navigate to https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid
+2. click configure project. 
+3. type project name in and next.
+4. select web server as your calling from.
+5. the url will be https://localhost:5001/auth/google/callback for testing 
+6.copy and past the client id and secret into the .env 
 
 ### 5. Starting the Application
 
