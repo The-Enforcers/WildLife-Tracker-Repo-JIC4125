@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPostById } from '../../services/postService';
-
+//I have created a second iteration of the profile page so this commit is jsut for PR. we will be showing both off to the client. 
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
