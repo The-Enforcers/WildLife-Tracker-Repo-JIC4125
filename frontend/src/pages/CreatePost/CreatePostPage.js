@@ -27,6 +27,7 @@ const mdParser = new MarkdownIt();
 const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate"];
 
 const CreatePostPage = () => {
+  const [title, setTitle] = useState("");
   const [scientificName, setScientificName] = useState("");
   const [commonName, setCommonName] = useState("");
   const [trackerType, setTrackerType] = useState("");
@@ -68,6 +69,7 @@ const CreatePostPage = () => {
     }
 
     const newPost = {
+      title,
       scientificName,
       commonName,
       trackerType: trackerType === 'custom' ? customTrackerType : trackerType,
@@ -138,6 +140,15 @@ const CreatePostPage = () => {
               {/* Form Fields */}
               <Grid item xs={12} md={6}>
                 <TextField
+                  label="Post Title"
+                  variant="outlined"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  fullWidth
+                  sx={{ marginBottom: 2 }}
+                />
+                <TextField
                   label="Scientific Name"
                   variant="outlined"
                   value={scientificName}
@@ -155,6 +166,9 @@ const CreatePostPage = () => {
                   fullWidth
                   sx={{ marginBottom: 2 }}
                 />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
                 <FormControl fullWidth sx={{ marginBottom: 2 }}>
                   <InputLabel>Tracker Type</InputLabel>
                   <Select
@@ -179,9 +193,6 @@ const CreatePostPage = () => {
                     sx={{ marginBottom: 2 }}
                   />
                 )}
-              </Grid>
-
-              <Grid item xs={12} md={6}>
                 <FormControl fullWidth sx={{ marginBottom: 2 }}>
                   <InputLabel>Enclosure Type</InputLabel>
                   <Select
