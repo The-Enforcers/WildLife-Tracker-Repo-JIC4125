@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown'
 
 import "./PostDetailsPage.css";
 
+
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
