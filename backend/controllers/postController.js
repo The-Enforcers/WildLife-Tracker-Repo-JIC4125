@@ -21,8 +21,8 @@ exports.getPostById = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-    const { scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.body;
-    const newPost = new Post({ scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations });
+    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.body;
+    const newPost = new Post({ title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations });
 
     try {
         const savedPost = await newPost.save();
@@ -35,9 +35,13 @@ exports.createPost = async (req, res) => {
 function build_search_terms(req) {
     console.log(req.query);
 
-    const { scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.query;
+    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.query;
 
     var search_requirements = {};
+
+    if (title) {
+        search_requirements.title = new RegExp(title, 'i');
+    }
 
     if (scientificName) {
         search_requirements.scientificName = new RegExp(scientificName, 'i');

@@ -7,6 +7,7 @@
   background-color: #f0f4f9;
   padding: 25px 15px;
   transition: width 0.5s ease;
+  left: 0px;
 }
 
 .sidebar img {
