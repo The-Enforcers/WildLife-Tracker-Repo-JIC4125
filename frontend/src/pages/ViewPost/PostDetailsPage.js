@@ -5,17 +5,25 @@ import { getPostById } from '../../services/postService';
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
-    const navigate = useNavigate(); // Hook to navigate programmatically
+    const [error, setError] = useState(null); // For error handling
+    const [hover, setHover] = useState(false); // For button hover state
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPost = async () => {
-            const data = await getPostById(id);
-            setPost(data);
+            try {
+                const data = await getPostById(id);
+                setPost(data);
+            } catch (error) {
+                setError('Failed to fetch post data.');
+                console.error("Failed to fetch post", error);
+            }
         };
         fetchPost();
     }, [id]);
 
-    if (!post) return <div>Loading...</div>;
+    if (error) return <div style={styles.error}>{error}</div>;
+    if (!post) return <div style={styles.loading}>Loading...</div>;
 
     return (
         <div style={styles.container}>
@@ -28,20 +36,29 @@ const PostDetailsPage = () => {
                 <p><strong>Attachment Type:</strong> {post.attachmentType}</p>
                 <p><strong>Recommendations:</strong> {post.recommendations}</p>
             </div>
-            <button style={styles.button} onClick={() => navigate('/')}>Back to Main Page</button>
+            <button
+                style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                onClick={() => navigate('/')}
+            >
+                Back to Main Page
+            </button>
         </div>
     );
 };
 
 const styles = {
     container: {
-        maxWidth: '600px',
-        margin: '40px auto',
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '20px auto',
         padding: '20px',
         borderRadius: '10px',
         backgroundColor: '#f9f9f9',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         fontFamily: 'Arial, sans-serif',
+        minHeight: '80vh',
     },
     title: {
         fontSize: '28px',
@@ -55,7 +72,7 @@ const styles = {
     },
     button: {
         display: 'block',
-        width: '100%',
+        width: '200px',
         padding: '10px 15px',
         backgroundColor: '#4CAF50',
         color: 'white',
@@ -64,13 +81,23 @@ const styles = {
         border: 'none',
         borderRadius: '5px',
         cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    buttonHover: {
+        backgroundColor: '#45a049',
     },
     loading: {
         fontSize: '18px',
         textAlign: 'center',
         marginTop: '50px',
-    }
+        color: '#666',
+    },
+    error: {
+        fontSize: '18px',
+        textAlign: 'center',
+        marginTop: '50px',
+        color: 'red',
+    },
 };
-
 
 export default PostDetailsPage;
