@@ -5,8 +5,8 @@ import { getPostById } from '../../services/postService';
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
-    const [error, setError] = useState(null); // For error handling
-    const [hover, setHover] = useState(false); // For button hover state
+    const [error, setError] = useState(null);
+    const [hover, setHover] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
