@@ -101,14 +101,6 @@ const PostDetailsPage = () => {
                     <img className="post-image" src="https://randyroberts.wordpress.com/wp-content/uploads/2009/06/img_1814a.jpg"/>
                 </div>
             </div>
-            <button
-                style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-                onClick={() => navigate('/')}
-            >
-                Back to Main Page
-            </button>
             <div className="tracker-info">
                 <div className="tracker-info-box">
                     <p className="tracker-info-actual">{post.trackerType}</p>
