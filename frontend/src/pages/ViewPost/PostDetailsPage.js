@@ -12,12 +12,19 @@ const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [user, setUser] = useState(null);
-    const navigate = useNavigate(); // Hook to navigate programmatically
+    const [error, setError] = useState(null);
+    const [hover, setHover] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPost = async () => {
-            const data = await getPostById(id);
-            setPost(data);
+            try {
+                const data = await getPostById(id);
+                setPost(data);
+            } catch (error) {
+                setError('Failed to fetch post data.');
+                console.error("Failed to fetch post", error);
+            }
         };
         fetchPost();
     }, [id]);
@@ -40,7 +47,9 @@ const PostDetailsPage = () => {
         fetchUser();
       }, []);
 
-    if (!post) return <div>Loading...</div>;
+    if (error) return <div style={styles.error}>{error}</div>;
+    if (!post) return <div style={styles.loading}>Loading...</div>;
+
 
     return (
         <>
@@ -92,36 +101,87 @@ const PostDetailsPage = () => {
                     <img className="post-image" src="https://randyroberts.wordpress.com/wp-content/uploads/2009/06/img_1814a.jpg"/>
                 </div>
             </div>
+            <button
+                style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                onClick={() => navigate('/')}
+            >
+                Back to Main Page
+            </button>
             <div className="tracker-info">
                 <div className="tracker-info-box">
-                
                     <p className="tracker-info-actual">{post.trackerType}</p>
                     <p className="tracker-info-header">Tracker</p>
-                
                 </div>
                 <div className="tracker-info-box">
-            
                     <p className="tracker-info-actual">{post.enclosureType}</p>
                     <p className="tracker-info-header">Enclosure</p>
-
                 </div>
                 <div className="tracker-info-box">
-                
                     <p className="tracker-info-actual">{post.attachmentType}</p>
                     <p className="tracker-info-header">Attachment</p>
-                
                 </div>
             </div>
             <div className="post-body">
                 <ReactMarkdown>{post.recommendations}</ReactMarkdown>
             </div>
-
           </div>
-
-            
         </div>
       </>
     );
+};
+
+const styles = {
+    container: {
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '20px auto',
+        padding: '20px',
+        borderRadius: '10px',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        fontFamily: 'Arial, sans-serif',
+        minHeight: '80vh',
+    },
+    title: {
+        fontSize: '28px',
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        textAlign: 'center',
+        color: '#333',
+    },
+    detailsContainer: {
+        marginBottom: '20px',
+    },
+    button: {
+        display: 'block',
+        width: '200px',
+        padding: '10px 15px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s',
+    },
+    buttonHover: {
+        backgroundColor: '#45a049',
+    },
+    loading: {
+        fontSize: '18px',
+        textAlign: 'center',
+        marginTop: '50px',
+        color: '#666',
+    },
+    error: {
+        fontSize: '18px',
+        textAlign: 'center',
+        marginTop: '50px',
+        color: 'red',
+    },
 };
 
 export default PostDetailsPage;
