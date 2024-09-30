@@ -21,8 +21,8 @@ exports.getPostById = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-    const {title, commonName, trackerType, enclosureType, attachmentType, recommendations } = req.body;
-    const newPost = new Post({title, commonName, trackerType, enclosureType, attachmentType, recommendations});
+    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.body;
+    const newPost = new Post({ title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations });
 
     try {
         const savedPost = await newPost.save();
@@ -33,43 +33,38 @@ exports.createPost = async (req, res) => {
 };
 
 function build_search_terms(req) {
-
     console.log(req.query);
 
-    const {title, commonName, trackerTypes, enclosureTypes, attachmentTypes, recommendations} = req.query;
-
-    // Create the search requirements
+    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.query;
 
     var search_requirements = {};
 
-    //name: { $regex: /apple/, $options: 'i' }
+    if (title) {
+        search_requirements.title = new RegExp(title, 'i');
+    }
 
-    if(title) {
-        if(title == "nut muncher") {
-            search_requirements.title = new RegExp(/squirrel/, 'i');
-        } else {
-            search_requirements.title = new RegExp(commonName, 'i');
-        }
+    if (scientificName) {
+        search_requirements.scientificName = new RegExp(scientificName, 'i');
     }
 
     if (commonName) {
-        if(commonName == "nut muncher") {
-            search_requirements.commonName = new RegExp(/squirrel/, 'i');
-        } else {
-            search_requirements.commonName = new RegExp(commonName, 'i');
-        }
+        search_requirements.commonName = new RegExp(commonName, 'i');
     }
 
-    if (trackerTypes) {
-        search_requirements.trackerTypes = new RegExp(trackerTypes, 'i');
+    if (trackerType) {
+        search_requirements.trackerType = trackerType;
     }
 
-    if (enclosureTypes) {
-        search_requirements.enclosureTypes = new RegExp(enclosureTypes, 'i');
+    if (dataTypes) {
+        search_requirements.dataTypes = { $in: dataTypes.split(',') };
     }
 
-    if (attachmentTypes) {
-        search_requirements.attachmentTypes = new RegExp(attachmentTypes, 'i');
+    if (enclosureType) {
+        search_requirements.enclosureType = enclosureType;
+    }
+
+    if (attachmentType) {
+        search_requirements.attachmentType = attachmentType;
     }
 
     if (recommendations) {

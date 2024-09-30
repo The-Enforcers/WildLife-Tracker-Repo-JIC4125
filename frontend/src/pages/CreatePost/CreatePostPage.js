@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { createPost } from "../../services/postService";
 import {
@@ -9,18 +9,34 @@ import {
   Container,
   Grid,
   IconButton,
+  Select,
+  MenuItem,
+  Chip,
+  FormControl,
+  InputLabel,
+  Paper,
 } from "@mui/material";
-
-// MUI icons
 import UploadIcon from "@mui/icons-material/Upload";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
+
+const mdParser = new MarkdownIt();
+
+const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate"];
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState("");
+  const [scientificName, setScientificName] = useState("");
   const [commonName, setCommonName] = useState("");
   const [trackerType, setTrackerType] = useState("");
+  const [customTrackerType, setCustomTrackerType] = useState("");
+  const [dataTypes, setDataTypes] = useState([]);
   const [enclosureType, setEnclosureType] = useState("");
+  const [customEnclosureType, setCustomEnclosureType] = useState("");
   const [attachmentType, setAttachmentType] = useState("");
+  const [customAttachmentType, setCustomAttachmentType] = useState("");
   const [recommendations, setRecommendations] = useState("");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
@@ -32,16 +48,36 @@ const CreatePostPage = () => {
     }
   };
 
+  const handleEditorChange = ({ text }) => {
+    setRecommendations(text);
+  };
+
+  const handleDataTypeToggle = (dataType) => {
+    setDataTypes(prev => 
+      prev.includes(dataType) 
+        ? prev.filter(type => type !== dataType)
+        : [...prev, dataType]
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic frontend validation
-    if (!title || !recommendations) {
-      setError("Both fields are required.");
+    if (!scientificName || !commonName || !recommendations) {
+      setError("All fields are required.");
       return;
     }
 
-     const newPost = {title, commonName, trackerType, enclosureType, attachmentType, recommendations}; // Exclude image from the form data
+    const newPost = {
+      title,
+      scientificName,
+      commonName,
+      trackerType: trackerType === 'custom' ? customTrackerType : trackerType,
+      dataTypes,
+      enclosureType: enclosureType === 'custom' ? customEnclosureType : enclosureType,
+      attachmentType: attachmentType === 'custom' ? customAttachmentType : attachmentType,
+      recommendations
+    };
 
     try {
       await createPost(newPost);
@@ -54,158 +90,207 @@ const CreatePostPage = () => {
   return (
     <>
       <Sidebar />
-      <Container maxWidth="md" sx={{ marginTop: 4, paddingBottom: 6 }}>
+      <Container maxWidth="lg" sx={{ marginTop: 4, paddingBottom: 6 }}>
         <Typography variant="h4" gutterBottom fontFamily={"monospace"}>
           New Animal Profile
         </Typography>
-        <Grid container spacing={4}>
-          {/* Left Side: Image Upload */}
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="label"
-              sx={{
-                backgroundColor: "#e0e0e0",
-                borderRadius: "50%",
-                width: 100,
-                height: 100,
-                "&:hover": {
-                  backgroundColor: "#c0c0c0",
-                },
-              }}
-            >
-              <input
-                hidden
-                accept="image/*"
-                type="file"
-                onChange={handleImageChange}
-              />
-              <UploadIcon sx={{ fontSize: 50 }} />
-            </IconButton>
+        <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
+          <Box component="form" onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              {/* Image Upload */}
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="label"
+                    sx={{
+                      backgroundColor: "#e0e0e0",
+                      width: 100,
+                      height: 100,
+                      marginBottom: 2,
+                      "&:hover": {
+                        backgroundColor: "#c0c0c0",
+                      },
+                    }}
+                  >
+                    <input
+                      hidden
+                      accept="image/*"
+                      type="file"
+                      onChange={handleImageChange}
+                    />
+                    <UploadIcon sx={{ fontSize: 50 }} />
+                  </IconButton>
+                  {image && (
+                    <img
+                      src={image}
+                      alt="Uploaded Preview"
+                      style={{
+                        maxHeight: 200,
+                        maxWidth: '100%',
+                        objectFit: "contain",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  )}
+                </Box>
+              </Grid>
 
-            {/* Display the selected image */}
-            {image && (
-              <Box
-                sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
-              >
-                <img
-                  src={image}
-                  alt="Uploaded Preview"
-                  style={{
-                    maxHeight: 200,
-                    objectFit: "contain",
-                    borderRadius: "10px",
-                  }}
+              {/* Form Fields */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Post Title"
+                  variant="outlined"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  fullWidth
+                  sx={{ marginBottom: 2 }}
                 />
-              </Box>
-            )}
-          </Grid>
+                <TextField
+                  label="Scientific Name"
+                  variant="outlined"
+                  value={scientificName}
+                  onChange={(e) => setScientificName(e.target.value)}
+                  required
+                  fullWidth
+                  sx={{ marginBottom: 2 }}
+                />
+                <TextField
+                  label="Common Name(s)"
+                  variant="outlined"
+                  value={commonName}
+                  onChange={(e) => setCommonName(e.target.value)}
+                  required
+                  fullWidth
+                  sx={{ marginBottom: 2 }}
+                />
+              </Grid>
 
-          {/* Right Side: Form Fields */}
-          <Grid item xs={12} md={6}>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 3,
-                backgroundColor: "#f9f9f9",
-                padding: 3,
-                borderRadius: "10px",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              {error && (
-                <Typography color="error" variant="body2">
-                  {error}
-                </Typography>
-              )}
-              <TextField
-                label="Scientific Name"
-                variant="outlined"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <TextField
-                label="Common Name(s)"
-                variant="outlined"
-                value={commonName}
-                onChange={(e) => setCommonName(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <TextField
-                label="Tracker Type"
-                variant="outlined"
-                value={trackerType}
-                onChange={(e) => setTrackerType(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <TextField
-                label="Enclosure Type"
-                variant="outlined"
-                value={enclosureType}
-                onChange={(e) => setEnclosureType(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <TextField
-                label="Attachment Type"
-                variant="outlined"
-                value={attachmentType}
-                onChange={(e) => setAttachmentType(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <TextField
-                label="Recommendations"
-                variant="outlined"
-                multiline
-                rows={4}
-                value={recommendations}
-                onChange={(e) => setRecommendations(e.target.value)}
-                required
-                fullWidth
-                sx={{ borderRadius: "10px" }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                sx={{
-                  borderRadius: "20px",
-                  padding: "10px 20px",
-                  backgroundColor: "#3f51b5",
-                  "&:hover": {
-                    backgroundColor: "#303f9f",
-                  },
-                }}
-              >
-                Submit
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  <InputLabel>Tracker Type</InputLabel>
+                  <Select
+                    value={trackerType}
+                    onChange={(e) => setTrackerType(e.target.value)}
+                    label="Tracker Type"
+                    required
+                  >
+                    <MenuItem value="VHF">VHF</MenuItem>
+                    <MenuItem value="GPS">GPS</MenuItem>
+                    <MenuItem value="custom">Custom</MenuItem>
+                  </Select>
+                </FormControl>
+                {trackerType === 'custom' && (
+                  <TextField
+                    label="Custom Tracker Type"
+                    variant="outlined"
+                    value={customTrackerType}
+                    onChange={(e) => setCustomTrackerType(e.target.value)}
+                    required
+                    fullWidth
+                    sx={{ marginBottom: 2 }}
+                  />
+                )}
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  <InputLabel>Enclosure Type</InputLabel>
+                  <Select
+                    value={enclosureType}
+                    onChange={(e) => setEnclosureType(e.target.value)}
+                    label="Enclosure Type"
+                    required
+                  >
+                    <MenuItem value="Encapsulated">Encapsulated</MenuItem>
+                    <MenuItem value="Modular">Modular</MenuItem>
+                    <MenuItem value="custom">Custom</MenuItem>
+                  </Select>
+                </FormControl>
+                {enclosureType === 'custom' && (
+                  <TextField
+                    label="Custom Enclosure Type"
+                    variant="outlined"
+                    value={customEnclosureType}
+                    onChange={(e) => setCustomEnclosureType(e.target.value)}
+                    required
+                    fullWidth
+                    sx={{ marginBottom: 2 }}
+                  />
+                )}
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  <InputLabel>Attachment Type</InputLabel>
+                  <Select
+                    value={attachmentType}
+                    onChange={(e) => setAttachmentType(e.target.value)}
+                    label="Attachment Type"
+                    required
+                  >
+                    <MenuItem value="Harness">Harness</MenuItem>
+                    <MenuItem value="Collar">Collar</MenuItem>
+                    <MenuItem value="Glue-on">Glue-on</MenuItem>
+                    <MenuItem value="custom">Custom</MenuItem>
+                  </Select>
+                </FormControl>
+                {attachmentType === 'custom' && (
+                  <TextField
+                    label="Custom Attachment Type"
+                    variant="outlined"
+                    value={customAttachmentType}
+                    onChange={(e) => setCustomAttachmentType(e.target.value)}
+                    required
+                    fullWidth
+                    sx={{ marginBottom: 2 }}
+                  />
+                )}
+              </Grid>
+
+              {/* Data Types */}
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>Data Types:</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {dataTypeOptions.map((option) => (
+                    <Chip
+                      key={option}
+                      label={option}
+                      onClick={() => handleDataTypeToggle(option)}
+                      color={dataTypes.includes(option) ? "primary" : "default"}
+                      sx={{ marginBottom: 1 }}
+                    />
+                  ))}
+                </Box>
+              </Grid>
+
+              {/* Recommendations */}
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>Recommendations:</Typography>
+                <MdEditor
+                  style={{ height: '300px' }}
+                  renderHTML={(text) => mdParser.render(text)}
+                  onChange={handleEditorChange}
+                />
+              </Grid>
+
+              {/* Submit Button */}
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  sx={{
+                    borderRadius: "20px",
+                    padding: "10px 20px",
+                    backgroundColor: "#3f51b5",
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                  }}
+                >
+                  Submit
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Paper>
       </Container>
     </>
   );
