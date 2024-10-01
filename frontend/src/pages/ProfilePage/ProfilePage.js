@@ -100,7 +100,7 @@ export default function ProfilePage() {
                 }}
               >
                 <ProfileAvatar
-                  alt="Jane Doe"
+                  alt="Jane Doe User"
                   src="/placeholder.svg?height=200&width=200"
                 />
                 <Typography variant="h5" gutterBottom>
