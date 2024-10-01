@@ -10,7 +10,7 @@ const SearchBox = ({ input, setInput, onSearch }) => {
         onChange={(e) => setInput(e.target.value)}
         value={input}
         type="text"
-        placeholder="Search Animal Tracker Repository"
+        placeholder="Search by species or common name"
       />
       <div>
         <span className={`send-icon ${input.length > 0 ? "show" : ""}`}>

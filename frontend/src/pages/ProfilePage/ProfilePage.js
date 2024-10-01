@@ -75,7 +75,7 @@ function TabPanel(props) {
   );
 }
 
-export default function Component() {
+export default function ProfilePage() {
   const [value, setValue] = useState(0);
   
   const handleChange = (event, newValue) => {
