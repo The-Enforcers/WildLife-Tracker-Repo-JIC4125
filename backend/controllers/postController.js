@@ -21,8 +21,11 @@ exports.getPostById = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.body;
-    const newPost = new Post({ title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations });
+    console.log(req.body);
+    const { title, scientificName, commonName, animalType, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.body;
+    const newPost = new Post({ title, scientificName, commonName, animalType, trackerType, dataTypes, enclosureType, attachmentType, recommendations });
+
+    console.log(newPost);
 
     try {
         const savedPost = await newPost.save();
@@ -35,7 +38,7 @@ exports.createPost = async (req, res) => {
 function build_search_terms(req) {
     console.log(req.query);
 
-    const { title, scientificName, commonName, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.query;
+    const { title, scientificName, commonName, animalType, trackerType, dataTypes, enclosureType, attachmentType, recommendations } = req.query;
 
     var search_requirements = {};
 
@@ -51,10 +54,13 @@ function build_search_terms(req) {
         search_requirements.commonName = new RegExp(commonName, 'i');
     }
 
-    if (trackerType) {
-        search_requirements.trackerType = { $in: trackerType.split(',') };;
+    if (animalType) {
+        search_requirements.animalType = { $in: animalType.split(",") };
     }
 
+    if (trackerType) {
+        search_requirements.trackerType = { $in: trackerType.split(',') };
+    }
 
     if (dataTypes) {
         search_requirements.dataTypes = { $in: dataTypes.split(',') };
