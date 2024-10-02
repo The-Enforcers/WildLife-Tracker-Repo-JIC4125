@@ -52,25 +52,27 @@ function build_search_terms(req) {
     }
 
     if (trackerType) {
-        search_requirements.trackerType = trackerType;
+        search_requirements.trackerType = { $in: trackerType.split(',') };;
     }
+
 
     if (dataTypes) {
         search_requirements.dataTypes = { $in: dataTypes.split(',') };
     }
 
     if (enclosureType) {
-        search_requirements.enclosureType = enclosureType;
+        search_requirements.enclosureType = new RegExp(enclosureType, 'i');
     }
 
     if (attachmentType) {
-        search_requirements.attachmentType = attachmentType;
+        search_requirements.attachmentType = { $in: attachmentType.split(',') };;
     }
 
     if (recommendations) {
         search_requirements.recommendations = new RegExp(recommendations, 'i');
     }
 
+    console.log(search_requirements);
     return search_requirements;
 }
 
