@@ -30,6 +30,7 @@ const CreatePostPage = () => {
   const [title, setTitle] = useState("");
   const [scientificName, setScientificName] = useState("");
   const [commonName, setCommonName] = useState("");
+  const [animalType, setAnimalType] = useState("");
   const [trackerType, setTrackerType] = useState("");
   const [customTrackerType, setCustomTrackerType] = useState("");
   const [dataTypes, setDataTypes] = useState([]);
@@ -72,6 +73,7 @@ const CreatePostPage = () => {
       title,
       scientificName,
       commonName,
+      animalType,
       trackerType: trackerType === 'custom' ? customTrackerType : trackerType,
       dataTypes,
       enclosureType: enclosureType === 'custom' ? customEnclosureType : enclosureType,
@@ -166,6 +168,21 @@ const CreatePostPage = () => {
                   fullWidth
                   sx={{ marginBottom: 2 }}
                 />
+                <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                  <InputLabel>Animal Type</InputLabel>
+                  <Select
+                    value={animalType}
+                    onChange={(e) => setAnimalType(e.target.value)}
+                    label="Animal Type"
+                    required
+                  >
+                    <MenuItem value="Mammal">Mammal</MenuItem>
+                    <MenuItem value="Reptile">Reptile</MenuItem>
+                    <MenuItem value="Amphibian">Amphibian</MenuItem>
+                    <MenuItem value="Fish">Fish</MenuItem>
+                    <MenuItem value="Bird">Bird</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} md={6}>

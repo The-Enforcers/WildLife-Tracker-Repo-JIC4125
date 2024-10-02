@@ -28,6 +28,11 @@ const SearchResultsPage = () => {
     harness: false,
     collar: false,
     glueOn: false,
+    mammal: false,
+    reptile: false,
+    amphibian: false,
+    fish: false,
+    bird: false
   });
 
   const imageUrls = [
@@ -74,6 +79,7 @@ const SearchResultsPage = () => {
     const trackerTypes = [];
     const attachmentTypes = [];
     const enclosureTypes = [];
+    const animalFamily = [];
 
     // Build arrays based on selected filters
     if (filters.vhf) trackerTypes.push("VHF");
@@ -83,15 +89,21 @@ const SearchResultsPage = () => {
     if (filters.harness) attachmentTypes.push("Harness");
     if (filters.collar) attachmentTypes.push("Collar");
     if (filters.glueOn) attachmentTypes.push("Glue-on");
+    if (filters.mammal) animalFamily.push("Mammal");
+    if (filters.reptile) animalFamily.push("Reptile");
+    if (filters.amphibian) animalFamily.push("Amphibians");
+    if (filters.fish) animalFamily.push("Fish");
+    if (filters.bird) animalFamily.push("Bird");
 
     // Create query strings
     const trackerTypeQuery = trackerTypes.join(",");
     const attachmentTypeQuery = attachmentTypes.join(",");
     const enclosureTypeQuery = enclosureTypes.join(",");
+    const animalFamilyQuery = animalFamily.join(",");
 
     try {
       const response = await fetch(
-        `https://localhost:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}`
+        `https://localhost:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
       );
       const data = await response.json();
       console.log("Filtered data:", data);
@@ -122,6 +134,68 @@ const SearchResultsPage = () => {
           {/* Filters on the left, below the search box */}
           <Grid item xs={12} sm={3} md={2}>
             <Box sx={{ padding: 2, borderRight: "1px solid #ddd", height: "100%", overflowY: "auto" }}>
+              {/* Accordion for Animal Family */}
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>Animal Type</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.mammal}
+                          onChange={handleCheckboxChange}
+                          name="mammal"
+                        />
+                      }
+                      label="Mammal"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.reptile}
+                          onChange={handleCheckboxChange}
+                          name="reptile"
+                        />
+                      }
+                      label="Reptile"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.amphibian}
+                          onChange={handleCheckboxChange}
+                          name="amphibian"
+                        />
+                      }
+                      label="Amphibian"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.fish}
+                          onChange={handleCheckboxChange}
+                          name="fish"
+                        />
+                      }
+                      label="Fish"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.bird}
+                          onChange={handleCheckboxChange}
+                          name="bird"
+                        />
+                      }
+                      label="Bird"
+                    />
+                  </FormGroup>
+                </AccordionDetails>
+              </Accordion>
+
+              
               {/* Accordion for Tracker Type */}
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>

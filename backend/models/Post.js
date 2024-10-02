@@ -13,6 +13,10 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  animalType: {
+    type: String,
+    required: true
+  },
   trackerType: {
     type: String,
     required: true,
