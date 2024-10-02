@@ -28,7 +28,6 @@ const PostDetailsPage = () => {
         fetchPost();
     }, [id]);
 
-
     useEffect(() => {
         const fetchUser = async () => {
           try {

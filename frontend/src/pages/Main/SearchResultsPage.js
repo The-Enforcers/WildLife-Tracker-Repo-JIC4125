@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Container, Box, Checkbox, FormGroup, FormControlLabel, Button, Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import {
+  Container,
+  Box,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Grid from "@mui/material/Grid";
 import ImageCard from "../../components/Card/Card";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -27,19 +38,26 @@ const SearchResultsPage = () => {
     "https://plus.unsplash.com/premium_photo-1661940855582-ccfec6edbf51?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
 
-  // fetch data from the MongoDB backend
-  useEffect(() => {
-    const fetchAnimals = async () => {
-      try {
-        const response = await fetch("https://localhost:5001/api/posts");
-        const data = await response.json();
-        console.log(data);
-        setAnimals(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  // Fetch animals data from the backend
+  const fetchAnimals = async () => {
+    try {
+      let request = "https://localhost:5001/api/posts";
 
+      if (input && input.length > 0) {
+        request += "/search?title=" + input;
+      }
+
+      const response = await fetch(request);
+      const data = await response.json();
+      console.log(data);
+      setAnimals(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Fetch animals data on component mount
+  useEffect(() => {
     fetchAnimals();
   }, []);
 
@@ -52,9 +70,35 @@ const SearchResultsPage = () => {
   };
 
   // Function to handle filter button click
-  const applyFilters = () => {
-    console.log("Applied filters:", filters);
-    // You can add filter logic here to filter the `animals` array
+  const applyFilters = async () => {
+    const trackerTypes = [];
+    const attachmentTypes = [];
+    const enclosureTypes = [];
+
+    // Build arrays based on selected filters
+    if (filters.vhf) trackerTypes.push("VHF");
+    if (filters.gps) trackerTypes.push("GPS");
+    if (filters.encapsulated) enclosureTypes.push("Encapsulated");
+    if (filters.modular) enclosureTypes.push("Modular");
+    if (filters.harness) attachmentTypes.push("Harness");
+    if (filters.collar) attachmentTypes.push("Collar");
+    if (filters.glueOn) attachmentTypes.push("Glue-on");
+
+    // Create query strings
+    const trackerTypeQuery = trackerTypes.join(",");
+    const attachmentTypeQuery = attachmentTypes.join(",");
+    const enclosureTypeQuery = enclosureTypes.join(",");
+
+    try {
+      const response = await fetch(
+        `https://localhost:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}`
+      );
+      const data = await response.json();
+      console.log("Filtered data:", data);
+      setAnimals(data); // Update state with filtered animals
+    } catch (error) {
+      console.error("Error fetching filtered data:", error);
+    }
   };
 
   // Function to pick a random image from the imageUrls array
@@ -71,7 +115,7 @@ const SearchResultsPage = () => {
       <Box sx={{ flexGrow: 1, padding: 2 }}>
         {/* SearchBox spans the entire width */}
         <Box sx={{ marginBottom: 2 }}>
-          <SearchBox input={input} setInput={setInput} />
+          <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
         </Box>
 
         <Grid container spacing={2}>
