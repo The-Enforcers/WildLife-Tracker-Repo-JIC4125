@@ -27,7 +27,6 @@ const PostDetailsPage = () => {
         };
         fetchPost();
     }, [id]);
-<<<<<<< Updated upstream
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -50,11 +49,6 @@ const PostDetailsPage = () => {
     if (error) return <div style={styles.error}>{error}</div>;
     if (!post) return <div style={styles.loading}>Loading...</div>;
 
-
-=======
-    if (error) return <div style={styles.error}>{error}</div>;
-    if (!post) return <div style={styles.loading}>Loading...</div>;
->>>>>>> Stashed changes
     return (
         <>
         <Sidebar />

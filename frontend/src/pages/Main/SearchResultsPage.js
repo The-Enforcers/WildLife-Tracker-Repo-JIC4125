@@ -17,19 +17,28 @@ const SearchResultsPage = () => {
     "https://plus.unsplash.com/premium_photo-1661940855582-ccfec6edbf51?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   ];
 
+  const fetchAnimals = async () => {
+    try {
+      var request = "https://localhost:5001/api/posts";
+      
+      if (input && input.length > 0) {
+
+          request += "/search?title="
+          request += input;
+
+      }
+
+      const response = await fetch(request);
+      const data = await response.json();
+      console.log(data);
+      setAnimals(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   // fetch data from the MongoDB backend
   useEffect(() => {
-    const fetchAnimals = async () => {
-      try {
-        const response = await fetch("https://localhost:5001/api/posts");
-        const data = await response.json();
-        console.log(data);
-        setAnimals(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchAnimals();
   
   }, []);
@@ -49,7 +58,7 @@ const SearchResultsPage = () => {
       <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         {/* SearchBox */}
         <Box sx={{ padding: 2 }}>
-          <SearchBox input={input} setInput={setInput}  />
+          <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
         </Box>
 
         {/* Grid */}
