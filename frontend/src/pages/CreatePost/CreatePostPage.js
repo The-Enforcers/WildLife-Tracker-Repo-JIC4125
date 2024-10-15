@@ -40,6 +40,7 @@ const CreatePostPage = () => {
   const [customAttachmentType, setCustomAttachmentType] = useState("");
   const [recommendations, setRecommendations] = useState("");
   const [image, setImage] = useState(null);
+  // eslint-disable-next-line 
   const [error, setError] = useState("");
   const navigate = useNavigate();
 

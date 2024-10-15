@@ -1,8 +1,9 @@
 .search-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Space between search box and icons */
+  gap: 10px;
   margin: 10px;
+  width: 95%;
 }
 
 .search-box {
