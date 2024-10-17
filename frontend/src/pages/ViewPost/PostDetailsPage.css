@@ -308,24 +308,110 @@
 
 }
 
+.expand-icon {
+
+    display: flex;
+    padding-top: 10px;
+}
+
+.expand-icon p {
+
+    margin-left: auto;
+    text-align: right;
+    color: rgb(94, 94, 94)
+}
+
+.no-image p {
+    color: rgb(228, 228, 228)
+}
+
+.expand-icon svg {
+    
+    display: block;
+    margin-right: auto;
+    left: 0px;
+}
+
+.no-image svg {
+    color: rgb(228, 228, 228)
+}
+
+.tracker-info-label {
+
+    margin: 0px auto;
+    padding-bottom: 20px;
+    width: 95%;
+    display: block;
+    text-align: center;
+    color: rgb(148, 148, 148);
+
+}
+
 .tracker-info {
+
+    display: block;
+    background-color: rgb(243, 243, 243);
+    border-radius: 15px;
+    padding: 0px 0px;
+    box-shadow: 0px 0px 10px #f2f2f2;
+    width: 95%;
+    margin: 30px auto;
+    padding-bottom: 5px;
+
+}
+
+.tracker-info-head {
 
     display: flex;
     background-color: rgb(243, 243, 243);
     border-radius: 15px;
-    padding: 10px 0px;
-    box-shadow: 0px 0px 10px #f2f2f2;
     width: 95%;
-    margin: 30px auto;
+    margin: 0px auto;
+    padding-top: 15px;
+    padding-bottom: 15px;
 
 }
 
-.tracker-info-box {
+.expanded-images-container {
+
+    display: none;
+    margin: 20px 20px;
+    padding-bottom: 15px;
+    border-radius: 15px;
+    /*box-shadow: 0px 5px 10px #d8d8d8;*/
+
+}
+
+.expanded {
+
+    display: block;
+    background-color: rgb(0, 0, 0, 0);
+    
+}
+
+.tracker-info-box- {
 
     flex: 1;
     float: bottom;
     max-width: 33%;
-    padding: 10px;
+    padding: 20px 10px;
+    padding-bottom: 10px;
+    margin: 0px auto;
+
+}
+
+.tracker-info-box-selected {
+
+    background-color: rgb(227, 226, 226);
+    flex: 1;
+    float: bottom;
+    max-width: 33%;
+    padding: 20px 10px;
+    padding-bottom: 10px;
+    border-radius: 15px;
+    margin: 0px auto;
+    box-shadow: 0px 5px 10px #d8d8d8;
+
 }
 
 .tracker-info-header {
@@ -348,6 +434,7 @@
 .post-picture {
 
     max-width: 50%;
+    min-width: 40%;
 
 }
 
@@ -355,6 +442,8 @@
 
     max-width: 100%;
     max-height: 100%;
+    min-width: 100%;
+    object-fit: cover;
     aspect-ratio: 1/1;
 
     /*float: right;*/
@@ -377,3 +466,4 @@
     font-size: 15px;
 
 }
+

@@ -1,7 +1,10 @@
+const crypto = require('crypto');
 const Image = require('../models/Image');
 const mongoose = require("mongoose");
 const gridfsStream = require('gridfs-stream');
 const { GridFSBucket } = require('mongodb');
+const path = require('path');
+
 
 // Image storage
 let gfs;
@@ -40,17 +43,20 @@ exports.getImage = async(req, res) => {
 
 exports.uploadImage = async(req, res) => {
 
+    console.log(req.file);
+
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
 
-    console.log(req.file.buffer);
+    const randomBytes = crypto.randomBytes(16).toString('hex');
+    const fileExtension = path.extname(req.file.originalname);
+    const randomFileName = `${randomBytes}${fileExtension}`;
 
-    const fileName = req.body.name || req.file.originalname;
     const contentType = req.file.mimetype;
 
     // Create a GridFS stream to upload the file
-    const writeStream = gridFSBucket.openUploadStream(fileName, {
+    const writeStream = gridFSBucket.openUploadStream(randomFileName, {
         contentType,
     });
 
@@ -60,7 +66,10 @@ exports.uploadImage = async(req, res) => {
     writeStream.on('finish', (file) => {
         // File upload complete
         console.log(file);
-        res.status(201).send(`File uploaded successfully`);
+        res.status(201).json({
+            message: 'File uploaded successfully',
+            filename: randomFileName
+        });
     });
 
     writeStream.on('error', (err) => {
