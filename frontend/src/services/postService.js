@@ -22,3 +22,31 @@ export const searchPosts = async (searchParameters) => {
     const response = await axios.get(`${API_URL}/search`);
     return response.data;
 };
+
+export const uploadImage = async (imageFile) => {
+    if (!imageFile) {
+        console.error('No image file provided.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', imageFile); // Append the image file to FormData
+
+    // Perform the request to the server using fetch
+    try {
+        const response = await fetch(`${API_URL}/image`, {
+            method: 'POST',
+            body: formData, // Send the FormData containing the image
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Image uploaded successfully:', data);
+        return data.filename; // Return the filename
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    }
+};
