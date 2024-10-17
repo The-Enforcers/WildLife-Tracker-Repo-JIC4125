@@ -316,7 +316,7 @@ const SearchResultsPage = () => {
                       title={animal.title} // title from MongoDB
                       description={animal.tracker} // description from MongoDB
                       post_id={animal._id} // Post id from MongoDB
-                      image={getRandomImage()} // randomly selected image
+                      image={animal.postImage}
                     />
                   </Grid>
                 ))}
