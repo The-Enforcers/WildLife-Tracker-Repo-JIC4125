@@ -1,27 +1,36 @@
 import React from "react";
 import { Tooltip } from "react-tooltip";
-import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
 
 const SearchBox = ({ input, setInput, onSearch }) => {
+  const navigate = useNavigate();
+
+  const handlePostClick = () => {
+    navigate("/create"); 
+  };
+
   return (
-    <div className="search-box">
-      <input
-        onChange={(e) => setInput(e.target.value)}
-        value={input}
-        type="text"
-        placeholder="Search by species or common name"
-      />
-      <div>
-        <span className={`send-icon ${input.length > 0 ? "show" : ""}`}>
-          <SearchIcon
-            onClick={() => onSearch(input)}
-            data-tooltip-id="submit"
-            data-tooltip-content="Submit"
+    <div className="search-container">
+      {/* Search Input Box */}
+      <div className="search-box">
+        <input
+          onChange={(e) => setInput(e.target.value)}
+          value={input}
+          type="text"
+          placeholder="Search by species or common name"
+        />
+
+        <span className="filter-icon">
+          <FilterListIcon
+            data-tooltip-id="filter"
+            data-tooltip-content="Filter results"
             fontSize="medium"
           />
           <Tooltip
-            id="submit"
+            id="filter"
             style={{
               padding: "5px",
               fontSize: "12px",
@@ -29,6 +38,24 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             }}
           />
         </span>
+      </div>
+
+      {/* Icons Outside the Search Box */}
+      <div className="icons-container">
+        {/* Add Icon */}
+        <div
+          className="new-add-icon"
+          onClick={handlePostClick}  
+          data-tooltip-id="add-new"
+          data-tooltip-content="Create new post"
+        >
+          <AddIcon fontSize="medium" />
+          <div>Post</div>  
+          <Tooltip
+            id="add-new"
+            style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
+          />
+        </div>
       </div>
     </div>
   );

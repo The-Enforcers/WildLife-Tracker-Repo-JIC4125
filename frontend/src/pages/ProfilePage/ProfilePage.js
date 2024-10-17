@@ -28,7 +28,6 @@ import {
 
 import Sidebar from "../../components/Sidebar/Sidebar";
 
-
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   marginTop: theme.spacing(3),
@@ -52,6 +51,7 @@ const StatsCard = styled(Card)(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
+  background: "#12121208",
   padding: theme.spacing(2),
 }));
 
@@ -77,7 +77,7 @@ function TabPanel(props) {
 
 export default function ProfilePage() {
   const [value, setValue] = useState(0);
-  
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -93,6 +93,7 @@ export default function ProfilePage() {
                 item
                 xs={12}
                 md={4}
+                mt={8}
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -103,9 +104,7 @@ export default function ProfilePage() {
                   alt="Jane Doe"
                   src="/placeholder.svg?height=200&width=200"
                 />
-                <Typography variant="h5" gutterBottom>
-                  Jane Doe
-                </Typography>
+                <Typography variant="h5">Jane Doe</Typography>
                 <Typography
                   variant="subtitle1"
                   color="textSecondary"
@@ -113,16 +112,7 @@ export default function ProfilePage() {
                 >
                   Wildlife Enthusiast
                 </Typography>
-                <Box sx={{ mt: 2, mb: 2 }}>
-                  <Button
-                    variant="contained"
-                    startIcon={<Email />}
-                    sx={{ mr: 1 }}
-                  >
-                    Message
-                  </Button>
-                  <Button variant="outlined">Follow</Button>
-                </Box>
+
                 <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                   <LocationOn fontSize="small" sx={{ mr: 1 }} />
                   <Typography variant="body2">Atlanta, Georgia</Typography>
@@ -132,14 +122,6 @@ export default function ProfilePage() {
                   <Typography variant="body2">
                     Member since: Sep 2024
                   </Typography>
-                </Box>
-                <Box>
-                  <Typography pt={1} variant="body2">
-                    Tags
-                  </Typography>
-                </Box>
-                <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
-                  <Chip icon={<Pets />} label="Researcher" color="primary" />
                 </Box>
               </Grid>
               <Grid item xs={12} md={8}>
@@ -153,11 +135,6 @@ export default function ProfilePage() {
                     <Tab
                       label="Recent Posts"
                       icon={<CameraAlt />}
-                      iconPosition="start"
-                    />
-                    <Tab
-                      label="Favorite Species"
-                      icon={<Favorite />}
                       iconPosition="start"
                     />
                   </Tabs>
@@ -189,23 +166,36 @@ export default function ProfilePage() {
                       </StatsCard>
                     </Grid>
                   </Grid>
-
-                  <Typography variant="body1">
-                    Passionate wildlife enthusiast with a keen eye for rare
-                    species. I've been tracking and documenting wildlife across
-                    North America for over 5 years. My goal is to contribute to
-                    conservation efforts through citizen science and raise
-                    awareness about biodiversity.
-                  </Typography>
+                  <Box mt={2}>
+                    <StatsCard>
+                      <Typography variant="body1">
+                        Passionate wildlife enthusiast with a keen eye for rare
+                        species. I've been tracking and documenting wildlife
+                        across North America for over 5 years.
+                      </Typography>
+                    </StatsCard>
+                  </Box>
                   <br />
-                  <Typography variant="body1">
-                    Passionate wildlife enthusiast with a keen eye for rare
-                    species. I've been tracking and documenting wildlife across
-                    North America for over 5 years. My goal is to contribute to
-                    conservation efforts through citizen science and raise
-                    awareness about biodiversity.
-                  </Typography>
-                  <br />
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {[
+                      "River Otter",
+                      "Grizzly Bear",
+                      "Bald Eagle",
+                      "Frog",
+                      "American Bison",
+                      "Elk",
+                      "Moose",
+                      "Mountain Lion",
+                      "Beaver",
+                    ].map((species) => (
+                      <Chip
+                        key={species}
+                        label={species}
+                        icon={<Favorite />}
+                        variant="outlined"
+                      />
+                    ))}
+                  </Box>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                   <List>
@@ -244,29 +234,6 @@ export default function ProfilePage() {
                       </ListItem>
                     ))}
                   </List>
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {[
-                      "Gray Wolf",
-                      "Grizzly Bear",
-                      "Bald Eagle",
-                      "American Bison",
-                      "Elk",
-                      "Moose",
-                      "Mountain Lion",
-                      "Beaver",
-                      "River Otter",
-                      "Pronghorn",
-                    ].map((species) => (
-                      <Chip
-                        key={species}
-                        label={species}
-                        icon={<Favorite />}
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
                 </TabPanel>
               </Grid>
             </Grid>
