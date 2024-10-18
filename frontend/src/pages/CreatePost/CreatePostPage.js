@@ -27,7 +27,8 @@ import { Edit as EditIcon } from '@mui/icons-material';
 
 const mdParser = new MarkdownIt();
 
-const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate"];
+const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate","Ambient Temperature","Pressure (air or water)"];
+
 
 const MainImageUploadArea = ({ type, image, handleImageChange }) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
