@@ -56,7 +56,7 @@
 }
 
 .new-add-icon:hover {
-  background-color: #cfd5db;
+  background-color: #787b7f;
 }
 
 .filter-icon {
@@ -66,11 +66,83 @@
   cursor: pointer;
 }
 
-/* For responsiveness */
-@media (max-width: 600px) {
+/* Drop Down Filter menus */
+.dropdown-menus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease, margin-top 0.5s ease;
+}
+
+.dropdown-menus.show {
+  max-height: 500px;  
+  opacity: 1;
+}
+
+.dropdown-menus.hide {
+  display: none;
+}
+
+.dropdown-menu {
+  margin: 0 2px;
+  padding: 5px 20px;
+  padding-right: 32px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 1rem;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Custom arrow icon */
+  background-image: url("../../assets/Arrow.svg");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 10px;
+}
+
+.dropdown-menu:focus {
+  border-color: #999;
+}
+.dropdown-menu:hover {
+  cursor: pointer;
+}
+
+.apply-button {
+  margin-left: 5px;
+  padding: 5px;
+  padding-inline: 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: #212e38;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.apply-button:hover {
+    background-color: #787b7f;
+}
+
+/* For responsiveness (Keep in order)  */
+@media (max-width: 900px) {
+  .apply-button{
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 800px) {
   .search-container {
     flex-direction: column;
     align-items: stretch;
+    gap: 15px;
   }
 
   .search-box {
@@ -81,4 +153,20 @@
     justify-content: center;
     gap: 5px;
   }
+
+  .dropdown-menus {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dropdown-menu {
+    margin: 5px 20px;
+  }
+
+  .apply-button {
+    margin: 10px 20px;
+    margin-left: 15px;
+  }
 }
+
+
