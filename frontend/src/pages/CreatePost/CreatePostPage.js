@@ -319,8 +319,16 @@ const CreatePostPage = () => {
                         required
                       >
                         <MenuItem value="VHF">VHF</MenuItem>
-                        <MenuItem value="GPS">GPS</MenuItem>
+                        <MenuItem value="Satellite">Satellite</MenuItem>
+                        <MenuItem value="LoRa">LoRa</MenuItem>
+                        <MenuItem value="Acoustic">Acoustic</MenuItem>
+                        <MenuItem value="Cellular / GSM">Cellular / GSM</MenuItem>
+                        <MenuItem value="Bio-logger">Bio-logger</MenuItem>
+                        <MenuItem value="RFID">RFID</MenuItem>
                         <MenuItem value="custom">Custom</MenuItem>
+
+
+
                       </Select>
                     </FormControl>
                   </Grid>
@@ -350,7 +358,9 @@ const CreatePostPage = () => {
                         required
                       >
                         <MenuItem value="Encapsulated">Encapsulated</MenuItem>
-                        <MenuItem value="Modular">Modular</MenuItem>
+                        <MenuItem value="Potting">Potting</MenuItem>
+                        <MenuItem value="Shrink wrap">Shrink wrap</MenuItem>
+                        <MenuItem value="Hematic seal">Hematic seal</MenuItem>
                         <MenuItem value="custom">Custom</MenuItem>
                       </Select>
                     </FormControl>
@@ -382,7 +392,9 @@ const CreatePostPage = () => {
                       >
                         <MenuItem value="Harness">Harness</MenuItem>
                         <MenuItem value="Collar">Collar</MenuItem>
-                        <MenuItem value="Glue-on">Glue-on</MenuItem>
+                        <MenuItem value="Adhesive">Adhesive</MenuItem>
+                        <MenuItem value="Implant">Implant</MenuItem>
+                        <MenuItem value="Bolt">Bolt</MenuItem>
                         <MenuItem value="custom">Custom</MenuItem>
                       </Select>
                     </FormControl>
