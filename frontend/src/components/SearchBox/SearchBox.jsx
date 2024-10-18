@@ -35,7 +35,10 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             placeholder="Search by species or common name"
           />
 
-          <span className="filter-icon" onClick={() => setShowFilters(!showFilters)}>
+          <span
+            className="filter-icon"
+            onClick={() => setShowFilters(!showFilters)}
+          >
             <FilterListIcon
               data-tooltip-id="filter"
               data-tooltip-content="Filter results"
@@ -79,23 +82,31 @@ const SearchBox = ({ input, setInput, onSearch }) => {
           onChange={(e) => setAnimal(e.target.value)}
         >
           <option value="">Animal</option>
-          {/* Add options here */}
+          <option value="mammal">Mammal</option>
+          <option value="reptile">Reptile</option>
+          <option value="amphibian">Amphibian</option>
+          <option value="fish">Fish</option>
+          <option value="bird">Bird</option>
         </select>
+
         <select
           className="dropdown-menu"
           value={tracker}
           onChange={(e) => setTracker(e.target.value)}
         >
           <option value="">Tracker</option>
-          {/* Add options here */}
+          <option value="vhf">VHF</option>
+          <option value="gps">GPS</option>
         </select>
+
         <select
           className="dropdown-menu"
           value={enclosure}
           onChange={(e) => setEnclosure(e.target.value)}
         >
           <option value="">Enclosure</option>
-          {/* Add options here */}
+          <option value="encapsulated">Encapsulated</option>
+          <option value="modular">Modular</option>
         </select>
 
         <select
@@ -104,7 +115,9 @@ const SearchBox = ({ input, setInput, onSearch }) => {
           onChange={(e) => setAttachment(e.target.value)}
         >
           <option value="">Attachment</option>
-          {/* Add options here */}
+          <option value="harness">Harness</option>
+          <option value="collar">Collar</option>
+          <option value="glueOn">Glue-on</option>
         </select>
 
         <select
@@ -113,16 +126,12 @@ const SearchBox = ({ input, setInput, onSearch }) => {
           onChange={(e) => setSpecies(e.target.value)}
         >
           <option value="">Species</option>
-          {/* Add options here */}
-        </select>
-
-        <select
-          className="dropdown-menu"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        >
-          <option value="">Date</option>
-          {/* Add options here */}
+          <option value="mammal">Mammal</option>
+          <option value="reptile">Reptile</option>
+          <option value="amphibian">Amphibian</option>
+          <option value="fish">Fish</option>
+          <option value="bird">Bird</option>
+          
         </select>
 
         {/* Apply Button */}

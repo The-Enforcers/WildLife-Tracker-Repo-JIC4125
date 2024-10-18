@@ -88,8 +88,8 @@
 }
 
 .dropdown-menu {
-  margin: 0 4px;
-  padding: 5px 12px;
+  margin: 0 2px;
+  padding: 5px 20px;
   padding-right: 32px;
   border-radius: 20px;
   border: 1px solid #ccc;
@@ -115,7 +115,7 @@
 }
 
 .apply-button {
-  margin-left: 50px;
+  margin-left: 5px;
   padding: 5px;
   padding-inline: 20px;
   border-radius: 20px;
