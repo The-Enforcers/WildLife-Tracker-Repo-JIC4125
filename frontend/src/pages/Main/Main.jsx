@@ -24,15 +24,15 @@ const Main = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch('https://localhost:5001/api/user', {
-          credentials: 'include'
+        const response = await fetch("https://localhost:5001/api/user", {
+          credentials: "include",
         });
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
         }
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error("Error fetching user:", error);
       }
     };
 

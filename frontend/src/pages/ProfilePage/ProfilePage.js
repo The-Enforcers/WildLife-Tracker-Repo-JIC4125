@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
   Card,
   Chip,
   Container,
@@ -18,7 +17,6 @@ import {
   styled,
 } from "@mui/material";
 import {
-  Email,
   LocationOn,
   DateRange,
   Pets,
