@@ -22,19 +22,27 @@ const SearchResultsPage = () => {
   const [animals, setAnimals] = useState([]);
   const [filters, setFilters] = useState({
     vhf: false,
-    gps: false,
+    satellite: false,
+    lora: false,
+    acoustic: false,
+    cell: false,
+    bio: false,
+    rfid: false,
     encapsulated: false,
-    modular: false,
+    potting: false,
+    shrink: false,
+    hematic: false,
     harness: false,
     collar: false,
-    glueOn: false,
+    adhesive: false,
+    bolt: false,
+    implant: false,
     mammal: false,
     reptile: false,
     amphibian: false,
     fish: false,
     bird: false
   });
-
   const imageUrls = [
     "https://plus.unsplash.com/premium_photo-1675432656807-216d786dd468?q=80&w=3090&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://plus.unsplash.com/premium_photo-1675714692711-d1aac0262feb?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -83,17 +91,32 @@ const SearchResultsPage = () => {
 
     // Build arrays based on selected filters
     if (filters.vhf) trackerTypes.push("VHF");
-    if (filters.gps) trackerTypes.push("GPS");
+    if (filters.satellite) trackerTypes.push("Satellite");
+    if (filters.lora) trackerTypes.push("LoRa");
+    if (filters.acoustic) trackerTypes.push("Acoustic");
+    if (filters.cell) trackerTypes.push("Cellular / GSM");
+    if (filters.bio) trackerTypes.push("Bio-logger");
+    if (filters.rfid) trackerTypes.push("RFID");
+
     if (filters.encapsulated) enclosureTypes.push("Encapsulated");
-    if (filters.modular) enclosureTypes.push("Modular");
+     if (filters.potting) enclosureTypes.push("Potting");
+     if (filters.shrink) enclosureTypes.push("Shrink wrap");
+     if (filters.hematic) enclosureTypes.push("Hematic seal");
+
+    if (filters.bolt) attachmentTypes.push("Bolt");
     if (filters.harness) attachmentTypes.push("Harness");
     if (filters.collar) attachmentTypes.push("Collar");
-    if (filters.glueOn) attachmentTypes.push("Glue-on");
+    if (filters.adhesive) attachmentTypes.push("Adhesive");
+    if (filters.implant) attachmentTypes.push("Implant");
+
     if (filters.mammal) animalFamily.push("Mammal");
     if (filters.reptile) animalFamily.push("Reptile");
     if (filters.amphibian) animalFamily.push("Amphibians");
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
+
+
+
 
     // Create query strings
     const trackerTypeQuery = trackerTypes.join(",");
@@ -216,12 +239,62 @@ const SearchResultsPage = () => {
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={filters.gps}
+                          checked={filters.satellite}
                           onChange={handleCheckboxChange}
-                          name="gps"
+                          name="satellite"
                         />
                       }
-                      label="GPS"
+                      label="Satellite"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.lora}
+                          onChange={handleCheckboxChange}
+                          name="lora"
+                        />
+                      }
+                      label="LoRa"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.acoustic}
+                          onChange={handleCheckboxChange}
+                          name="acoustic"
+                        />
+                      }
+                      label="Acoustic"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.cell}
+                          onChange={handleCheckboxChange}
+                          name="cell"
+                        />
+                      }
+                      label="Cellular / GSM"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.bio}
+                          onChange={handleCheckboxChange}
+                          name="bio"
+                        />
+                      }
+                      label="Bio-logger"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.rfid}
+                          onChange={handleCheckboxChange}
+                          name="rfid"
+                        />
+                      }
+                      label="RFID"
                     />
                   </FormGroup>
                 </AccordionDetails>
@@ -247,12 +320,32 @@ const SearchResultsPage = () => {
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={filters.modular}
+                          checked={filters.shrink}
                           onChange={handleCheckboxChange}
-                          name="modular"
+                          name="shrink"
                         />
                       }
-                      label="Modular"
+                      label="Shrink wrap"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.potting}
+                          onChange={handleCheckboxChange}
+                          name="potting"
+                        />
+                      }
+                      label="Potting"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.hematic}
+                          onChange={handleCheckboxChange}
+                          name="hematic"
+                        />
+                      }
+                      label="Hematic seal"
                     />
                   </FormGroup>
                 </AccordionDetails>
@@ -288,12 +381,32 @@ const SearchResultsPage = () => {
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={filters.glueOn}
+                          checked={filters.bolt}
                           onChange={handleCheckboxChange}
-                          name="glueOn"
+                          name="bolt"
                         />
                       }
-                      label="Glue-on"
+                      label="Bolt"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.implant}
+                          onChange={handleCheckboxChange}
+                          name="implant"
+                        />
+                      }
+                      label="Implant"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.adhesive}
+                          onChange={handleCheckboxChange}
+                          name="adhesive"
+                        />
+                      }
+                      label="Adhesive"
                     />
                   </FormGroup>
                 </AccordionDetails>
