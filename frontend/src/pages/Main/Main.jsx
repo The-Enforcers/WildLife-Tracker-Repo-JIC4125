@@ -21,6 +21,13 @@ const Main = () => {
   const [input, setInput] = useState("");
   const [user, setUser] = useState(null);
 
+  // State variables for the typing animation
+  const animalNames = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra"];
+  const [currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState("Animal");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [animationStarted, setAnimationStarted] = useState(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -30,6 +37,7 @@ const Main = () => {
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
+          console.log("User data:", userData);
         }
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -38,6 +46,48 @@ const Main = () => {
 
     fetchUser();
   }, []);
+
+  // typing animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimationStarted(true);
+      setDisplayedText("");
+      setCurrentAnimalIndex(0);
+    }, 1500); // delay the typing animations
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // typing animation
+  useEffect(() => {
+    if (!animationStarted) return;
+
+    const currentAnimal = animalNames[currentAnimalIndex % animalNames.length];
+
+    if (!isDeleting && displayedText.length < currentAnimal.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(
+          currentAnimal.substring(0, displayedText.length + 1)
+        );
+      }, 150);
+      return () => clearTimeout(timeout);
+    } else if (!isDeleting && displayedText.length === currentAnimal.length) {
+      const timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 1500);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && displayedText.length > 0) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(
+          currentAnimal.substring(0, displayedText.length - 1)
+        );
+      }, 75);
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && displayedText.length === 0) {
+      setIsDeleting(false);
+      setCurrentAnimalIndex(currentAnimalIndex + 1);
+    }
+  }, [displayedText, isDeleting, animationStarted]);
 
   return (
     <>
@@ -62,7 +112,9 @@ const Main = () => {
               <p>
                 <span>Hello, {user.displayName}</span>
               </p>
-              <p className="sub-greet">Animal Tracker Repository</p>
+              <p className="sub-greet">
+                Tracker Repository for <span className="animal-word">{displayedText}</span>
+              </p>
             </div>
           )}
 
