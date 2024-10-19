@@ -48,7 +48,7 @@ const PostDetailsPage = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch('https://localhost:5001/api/user', {
+                const response = await fetch(`https://${window.location.hostname}:5001/api/user`, {
                     credentials: 'include'
                 });
                 if (response.ok) {
@@ -66,6 +66,8 @@ const PostDetailsPage = () => {
     if (error) return <div style={styles.error}>{error}</div>;
     if (!post) return <div style={styles.loading}>Loading...</div>;
 
+    var google_auth = `https://${window.location.hostname}:5001/auth/google`
+
     return (
         <>
             <Sidebar />
@@ -75,7 +77,7 @@ const PostDetailsPage = () => {
                     {user ? (
                         <span>{user.displayName}</span>
                     ) : (
-                        <a href="https://localhost:5001/auth/google">
+                        <a href={google_auth}>
                             <AccountCircleOutlinedIcon
                                 fontSize="large"
                                 sx={{ color: "black" }}
@@ -111,7 +113,7 @@ const PostDetailsPage = () => {
                             </div>
                         </div>
                         <div className="post-picture">
-                            <img className="post-image" src={"https://localhost:5001/api/posts/image/" + post.postImage} />
+                            <img className="post-image" src={"https://" + window.location.hostname + ":5001/api/posts/image/" + post.postImage} />
                         </div>
                     </div>
                     <div className="tracker-info">
@@ -159,13 +161,13 @@ const PostDetailsPage = () => {
                         {/* Centered images for the expanded boxes */}
                         <div className={`expanded-images-container ${expandedBox ? 'expanded' : ''}`}>
                             {expandedBox === 'tracker' && post.trackerImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.trackerImage}`} alt="Tracker" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.trackerImage}`} alt="Tracker" style={styles.expandedImage} />
                             )}
                             {expandedBox === 'enclosure' && post.enclosureImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.enclosureImage}`} alt="Enclosure" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.enclosureImage}`} alt="Enclosure" style={styles.expandedImage} />
                             )}
                             {expandedBox === 'attachment' && post.attachmentImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.attachmentImage}`} alt="Attachment" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.attachmentImage}`} alt="Attachment" style={styles.expandedImage} />
                             )}
                         </div>
                     </div>

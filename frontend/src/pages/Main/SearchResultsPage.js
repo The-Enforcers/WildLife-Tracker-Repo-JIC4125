@@ -54,7 +54,7 @@ const SearchResultsPage = () => {
   // Fetch animals data from the backend
   const fetchAnimals = async () => {
     try {
-      let request = "https://localhost:5001/api/posts";
+      let request = `https://${window.location.hostname}:5001/api/posts`;
 
       if (input && input.length > 0) {
         request += "/search?title=" + input;
@@ -126,7 +126,7 @@ const SearchResultsPage = () => {
 
     try {
       const response = await fetch(
-        `https://localhost:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
+        `https://${window.location.hostname}:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
       );
       const data = await response.json();
       console.log("Filtered data:", data);

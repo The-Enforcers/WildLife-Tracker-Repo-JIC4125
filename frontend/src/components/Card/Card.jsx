@@ -19,7 +19,7 @@ const ImageCard = ({ title, description, image, post_id }) => {
     >
       <a href={`/post/${post_id}`} style={{ textDecoration: 'none' }}>
         {/* Ensure the src attribute is properly set here */}
-        <img src={"https://localhost:5001/api/posts/image/" + image} alt={title}
+        <img src={`https://${window.location.hostname}:5001/api/posts/image/` + image} alt={title}
           style={{
             width: '100%',
             height: '110px',
