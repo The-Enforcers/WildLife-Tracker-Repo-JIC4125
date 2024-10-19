@@ -158,6 +158,10 @@ const CreatePostPage = () => {
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0]; // Get the actual file object
 
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          setError("File size too large. Please upload an image smaller than 10MB.");
+          return;
+        }
         // Store the image contents so that it can be uploaded
         setImages(prevImages => ({
             ...prevImages,
