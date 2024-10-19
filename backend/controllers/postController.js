@@ -1,6 +1,6 @@
 // backend/controllers/postController.js
 const Post = require('../models/Post');
-
+//returns all posts
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find();
