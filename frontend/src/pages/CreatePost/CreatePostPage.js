@@ -435,10 +435,12 @@ const CreatePostPage = () => {
               {/* Recommendations */}
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom>Recommendations:</Typography>
-                <MdEditor
+                <MdEditor // Only Showing Preview & Menu per Client request
                   style={{ height: '300px' }}
                   renderHTML={(text) => mdParser.render(text)}
                   onChange={handleEditorChange}
+                  view={{ menu: true, md: true, html: false }} 
+                  canView={{ menu: true, fullScreen: true, both: false }}
                 />
               </Grid>
 
