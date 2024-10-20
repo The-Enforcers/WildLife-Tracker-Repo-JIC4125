@@ -435,7 +435,7 @@ const CreatePostPage = () => {
               </Grid>
 
               {/* Recommendations */}
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ padding: 3, marginBottom: 3 }}>
                 <Typography variant="h6" gutterBottom>Recommendations:</Typography>
                 <ReactQuill
                   value={recommendations}
