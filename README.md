@@ -4,6 +4,28 @@ This project is designed to serve as a centralized repository for information on
 
 # Release Notes
 
+## Version 0.3.0
+
+### Features
+
+- **Client Modifications**
+  - **Post Details**: Added more fields, more entries to dropdowns, more image fields according to new Client Specs
+  - **Markdown GUI Change**: Now users only interact with "Markdown preivew."
+  - **Branding**: Aligning look with feedback on UI and Branding elements. "How to use" element added.
+- **Linking Post and Accounts**: You now have to login before creating a post - posts now associated with users.
+- **Search and Filtering Front-end**: Backend now linked with usable frontend.
+- **Post Editing Functionality**: You can now edit posts (if you created it) + corresponding front-end UI.
+- **User Profile Pages**: ... that show created posts for that user.
+
+### Bug Fixes
+
+- Image and video embed in markdown fixed.
+- Sync and displaying issues between input on 'post creation page' and output on the 'published page.'
+
+### Known Issues
+
+- User's profile pages will be expanded on in future sprints according to those future stories.
+
 ## Version 0.2.0
 
 ### Features
