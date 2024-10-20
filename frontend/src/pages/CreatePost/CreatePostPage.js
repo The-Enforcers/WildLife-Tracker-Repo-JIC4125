@@ -138,8 +138,30 @@ const CreatePostPage = () => {
   //const [image, setImage] = useState(null);
   // eslint-disable-next-line 
   const [error, setError] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const fetchUser = async () => {
+    try {
+      const response = await fetch("https://localhost:5001/api/user", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      }else{
+        setShowPopup(true);
+      }
+    } catch (error) {
+      setShowPopup(true);
+    }
+  };
+  
+  fetchUser();
 
+  const handleClosePopup = () => {
+    window.location.href = "https://localhost:5001/auth/google";
+  };
   const [images, setImages] = useState({
     mainImage: null,
     trackerType: null,
@@ -240,7 +262,8 @@ const CreatePostPage = () => {
         enclosureImage: imageFilenames.enclosureType,
         attachmentType: attachmentType === 'custom' ? customAttachmentType : attachmentType,
         attachmentImage: imageFilenames.attachmentType,
-        recommendations
+        recommendations,
+        author: user.displayName
       };
 
       await createPost(newPost);
@@ -252,6 +275,31 @@ const CreatePostPage = () => {
 
   return (
     <>
+
+{showPopup && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            padding: "20px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+            zIndex: 1000,
+            borderRadius: "8px",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            You must be logged in to create a post.
+          </Typography>
+          <Button variant="contained" color="primary" onClick={handleClosePopup}>
+            OK
+          </Button>
+        </div>
+      )}
+
       <Sidebar />
       <Container maxWidth="lg" sx={{ marginTop: 4, paddingBottom: 6 }}>
         <Paper elevation={0} sx={{ padding: 3, marginBottom: 3 }}>
@@ -262,9 +310,13 @@ const CreatePostPage = () => {
             <Grid container spacing={3}>
               {/* Image Upload */}
               <Grid item xs={12}>
-                <MainImageUploadArea type="mainImage" image={imageFiles.mainImage} handleImageChange={handleImageChange} />
+                <MainImageUploadArea 
+                  type="mainImage" 
+                  image={imageFiles.mainImage} 
+                  handleImageChange={handleImageChange} 
+                />
               </Grid>
-
+  
               {/* Form Fields */}
               <Grid item xs={12} md={6}>
                 <TextField
@@ -310,7 +362,7 @@ const CreatePostPage = () => {
                   </Select>
                 </FormControl>
               </Grid>
-
+  
               <Grid item xs={12} md={6}>
                 {/* Tracker Type and image */}
                 <Grid container alignItems="flex-start" spacing={2} sx={{ mb: 2 }}>
@@ -331,13 +383,14 @@ const CreatePostPage = () => {
                         <MenuItem value="Bio-logger">Bio-logger</MenuItem>
                         <MenuItem value="RFID">RFID</MenuItem>
                         <MenuItem value="custom">Custom</MenuItem>
-
-
-
                       </Select>
                     </FormControl>
                   </Grid>
-                  <ImageUploadArea type="trackerType" image={imageFiles.trackerType} handleImageChange={handleImageChange} />
+                  <ImageUploadArea 
+                    type="trackerType" 
+                    image={imageFiles.trackerType} 
+                    handleImageChange={handleImageChange} 
+                  />
                 </Grid>
                 {trackerType === 'custom' && (
                   <TextField
@@ -350,7 +403,7 @@ const CreatePostPage = () => {
                     sx={{ mb: 2 }}
                   />
                 )}
-
+  
                 {/* Enclosure Type and image */}
                 <Grid container alignItems="flex-start" spacing={2} sx={{ mb: 2 }}>
                   <Grid item xs={10}>
@@ -370,7 +423,11 @@ const CreatePostPage = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <ImageUploadArea type="enclosureType" image={imageFiles.enclosureType} handleImageChange={handleImageChange} />
+                  <ImageUploadArea 
+                    type="enclosureType" 
+                    image={imageFiles.enclosureType} 
+                    handleImageChange={handleImageChange} 
+                  />
                 </Grid>
                 {enclosureType === 'custom' && (
                   <TextField
@@ -383,7 +440,7 @@ const CreatePostPage = () => {
                     sx={{ mb: 2 }}
                   />
                 )}
-
+  
                 {/* Attachment Type and image */}
                 <Grid container alignItems="flex-start" spacing={2} sx={{ mb: 2 }}>
                   <Grid item xs={10}>
@@ -404,7 +461,11 @@ const CreatePostPage = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <ImageUploadArea type="attachmentType" image={imageFiles.attachmentType} handleImageChange={handleImageChange} />
+                  <ImageUploadArea 
+                    type="attachmentType" 
+                    image={imageFiles.attachmentType} 
+                    handleImageChange={handleImageChange} 
+                  />
                 </Grid>
                 {attachmentType === 'custom' && (
                   <TextField
@@ -418,8 +479,7 @@ const CreatePostPage = () => {
                   />
                 )}
               </Grid>
-
-
+  
               {/* Data Types */}
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom>Data Types:</Typography>
@@ -435,7 +495,7 @@ const CreatePostPage = () => {
                   ))}
                 </Box>
               </Grid>
-
+  
               {/* Recommendations */}
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom>Recommendations:</Typography>
@@ -445,7 +505,7 @@ const CreatePostPage = () => {
                   onChange={handleEditorChange}
                 />
               </Grid>
-
+  
               {/* Submit Button */}
               <Grid item xs={12}>
                 <Button
