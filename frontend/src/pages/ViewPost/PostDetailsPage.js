@@ -4,6 +4,8 @@ import { getPostById } from '../../services/postService';
 import Sidebar from "../../components/Sidebar/Sidebar";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ReactMarkdown from 'react-markdown';
+import ReactQuill from 'react-quill';
+import "react-quill/dist/quill.snow.css";
 import "./PostDetailsPage.css";
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -174,9 +176,11 @@ const PostDetailsPage = () => {
                     
 
 
-                    <div className="post-body">
-                        <ReactMarkdown>{post.recommendations}</ReactMarkdown>
-                    </div>
+                    <ReactQuill 
+                        value={post.recommendations || ''} 
+                        readOnly={true}
+                        theme="bubble"
+                    />
                 </div>
             </div>
         </>
