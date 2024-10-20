@@ -99,7 +99,7 @@ const PostDetailsPage = () => {
                             <p className="post-title"> {post.title} </p>
                             <div className="post-author">
                                 <img className="profile-picture" src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg" />
-                                <p className="author-name"> {post.author} Jane Doe</p>
+                                <p className="author-name"> {post.author}</p>
                             </div>
                             <div className="animal-names">
                                 <div className="name-box">
