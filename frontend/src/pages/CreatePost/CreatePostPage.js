@@ -19,6 +19,8 @@ import {
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
@@ -173,7 +175,7 @@ const CreatePostPage = () => {
 };
 
 
-  const handleEditorChange = ({ text }) => {
+  const handleEditorChange = (text) => {
     setRecommendations(text);
   };
 
@@ -435,12 +437,11 @@ const CreatePostPage = () => {
               {/* Recommendations */}
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom>Recommendations:</Typography>
-                <MdEditor // Only Showing Preview & Menu per Client request
-                  style={{ height: '300px' }}
-                  renderHTML={(text) => mdParser.render(text)}
+                <ReactQuill
+                  value={recommendations}
                   onChange={handleEditorChange}
-                  view={{ menu: true, md: true, html: false }} 
-                  canView={{ menu: true, fullScreen: true, both: false }}
+                  theme="snow"
+                  style={{ height: '300px' }}
                 />
               </Grid>
 
