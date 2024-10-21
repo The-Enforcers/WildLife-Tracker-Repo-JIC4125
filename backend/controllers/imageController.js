@@ -76,5 +76,5 @@ exports.uploadImage = async(req, res) => {
         console.error('Error uploading file:', err);
         res.status(500).send('Error uploading file.');
     });
-
+// i see a nut muncher
 }

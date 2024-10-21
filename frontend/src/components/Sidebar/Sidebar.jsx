@@ -1,101 +1,124 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 import { Tooltip } from "react-tooltip";
+import HelpPopup from "../HelpPopup/HelpPopup";
 
 // MUI icons
-import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AddIcon from '@mui/icons-material/Add';
-import Home from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import HistoryIcon from '@mui/icons-material/History';
 import SettingsIcon from '@mui/icons-material/Settings';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const Sidebar = () => {
-  const [extended, setExtended] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const [extended, setExtended] = useState(location.pathname === "/");
+  const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
-  let sidebarWidth = extended ? "75px" : "18%";
+  useEffect(() => {
+    setExtended(location.pathname === "/");
+    
+    // Check if it's the beginning of a session
+    const isFirstVisit = !localStorage.getItem('hasVisitedBefore');
+    if (isFirstVisit) {
+      setIsHelpPopupOpen(true);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+  }, [location]);
+
+  const toggleSidebar = () => {
+    setExtended(!extended);
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+  const openHelpPopup = () => {
+    setIsHelpPopupOpen(true);
+  };
+
+  const closeHelpPopup = () => {
+    setIsHelpPopupOpen(false);
+  };
 
   return (
-    <div className="sidebar" style={{ width: sidebarWidth }}>
-      <div className="top">
-        <MenuIcon
-          onClick={() => setExtended(!extended)}
-          className="menu"
-          data-tooltip-id="menu"
-          data-tooltip-content={extended ? "Expand" : "Collapse"}
-        />
-        <Tooltip
-          id="menu"
-          place={"bottom"}
-          style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
-        />
+    <>
+      <div className={`sidebar ${extended ? 'extended' : 'collapsed'}`} style={{ width: extended ? "18%" : "75px" }}>
+        <div className="top">
+          {extended ? (
+            <ChevronLeftIcon
+              onClick={toggleSidebar}
+              className="menu"
+              data-tooltip-id="menu"
+              data-tooltip-content="Collapse"
+            />
+          ) : (
+            <ChevronRightIcon
+              onClick={toggleSidebar}
+              className="menu"
+              data-tooltip-id="menu"
+              data-tooltip-content="Expand"
+            />
+          )}
+          <Tooltip id="menu" place="bottom" />
 
-        {/* Home */}
-        <div
-          onClick={() => navigate("/")}
-          className="new-post"
-          data-tooltip-id="new-post"
-          data-tooltip-content="Home"
-        >
-          <Home />
-          <Tooltip
-            id="home"
-            place={"bottom"}
-            style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
-          />
-          {!extended && <p>Home</p>}
+          <div
+            onClick={() => handleNavigation("/")}
+            className="new-post"
+            data-tooltip-id="home"
+            data-tooltip-content="Home"
+          >
+            <HomeIcon />
+            <Tooltip id="home" place="bottom" />
+            {extended && <p>Home</p>}
+          </div>
+
+          <div
+            onClick={() => handleNavigation("/create")}
+            className="new-post"
+            data-tooltip-id="new-post"
+            data-tooltip-content="New Post"
+          >
+            <AddIcon />
+            <Tooltip id="new-post" place="bottom" />
+            {extended && <p>New Post</p>}
+          </div>
+
+          <div
+            onClick={() => handleNavigation("/results")}
+            className="view-posts"
+            data-tooltip-id="view-posts"
+            data-tooltip-content="View Posts"
+          >
+            <VisibilityIcon />
+            <Tooltip id="view-posts" place="bottom" />
+            {extended && <p>View Posts</p>}
+          </div>
         </div>
-
-        {/* New Post */}
-        <div
-          onClick={() => navigate("/create")}
-          className="new-post"
-          data-tooltip-id="new-post"
-          data-tooltip-content="New Post"
-        >
-          <AddIcon />
-          <Tooltip
-            id="new-post"
-            place={"bottom"}
-            style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
-          />
-          {!extended && <p>New Post</p>}
-        </div>
-
-        {/* View Posts */}
-        <div
-          onClick={() => navigate("/results")}
-          className="view-posts"
-          data-tooltip-id="view-posts"
-          data-tooltip-content="View Posts"
-        >
-          <VisibilityIcon />
-          <Tooltip
-            id="view-posts"
-            place={"bottom"}
-            style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
-          />
-          {!extended && <p>View Posts</p>}
+        <div className="bottom">
+          <div className="bottom-item recent-entry" onClick={openHelpPopup}>
+            <HelpOutlineIcon />
+            {extended && <p>Help</p>}
+          </div>
+          <div className="bottom-item recent-entry">
+            <HistoryIcon />
+            {extended && <p>Activity</p>}
+          </div>
+          <div className="bottom-item recent-entry">
+            <SettingsIcon />
+            {extended && <p>Settings</p>}
+          </div>
         </div>
       </div>
-      <div className="bottom">
-        <div className="bottom-item recent-entry">
-          <HelpOutlineIcon />
-          {!extended && <p>Help</p>}
-        </div>
-        <div className="bottom-item recent-entry">
-          <HistoryIcon />
-          {!extended && <p>Activity</p>}
-        </div>
-        <div className="bottom-item recent-entry">
-          <SettingsIcon />
-          {!extended && <p>Settings</p>}
-        </div>
-      </div>
-    </div>
+      <HelpPopup isOpen={isHelpPopupOpen} onClose={closeHelpPopup} />
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ router.get('/search', postController.searchPosts);
 router.get('/', postController.getAllPosts);
 router.post('/', postController.createPost);
 router.get('/:id', postController.getPostById);
+router.put('/:id', postController.updatePost);
 router.post('/image', upload.single('image'), imageController.uploadImage);
 router.get('/image/:filename', imageController.getImage);
 

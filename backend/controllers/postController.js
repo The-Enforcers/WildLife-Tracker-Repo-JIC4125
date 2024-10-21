@@ -35,6 +35,9 @@ exports.createPost = async (req, res) => {
     }
 };
 
+// Add nut muncher easter egg soon
+// please
+
 function build_search_terms(req) {
     console.log(req.query);
 
@@ -99,3 +102,28 @@ exports.searchPosts = async(req, res) => {
     }
 
 }
+
+exports.updatePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        // Fetch the existing post
+        const existingPost = await Post.findById(id);
+        if (!existingPost) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Preserve existing image fields if not provided in the update
+        ['postImage', 'trackerImage', 'enclosureImage', 'attachmentImage'].forEach(field => {
+            if (!updateData[field]) {
+                updateData[field] = existingPost[field];
+            }
+        });
+
+        const updatedPost = await Post.findByIdAndUpdate(id, updateData, { new: true });
+        res.json(updatedPost);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};

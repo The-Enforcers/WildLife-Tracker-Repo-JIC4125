@@ -18,7 +18,6 @@ const SearchBox = ({ input, setInput, onSearch }) => {
   const [enclosure, setEnclosure] = useState("");
   const [attachment, setAttachment] = useState("");
   const [species, setSpecies] = useState("");
-  const [date, setDate] = useState("");
 
   // State for showing/hiding filters
   const [showFilters, setShowFilters] = useState(false);
