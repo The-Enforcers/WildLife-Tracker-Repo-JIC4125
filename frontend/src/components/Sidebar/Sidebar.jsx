@@ -5,30 +5,33 @@ import { Tooltip } from "react-tooltip";
 import HelpPopup from "../HelpPopup/HelpPopup";
 
 // MUI icons
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import AddIcon from '@mui/icons-material/Add';
-import HomeIcon from '@mui/icons-material/Home';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import HistoryIcon from '@mui/icons-material/History';
-import SettingsIcon from '@mui/icons-material/Settings';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import AddIcon from "@mui/icons-material/Add";
+import HomeIcon from "@mui/icons-material/Home";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import HistoryIcon from "@mui/icons-material/History";
+import SettingsIcon from "@mui/icons-material/Settings";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+// wildlife movement institute logo
+import logo from "../../assets/logo.png";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [extended, setExtended] = useState(location.pathname === "/");
   const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
   useEffect(() => {
     setExtended(location.pathname === "/");
-    
+
     // Check if it's the beginning of a session
-    const isFirstVisit = !localStorage.getItem('hasVisitedBefore');
+    const isFirstVisit = !localStorage.getItem("hasVisitedBefore");
     if (isFirstVisit) {
       setIsHelpPopupOpen(true);
-      localStorage.setItem('hasVisitedBefore', 'true');
+      localStorage.setItem("hasVisitedBefore", "true");
     }
   }, [location]);
 
@@ -50,24 +53,41 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className={`sidebar ${extended ? 'extended' : 'collapsed'}`} style={{ width: extended ? "18%" : "75px" }}>
+      <div
+        className={`sidebar ${extended ? "extended" : "collapsed"}`}
+        style={{ width: extended ? "17%" : "75px" }}
+      >
         <div className="top">
-          {extended ? (
-            <ChevronLeftIcon
-              onClick={toggleSidebar}
-              className="menu"
-              data-tooltip-id="menu"
-              data-tooltip-content="Collapse"
-            />
-          ) : (
-            <ChevronRightIcon
-              onClick={toggleSidebar}
-              className="menu"
-              data-tooltip-id="menu"
-              data-tooltip-content="Expand"
-            />
-          )}
-          <Tooltip id="menu" place="bottom" />
+          <div className="toggle-container">
+            {extended ? (
+              <>
+                <div className="logo" onClick={() => handleNavigation("/")}>
+                  <img
+                    src={logo}
+                    alt="Wildlife Movement Institute Logo"
+                    className="logo-image"
+                  />
+                </div>
+
+                <ChevronLeftIcon
+                  onClick={toggleSidebar}
+                  className="menu"
+                  data-tooltip-id="menu"
+                  data-tooltip-content="Collapse"
+                />
+              </>
+            ) : (
+              <>
+                <ChevronRightIcon
+                  onClick={toggleSidebar}
+                  className="menu"
+                  data-tooltip-id="menu"
+                  data-tooltip-content="Expand"
+                />
+              </>
+            )}
+            <Tooltip id="menu" place="bottom" />
+          </div>
 
           <div
             onClick={() => handleNavigation("/")}

@@ -128,6 +128,20 @@
   width: 0;
 }
 
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo img {
+  width: 180px;
+  height: 52px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: box-shadow 0.1s ease-in-out;
+}
+
 @media (max-width: 600px) {
   .sidebar {
     display: none;
