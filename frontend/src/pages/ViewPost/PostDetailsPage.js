@@ -11,6 +11,9 @@ import "./PostDetailsPage.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
+import { Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
@@ -89,19 +92,37 @@ const PostDetailsPage = () => {
                     )}
                 </div>
                 <div className="main-container">
+                <div className="button-container">
                     <div className="back-button-container">
                         <button className="back-button" onClick={() => navigate('/')}>
-                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15 7L10 12L15 17" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <p className="button-content">Home</p>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 7L10 12L15 17" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <p className="button-content">Home</p>
                         </button>
-                        {user && post && user.displayName === post.author && (
-                            <button className="edit-button" onClick={handleEdit}>
-                                Edit Post
-                            </button>
-                        )}
                     </div>
+                    {user && post && user.displayName === post.author && (
+                        <Button
+                        variant="contained"
+                        onClick={handleEdit}
+                        startIcon={<EditIcon />}
+                        sx={{
+                            backgroundColor: '#3f51b5',
+                            color: 'white',
+                            '&:hover': {
+                            backgroundColor: '#303f9f',
+                            },
+                            textTransform: 'none',
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            borderRadius: '20px',
+                            padding: '8px 16px',
+                        }}
+                        >
+                        Edit Post
+                        </Button>
+                    )}
+                </div>
                     <div className="post-head">
                         <div className="post-meta">
                             <p className="post-title"> {post.title} </p>

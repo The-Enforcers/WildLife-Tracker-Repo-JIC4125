@@ -29,7 +29,7 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
     <Box sx={{ position: 'relative', width: '100%', maxWidth: 200 }}>
       {image && (
         <img
-          src={image}
+          src={image instanceof File ? URL.createObjectURL(image) : image}
           alt="Uploaded Preview"
           style={{
             maxHeight: 200,
@@ -86,7 +86,7 @@ const ImageUploadArea = ({ type, image, handleImageChange }) => (
       {image ? (
         <>
           <img
-            src={image}
+            src={image instanceof File ? URL.createObjectURL(image) : image}
             alt={`${type} Image`}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
@@ -186,17 +186,17 @@ const CreatePostPage = () => {
           setAttachmentType(postData.attachmentType);
           setRecommendations(postData.recommendations);
           setImageFiles({
-            mainImage: postData.postImage,
-            trackerType: postData.trackerImage,
-            enclosureType: postData.enclosureImage,
-            attachmentType: postData.attachmentImage,
-          });
-          setImages({
-            mainImage: null,
-            trackerType: null,
-            enclosureType: null,
-            attachmentType: null,
-          });
+            mainImage: postData.postImage ? `https://${window.location.hostname}:5001/api/posts/image/${postData.postImage}` : null,
+            trackerType: postData.trackerImage ? `https://${window.location.hostname}:5001/api/posts/image/${postData.trackerImage}` : null,
+            enclosureType: postData.enclosureImage ? `https://${window.location.hostname}:5001/api/posts/image/${postData.enclosureImage}` : null,
+            attachmentType: postData.attachmentImage ? `https://${window.location.hostname}:5001/api/posts/image/${postData.attachmentImage}` : null,
+        });
+        setImages({
+          mainImage: null,
+          trackerType: null,
+          enclosureType: null,
+          attachmentType: null,
+        });
         } catch (error) {
           console.error("Error fetching post for editing:", error);
         }
@@ -212,7 +212,7 @@ const CreatePostPage = () => {
   const handleImageChange = (field, e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-
+  
       if (file.size > 10 * 1024 * 1024) {
         setError("File size too large. Please upload an image smaller than 10MB.");
         return;
@@ -221,10 +221,10 @@ const CreatePostPage = () => {
         ...prevImages,
         [field]: file
       }));
-
+  
       setImageFiles(prevImages => ({
         ...prevImages,
-        [field]: URL.createObjectURL(e.target.files[0])
+        [field]: URL.createObjectURL(file)
       }));
     }
   };
@@ -255,7 +255,12 @@ const CreatePostPage = () => {
           const filename = await uploadImage(image);
           return { [key]: filename };
         }
-        return { [key]: imageFiles[key] }; // Use existing image if no new upload
+        // If it's not a File object, it means we're using an existing image
+        // So we extract the filename from the URL
+        if (typeof imageFiles[key] === 'string') {
+          return { [key]: imageFiles[key].split('/').pop() };
+        }
+        return { [key]: null };
       });
   
       const uploadedImages = await Promise.all(imageUploads);
