@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from '@mui/icons-material/Close';
-import Sidebar from "../../components/Sidebar/Sidebar";
+//import Sidebar from "../../components/Sidebar/Sidebar";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Edit as EditIcon } from '@mui/icons-material';
@@ -27,7 +27,7 @@ import { Edit as EditIcon } from '@mui/icons-material';
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png'];
 
-const mdParser = new MarkdownIt();
+//const mdParser = new MarkdownIt();
 
 const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate","Ambient Temperature","Pressure (air or water)"];
 
