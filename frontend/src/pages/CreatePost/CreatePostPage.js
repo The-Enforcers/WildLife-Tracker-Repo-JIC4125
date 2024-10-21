@@ -18,6 +18,7 @@ import {
   Paper,
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
+import CloseIcon from '@mui/icons-material/Close';
 import Sidebar from "../../components/Sidebar/Sidebar";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -26,6 +27,8 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Edit as EditIcon } from '@mui/icons-material';
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png'];
 
 const mdParser = new MarkdownIt();
 
@@ -140,6 +143,7 @@ const CreatePostPage = () => {
   //const [image, setImage] = useState(null);
   // eslint-disable-next-line 
   const [error, setError] = useState("");
+  const [errorOverlay, setErrorOverlay] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -180,32 +184,32 @@ const CreatePostPage = () => {
 
   const handleImageChange = (field, e) => {
     if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0]; // Get the actual file object
-        const fileExtension = file.name.split('.').pop().toLowerCase();
+      const file = e.target.files[0];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
 
-        const forbiddenExtensions = ['gif', 'webp', 'exe']; // Forbidden File Type Filter
-        if (forbiddenExtensions.includes(fileExtension)) {
-          alert("Uploading disallowed file types is not allowed: .gif, .webp, .exe");
-          return;
-        }
+      if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+        setError(`Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(', ')}`);
+        setErrorOverlay(true);
+        return;
+      }
 
-        if (file.size > 10 * 1024 * 1024) { // 10MB limit
-          setError("File size too large. Please upload an image smaller than 10MB.");
-          return;
-        }
-        // Store the image contents so that it can be uploaded
-        setImages(prevImages => ({
-            ...prevImages,
-            [field]: file
-        }));
+      if (file.size > MAX_FILE_SIZE) {
+        setError(`File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`);
+        setErrorOverlay(true);
+        return;
+      }
 
-        // Store the image filename so that it can be displayed
-        setImageFiles(prevImages => ({
-            ...prevImages,
-            [field]: URL.createObjectURL(e.target.files[0])
-        }))
+      setImages(prevImages => ({
+        ...prevImages,
+        [field]: file
+      }));
+
+      setImageFiles(prevImages => ({
+        ...prevImages,
+        [field]: URL.createObjectURL(file)
+      }));
     }
-};
+  };
 
 
   const handleEditorChange = (text) => {
@@ -284,6 +288,40 @@ const CreatePostPage = () => {
 
   return (
     <>
+      {errorOverlay && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            maxWidth: '80%',
+            textAlign: 'center',
+          }}>
+            <Typography variant="h6" style={{ marginBottom: '20px', color: 'red' }}>
+              {error}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setErrorOverlay(false)}
+              startIcon={<CloseIcon />}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
 
 {showPopup && (
         <div
