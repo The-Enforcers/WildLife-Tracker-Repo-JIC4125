@@ -104,9 +104,12 @@ app.get(
   passport.authenticate("google", { failureRedirect: "https://localhost:3000/login" }),
   (req, res) => {
     console.log("Google authentication callback received");
-    res.redirect(`https://localhost:3000/?user=${encodeURIComponent(JSON.stringify(req.user))}`);
+
+    // Use the session to keep user logged in and just redirect to the homepage
+    res.redirect("https://localhost:3000/");
   }
 );
+
 
 app.get("/auth/logout", (req, res) => {
   req.logout((err) => {
