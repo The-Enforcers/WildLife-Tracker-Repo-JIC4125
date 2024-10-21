@@ -4,21 +4,26 @@ import { getPostById } from '../../services/postService';
 import Sidebar from "../../components/Sidebar/Sidebar";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ReactMarkdown from 'react-markdown';
+import ReactQuill from 'react-quill';
+import "react-quill/dist/quill.snow.css";
 import "./PostDetailsPage.css";
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+
+import { Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 const PostDetailsPage = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const [expandedBox, setExpandedBox] = useState(null); // Track which box is expanded
+    const [expandedBox, setExpandedBox] = useState(null);
     const navigate = useNavigate();
 
     const handleBoxClick = (boxType) => {
-        setExpandedBox(prev => (prev === boxType ? null : boxType)); // Toggle box
+        setExpandedBox(prev => (prev === boxType ? null : boxType));
     };
 
     useEffect(() => {
@@ -27,7 +32,6 @@ const PostDetailsPage = () => {
                 const data = await getPostById(id);
                 setPost(data);
 
-                // Expand the first type box that exists
                 if (data.trackerImage) {
                     setExpandedBox('tracker');
                 } else if (data.enclosureImage) {
@@ -35,8 +39,6 @@ const PostDetailsPage = () => {
                 } else if (data.attachmentImage) {
                     setExpandedBox('attachment');
                 }
-
-
             } catch (error) {
                 setError('Failed to fetch post data.');
                 console.error("Failed to fetch post", error);
@@ -48,7 +50,7 @@ const PostDetailsPage = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch('https://localhost:5001/api/user', {
+                const response = await fetch(`https://${window.location.hostname}:5001/api/user`, {
                     credentials: 'include'
                 });
                 if (response.ok) {
@@ -63,8 +65,14 @@ const PostDetailsPage = () => {
         fetchUser();
     }, []);
 
+    const handleEdit = () => {
+        navigate(`/edit-post/${id}`);
+    };
+
     if (error) return <div style={styles.error}>{error}</div>;
     if (!post) return <div style={styles.loading}>Loading...</div>;
+
+    var google_auth = `https://${window.location.hostname}:5001/auth/google`
 
     return (
         <>
@@ -75,7 +83,7 @@ const PostDetailsPage = () => {
                     {user ? (
                         <span>{user.displayName}</span>
                     ) : (
-                        <a href="https://localhost:5001/auth/google">
+                        <a href={google_auth}>
                             <AccountCircleOutlinedIcon
                                 fontSize="large"
                                 sx={{ color: "black" }}
@@ -84,20 +92,43 @@ const PostDetailsPage = () => {
                     )}
                 </div>
                 <div className="main-container">
+                <div className="button-container">
                     <div className="back-button-container">
                         <button className="back-button" onClick={() => navigate('/')}>
-                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15 7L10 12L15 17" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <p className="button-content">Home</p>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 7L10 12L15 17" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <p className="button-content">Home</p>
                         </button>
                     </div>
+                    {user && post && user.displayName === post.author && (
+                        <Button
+                        variant="contained"
+                        onClick={handleEdit}
+                        startIcon={<EditIcon />}
+                        sx={{
+                            backgroundColor: '#3f51b5',
+                            color: 'white',
+                            '&:hover': {
+                            backgroundColor: '#303f9f',
+                            },
+                            textTransform: 'none',
+                            fontSize: '15px',
+                            fontWeight: 'bold',
+                            borderRadius: '20px',
+                            padding: '8px 16px',
+                        }}
+                        >
+                        Edit Post
+                        </Button>
+                    )}
+                </div>
                     <div className="post-head">
                         <div className="post-meta">
                             <p className="post-title"> {post.title} </p>
                             <div className="post-author">
-                                <img className="profile-picture" src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg" />
-                                <p className="author-name"> {post.author} Jane Doe</p>
+                                <img className="profile-picture" src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg" alt="Author" />
+                                <p className="author-name"> {post.author}</p>
                             </div>
                             <div className="animal-names">
                                 <div className="name-box">
@@ -111,15 +142,15 @@ const PostDetailsPage = () => {
                             </div>
                         </div>
                         <div className="post-picture">
-                            <img className="post-image" src={"https://localhost:5001/api/posts/image/" + post.postImage} />
+                            <img className="post-image" src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`} alt="Post" />
                         </div>
                     </div>
                     <div className="tracker-info">
                         <div className="tracker-info-head">
                             <div
                                 className={`tracker-info-box-${expandedBox === 'tracker' ? 'selected' : ''}`}   
-                                onClick={() => post.trackerImage && handleBoxClick('tracker')}  // Only clickable if trackerImage exists
-                                style={{ cursor: post.trackerImage ? 'pointer' : 'default' }}  // Show pointer only if clickable
+                                onClick={() => post.trackerImage && handleBoxClick('tracker')}
+                                style={{ cursor: post.trackerImage ? 'pointer' : 'default' }}
                             >
                                 <p className="tracker-info-actual">{post.trackerType}</p>
                                 <p className="tracker-info-header">Tracker</p>
@@ -131,8 +162,8 @@ const PostDetailsPage = () => {
 
                             <div
                                 className={`tracker-info-box-${expandedBox === 'enclosure' ? 'selected' : ''}`}   
-                                onClick={() => post.enclosureImage && handleBoxClick('enclosure')}  // Only clickable if enclosureImage exists
-                                style={{ cursor: post.enclosureImage ? 'pointer' : 'default' }}  // Show pointer only if clickable
+                                onClick={() => post.enclosureImage && handleBoxClick('enclosure')}
+                                style={{ cursor: post.enclosureImage ? 'pointer' : 'default' }}
                             >
                                 <p className="tracker-info-actual">{post.enclosureType}</p>
                                 <p className="tracker-info-header">Enclosure</p>
@@ -144,8 +175,8 @@ const PostDetailsPage = () => {
 
                             <div
                                 className={`tracker-info-box-${expandedBox === 'attachment' ? 'selected' : ''}`}   
-                                onClick={() => post.attachmentImage && handleBoxClick('attachment')}  // Only clickable if attachmentImage exists
-                                style={{ cursor: post.attachmentImage ? 'pointer' : 'default' }}  // Show pointer only if clickable
+                                onClick={() => post.attachmentImage && handleBoxClick('attachment')}
+                                style={{ cursor: post.attachmentImage ? 'pointer' : 'default' }}
                             >
                                 <p className="tracker-info-actual">{post.attachmentType}</p>
                                 <p className="tracker-info-header">Attachment</p>
@@ -156,25 +187,24 @@ const PostDetailsPage = () => {
                             </div>
                         </div>
                         
-                        {/* Centered images for the expanded boxes */}
                         <div className={`expanded-images-container ${expandedBox ? 'expanded' : ''}`}>
                             {expandedBox === 'tracker' && post.trackerImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.trackerImage}`} alt="Tracker" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.trackerImage}`} alt="Tracker" style={styles.expandedImage} />
                             )}
                             {expandedBox === 'enclosure' && post.enclosureImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.enclosureImage}`} alt="Enclosure" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.enclosureImage}`} alt="Enclosure" style={styles.expandedImage} />
                             )}
                             {expandedBox === 'attachment' && post.attachmentImage && ( 
-                                <img src={`https://localhost:5001/api/posts/image/${post.attachmentImage}`} alt="Attachment" style={styles.expandedImage} />
+                                <img src={`https://${window.location.hostname}:5001/api/posts/image/${post.attachmentImage}`} alt="Attachment" style={styles.expandedImage} />
                             )}
                         </div>
                     </div>
                     
-
-
-                    <div className="post-body">
-                        <ReactMarkdown>{post.recommendations}</ReactMarkdown>
-                    </div>
+                    <ReactQuill 
+                        value={post.recommendations || ''} 
+                        readOnly={true}
+                        theme="bubble"
+                    />
                 </div>
             </div>
         </>

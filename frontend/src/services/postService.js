@@ -1,7 +1,7 @@
 // src/services/postService.js
 import axios from 'axios';
 
-const API_URL = 'https://localhost:5001/api/posts';
+const API_URL = `https://${window.location.hostname}:5001/api/posts`;
 
 export const getPosts = async () => {
     const response = await axios.get(API_URL);
@@ -20,6 +20,13 @@ export const createPost = async (postData) => {
 
 export const searchPosts = async (searchParameters) => {
     const response = await axios.get(`${API_URL}/search`);
+    return response.data;
+};
+
+export const updatePost = async (id, postData) => {
+    console.log("Sending update request for post ID:", id, "with data:", postData);
+    const response = await axios.put(`${API_URL}/${id}`, postData);
+    console.log("Update response:", response.data);
     return response.data;
 };
 

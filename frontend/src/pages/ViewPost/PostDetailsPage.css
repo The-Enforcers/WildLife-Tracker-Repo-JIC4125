@@ -186,14 +186,14 @@
 }
 
 /* Post Details stuff */
-
-.back-button-container {
-
+.button-container {
     width: 90%;
-    margin: 0px auto;
+    margin: 0 auto;
     padding-top: 70px;
-
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 .back-button {
 
@@ -453,8 +453,12 @@
 }
 
 .post-body {
-
-    margin: 0px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
     width: 75%;
     margin-top: 50px;
 

@@ -1,6 +1,6 @@
 // backend/controllers/postController.js
 const Post = require('../models/Post');
-
+//returns all posts
 exports.getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find();
@@ -22,8 +22,8 @@ exports.getPostById = async (req, res) => {
 
 exports.createPost = async (req, res) => {
     console.log(req.body);
-    const { postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations } = req.body;
-    const newPost = new Post({ postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations });
+    const { postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author } = req.body;
+    const newPost = new Post({ postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author  });
 
     console.log(newPost);
 
@@ -99,3 +99,28 @@ exports.searchPosts = async(req, res) => {
     }
 
 }
+
+exports.updatePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        // Fetch the existing post
+        const existingPost = await Post.findById(id);
+        if (!existingPost) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Preserve existing image fields if not provided in the update
+        ['postImage', 'trackerImage', 'enclosureImage', 'attachmentImage'].forEach(field => {
+            if (!updateData[field]) {
+                updateData[field] = existingPost[field];
+            }
+        });
+
+        const updatedPost = await Post.findByIdAndUpdate(id, updateData, { new: true });
+        res.json(updatedPost);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
