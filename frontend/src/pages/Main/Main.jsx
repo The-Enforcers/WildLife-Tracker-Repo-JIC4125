@@ -10,7 +10,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import SearchBox from "../../components/SearchBox/SearchBox";
 import Sidebar from "../../components/Sidebar/Sidebar";
 
-// Local icon images
+// Local icon image assets
 import icon1 from "../../assets/Mammals.png";
 import icon4 from "../../assets/Birds.png";
 import icon3 from "../../assets/Amphibians.png";
