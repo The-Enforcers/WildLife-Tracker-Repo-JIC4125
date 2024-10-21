@@ -243,6 +243,20 @@ const CreatePostPage = () => {
       return;
     }
 
+    const missingImages = [];
+    if (!images.mainImage) missingImages.push("Main Image");
+    if (!images.trackerType) missingImages.push("Tracker Type Image");
+    if (!images.enclosureType) missingImages.push("Enclosure Type Image");
+    if (!images.attachmentType) missingImages.push("Attachment Type Image");
+
+    if (missingImages.length > 0) {
+      const formattedMissingImages = missingImages.length > 1
+        ? missingImages.slice(0, -1).join(", ") + " and " + missingImages[missingImages.length - 1]
+        : missingImages[0];
+      setError(`All image fields are required. You are missing: ${formattedMissingImages}`);
+      return;
+    }
+
     try {
 
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
@@ -315,6 +329,7 @@ const CreatePostPage = () => {
           <Typography variant="h4" gutterBottom>
             New Animal Profile
           </Typography>
+          {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               {/* Image Upload */}
