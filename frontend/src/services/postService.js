@@ -23,6 +23,13 @@ export const searchPosts = async (searchParameters) => {
     return response.data;
 };
 
+export const updatePost = async (id, postData) => {
+    console.log("Sending update request for post ID:", id, "with data:", postData);
+    const response = await axios.put(`${API_URL}/${id}`, postData);
+    console.log("Update response:", response.data);
+    return response.data;
+};
+
 export const uploadImage = async (imageFile) => {
     if (!imageFile) {
         console.error('No image file provided.');
