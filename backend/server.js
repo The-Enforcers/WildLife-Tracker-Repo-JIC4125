@@ -36,6 +36,7 @@ const UserSchema = new mongoose.Schema({
   googleId: String,
   displayName: String,
   email: String,
+  picture: String,
 });
 const User = mongoose.model("User", UserSchema);
 
@@ -49,13 +50,22 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        const picture = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
+
         let user = await User.findOne({ googleId: profile.id });
         if (!user) {
           user = await new User({
             googleId: profile.id,
             displayName: profile.displayName,
             email: profile.emails[0].value,
+            picture: picture,
           }).save();
+        } else {
+          // update user information if it might have changed
+          user.displayName = profile.displayName;
+          user.email = profile.emails[0].value;
+          user.picture = picture; 
+          await user.save();
         }
         return done(null, user);
       } catch (err) {
@@ -64,6 +74,7 @@ passport.use(
     }
   )
 );
+
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -103,7 +114,7 @@ app.get("/auth/logout", (req, res) => {
       console.error("Error during logout:", err);
       return res.status(500).json({ error: "Error during logout" });
     }
-    res.redirect("https://localhost:3000");
+    res.status(200).json({ message: "Logged out successfully" });
   });
 });
 

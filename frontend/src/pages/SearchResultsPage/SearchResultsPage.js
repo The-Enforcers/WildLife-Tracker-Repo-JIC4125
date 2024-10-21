@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Box,
@@ -11,8 +11,23 @@ import {
   AccordionDetails,
   Typography,
 } from "@mui/material";
+
+// MUI Imports
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Grid from "@mui/material/Grid";
+
+// MUI Icons
+import PetsIcon from "@mui/icons-material/Pets";
+import GpsFixedIcon from "@mui/icons-material/GpsFixed";
+import ScienceIcon from "@mui/icons-material/Science";
+import TerrainIcon from '@mui/icons-material/Terrain';  
+import AcUnitIcon from '@mui/icons-material/AcUnit';
+import WavesIcon from '@mui/icons-material/Waves';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import CloudIcon from '@mui/icons-material/Cloud';
+import PublicIcon from '@mui/icons-material/Public';
+import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+
 import ImageCard from "../../components/Card/Card";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import SearchBox from "../../components/SearchBox/SearchBox";
@@ -41,18 +56,24 @@ const SearchResultsPage = () => {
     reptile: false,
     amphibian: false,
     fish: false,
-    bird: false
+    bird: false,
   });
-  const imageUrls = [
-    "https://plus.unsplash.com/premium_photo-1675432656807-216d786dd468?q=80&w=3090&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1675714692711-d1aac0262feb?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1673455210376-fb94ce182ff4?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1661936536518-4c6fa37f5ba8?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1661940855582-ccfec6edbf51?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  ];
 
-  // Fetch animals data from the backend
-  const fetchAnimals = async () => {
+  const iconList = [
+    PetsIcon,
+    GpsFixedIcon,
+    ScienceIcon,
+    TerrainIcon,
+    AcUnitIcon,      
+    WavesIcon,       
+    WhatshotIcon,    
+    CloudIcon,       
+    PublicIcon,      
+    ElectricBoltIcon 
+  ];
+  
+  // fetch animals data from the backend
+  const fetchAnimals = useCallback(async () => {
     try {
       let request = `https://${window.location.hostname}:5001/api/posts`;
 
@@ -67,14 +88,20 @@ const SearchResultsPage = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [input]);
 
-  // Fetch animals data on component mount
+  // Use fetchAnimals inside useEffect and include it in the dependency array
   useEffect(() => {
     fetchAnimals();
-  }, []);
+  }, [fetchAnimals]);
 
-  // Function to handle checkbox changes
+  // function to randomly select icons
+  const getRandomIcons = () => {
+    const shuffledIcons = [...iconList].sort(() => 0.5 - Math.random());
+    return shuffledIcons.slice(0, 3); 
+  };
+
+  // function to handle checkbox changes
   const handleCheckboxChange = (event) => {
     setFilters({
       ...filters,
@@ -115,9 +142,6 @@ const SearchResultsPage = () => {
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
 
-
-
-
     // Create query strings
     const trackerTypeQuery = trackerTypes.join(",");
     const attachmentTypeQuery = attachmentTypes.join(",");
@@ -136,11 +160,6 @@ const SearchResultsPage = () => {
     }
   };
 
-  // Function to pick a random image from the imageUrls array
-  const getRandomImage = () => {
-    return imageUrls[Math.floor(Math.random() * imageUrls.length)];
-  };
-
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       {/* Sidebar */}
@@ -150,7 +169,11 @@ const SearchResultsPage = () => {
       <Box sx={{ flexGrow: 1, padding: 2 }}>
         {/* SearchBox spans the entire width */}
         <Box sx={{ marginBottom: 2 }}>
-          <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
+          <SearchBox
+            input={input}
+            setInput={setInput}
+            onSearch={fetchAnimals}
+          />
         </Box>
 
         <Grid container spacing={2}>
@@ -427,9 +450,12 @@ const SearchResultsPage = () => {
                   <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                     <ImageCard
                       title={animal.title} // title from MongoDB
-                      description={animal.tracker} // description from MongoDB
-                      post_id={animal._id} // Post id from MongoDB
-                      image={animal.postImage}
+                      description={animal.trackerType} // description from MongoDB (trackerType)
+                      post_id={animal._id} // post id from MongoDB
+                      image={animal.postImage} // image URL from MongoDB
+                      animalType={animal.animalType} // animal type from MongoDB
+                      trackerType={animal.trackerType} // tracker type from MongoDB
+                      icons={getRandomIcons()} // Randomize the icons for each card
                     />
                   </Grid>
                 ))}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Avatar,
   Box,
@@ -24,7 +24,11 @@ import {
   Favorite,
 } from "@mui/icons-material";
 
+// cutsom components
 import Sidebar from "../../components/Sidebar/Sidebar";
+
+// user context for user information
+import { UserContext } from "../../context/UserContext";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -75,6 +79,7 @@ function TabPanel(props) {
 
 export default function ProfilePage() {
   const [value, setValue] = useState(0);
+  const { user } = useContext(UserContext); // access the user from UserContext
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -99,26 +104,26 @@ export default function ProfilePage() {
                 }}
               >
                 <ProfileAvatar
-                  alt="Jane Doe"
-                  src="/placeholder.svg?height=200&width=200"
+                  alt={user?.displayName || "User Avatar"} // Use user data
+                  src={user?.picture || "/placeholder.svg?height=200&width=200"} // Use user data
                 />
-                <Typography variant="h5">Jane Doe</Typography>
+                <Typography variant="h5">{user?.displayName || "Anonymous"}</Typography>
                 <Typography
                   variant="subtitle1"
                   color="textSecondary"
                   gutterBottom
                 >
-                  Wildlife Enthusiast
+                  {user?.bio || "Wildlife Enthusiast"} {/* Optional user bio */}
                 </Typography>
 
                 <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                   <LocationOn fontSize="small" sx={{ mr: 1 }} />
-                  <Typography variant="body2">Atlanta, Georgia</Typography>
+                  <Typography variant="body2">{user?.location || "Unknown Location"}</Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                   <DateRange fontSize="small" sx={{ mr: 1 }} />
                   <Typography variant="body2">
-                    Member since: Sep 2024
+                    Member since: {user?.memberSince || "N/A"}
                   </Typography>
                 </Box>
               </Grid>
