@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Box,
@@ -73,7 +73,7 @@ const SearchResultsPage = () => {
   ];
   
   // fetch animals data from the backend
-  const fetchAnimals = async () => {
+  const fetchAnimals = useCallback(async () => {
     try {
       let request = `https://${window.location.hostname}:5001/api/posts`;
 
@@ -88,12 +88,12 @@ const SearchResultsPage = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [input]);
 
-  // fetch animals data on component mount
+  // Use fetchAnimals inside useEffect and include it in the dependency array
   useEffect(() => {
     fetchAnimals();
-  }, []);
+  }, [fetchAnimals]);
 
   // function to randomly select icons
   const getRandomIcons = () => {

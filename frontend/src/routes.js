@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Main from "./pages/Main/Main.jsx";
 import PostDetailsPage from "./pages/ViewPost/PostDetailsPage.js";
 import CreatePostPage from "./pages/CreatePost/CreatePostPage.js";
-import SearchResultsPage from "./pages/Main/SearchResultsPage.js";
+import SearchResultsPage from "./pages/SearchResultsPage/SearchResultsPage.js";
 import LoginPage from "./pages/Login/login.js";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.js";
 import { UserProvider } from "./context/UserContext"; 
