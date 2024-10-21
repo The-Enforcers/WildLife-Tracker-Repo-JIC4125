@@ -181,6 +181,13 @@ const CreatePostPage = () => {
   const handleImageChange = (field, e) => {
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0]; // Get the actual file object
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+
+        const forbiddenExtensions = ['gif', 'webp', 'exe']; // Forbidden File Type Filter
+        if (forbiddenExtensions.includes(fileExtension)) {
+          alert("Uploading disallowed file types is not allowed: .gif, .webp, .exe");
+          return;
+        }
 
         if (file.size > 10 * 1024 * 1024) { // 10MB limit
           setError("File size too large. Please upload an image smaller than 10MB.");
