@@ -35,6 +35,8 @@ exports.createPost = async (req, res) => {
     }
 };
 
+// Add nut muncher easter egg soon
+
 function build_search_terms(req) {
     console.log(req.query);
 
