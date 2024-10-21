@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
-import {useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
+// User context for user information
+import { UserContext } from "../../context/UserContext"; 
 
 // CSS file
 import "./Main.css";
@@ -34,9 +37,9 @@ const animalNames = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra"];
 
 const Main = () => {
   const navigate = useNavigate();
+  const { user, logoutUser } = useContext(UserContext); // Get user and logout function from context
 
   const [input, setInput] = useState("");
-  const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -47,26 +50,6 @@ const Main = () => {
   const [animationStarted, setAnimationStarted] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("https://localhost:5001/api/user", {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        }
-      } catch (error) {
-        setUser(null);
-        console.log("User: not logged in");
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // typing animation
-  useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationStarted(true);
       setDisplayedText("");
@@ -76,7 +59,6 @@ const Main = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // typing animation
   useEffect(() => {
     if (!animationStarted) return;
 
@@ -104,24 +86,9 @@ const Main = () => {
   }, [displayedText, isDeleting, animationStarted, currentAnimalIndex]);
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch("https://localhost:5001/auth/logout", {
-        method: "GET",
-        credentials: "include",
-      });
-  
-      if (response.ok) {
-        handleClose();
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        setUser(null);
-      } else {
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    await logoutUser(); // calls the logout function from context
+    setAnchorEl(null);
   };
-  
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -133,9 +100,8 @@ const Main = () => {
 
   const handleProfileClick = () => {
     handleClose();
-    navigate("/profile"); 
+    navigate("/profile");
   };
-  
 
   return (
     <>
@@ -219,12 +185,12 @@ const Main = () => {
             >
               {user ? (
                 [
-                  <MenuItem key="user-info"  onClick={handleProfileClick}>
-                  <ListItemIcon>
-                    <AccountCircleOutlinedIcon fontSize="medium"/>
-                  </ListItemIcon>
-                  {user.displayName}
-                </MenuItem>,
+                  <MenuItem key="profile" onClick={handleProfileClick}>
+                    <ListItemIcon>
+                      <AccountCircleOutlinedIcon fontSize="medium" />
+                    </ListItemIcon>
+                    {user.displayName}
+                  </MenuItem>,
                   <Divider key="divider" />,
                   <MenuItem key="logout" onClick={handleLogout}>
                     <ListItemIcon>
@@ -263,7 +229,6 @@ const Main = () => {
             </div>
           )}
 
-          {/* Search Box */}
           <SearchBox input={input} setInput={setInput} />
 
           {/* Icon Images with Labels */}

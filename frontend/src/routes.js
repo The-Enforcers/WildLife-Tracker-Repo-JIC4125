@@ -6,17 +6,20 @@ import CreatePostPage from "./pages/CreatePost/CreatePostPage.js";
 import SearchResultsPage from "./pages/Main/SearchResultsPage.js";
 import LoginPage from "./pages/Login/login.js";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.js";
+import { UserProvider } from "./context/UserContext"; 
 
 const AppRoutes = () => (
   <Router>
-    <Routes>
-      <Route path="/" element={<Main />} />
-      <Route path="/results" element={<SearchResultsPage />} />
-      <Route path="/post/:id" element={<PostDetailsPage />} />
-      <Route path="/create" element={<CreatePostPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-    </Routes>
+    <UserProvider>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/results" element={<SearchResultsPage />} />
+        <Route path="/post/:id" element={<PostDetailsPage />} />
+        <Route path="/create" element={<CreatePostPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+    </UserProvider>
   </Router>
 );
 
