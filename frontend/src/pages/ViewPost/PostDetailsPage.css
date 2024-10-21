@@ -186,14 +186,14 @@
 }
 
 /* Post Details stuff */
-
-.back-button-container {
-
+.button-container {
     width: 90%;
-    margin: 0px auto;
+    margin: 0 auto;
     padding-top: 70px;
-
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
 .back-button {
 
