@@ -69,6 +69,25 @@
   margin-right: 5px;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info .MuiAvatar-root {
+  margin-right: 8px;
+}
+
+.user-info .user-name {
+  font-size: 16px;
+  color: #000;
+}
+
+.user-info:hover {
+  opacity: 0.8; 
+}
+
+
 /* Drop-Down Animation */
 @keyframes dropDown {
   0% {
@@ -200,6 +219,9 @@
     height: 15px;
   }
   .icon-label {
+    display: none;
+  }
+  .user-name{
     display: none;
   }
 }
