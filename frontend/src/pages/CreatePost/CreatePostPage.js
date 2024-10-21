@@ -18,9 +18,16 @@ import {
   Paper,
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
+import CloseIcon from '@mui/icons-material/Close';
+import Sidebar from "../../components/Sidebar/Sidebar";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Edit as EditIcon } from '@mui/icons-material';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png'];
+
+const mdParser = new MarkdownIt();
 
 const dataTypeOptions = ["Accelerometry", "Body Temperature", "Environmental Temperature", "Heart Rate","Ambient Temperature","Pressure (air or water)"];
 
@@ -132,6 +139,7 @@ const CreatePostPage = () => {
   const [customAttachmentType, setCustomAttachmentType] = useState("");
   const [recommendations, setRecommendations] = useState("");
   const [error, setError] = useState("");
+  const [errorOverlay, setErrorOverlay] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -149,7 +157,7 @@ const CreatePostPage = () => {
     enclosureType: null,
     attachmentType: null,
   });
-
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -210,24 +218,33 @@ const CreatePostPage = () => {
   };
 
   const handleImageChange = (field, e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-  
-      if (file.size > 10 * 1024 * 1024) {
-        setError("File size too large. Please upload an image smaller than 10MB.");
-        return;
-      }
-      setImages(prevImages => ({
-        ...prevImages,
-        [field]: file
-      }));
-  
-      setImageFiles(prevImages => ({
-        ...prevImages,
-        [field]: URL.createObjectURL(file)
-      }));
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+      setError(`Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(', ')}`);
+      setErrorOverlay(true);
+      return;
     }
-  };
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`);
+      setErrorOverlay(true);
+      return;
+    }
+
+    setImages(prevImages => ({
+      ...prevImages,
+      [field]: file
+    }));
+
+    setImageFiles(prevImages => ({
+      ...prevImages,
+      [field]: URL.createObjectURL(file)
+    }));
+  }
+};
 
   const handleEditorChange = (text) => {
     setRecommendations(text);
@@ -297,7 +314,42 @@ const CreatePostPage = () => {
 
   return (
     <>
-      {showPopup && (
+      {errorOverlay && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            maxWidth: '80%',
+            textAlign: 'center',
+          }}>
+            <Typography variant="h6" style={{ marginBottom: '20px', color: 'red' }}>
+              {error}
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setErrorOverlay(false)}
+              startIcon={<CloseIcon />}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
+
+{showPopup && (
         <div
           style={{
             position: "fixed",
