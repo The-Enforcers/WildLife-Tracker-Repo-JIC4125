@@ -1,0 +1,21 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.25rem;
+  margin-inline: 15px;
+  padding: 6px 0px;
+  color: #5f6368;
+}
+
+.nav img {
+  width: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: box-shadow 0.1s ease-in-out;
+}
+
+.nav img:hover {
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.065);
+}
+
