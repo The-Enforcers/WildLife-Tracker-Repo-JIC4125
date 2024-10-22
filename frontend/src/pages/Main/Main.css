@@ -1,47 +1,13 @@
-.main {
-  flex: 1;
-  max-height: 100vh;
-  overflow: hidden;
-  position: relative;
-  padding-bottom: 0;
-}
-
-.main .nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 1.25rem;
-  margin: 9px 15px;
-  padding: 6px 0px;
-  color: #5f6368;
-}
-
-.main .nav img {
-  width: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: box-shadow 0.1s ease-in-out;
-}
-
-.main .nav img:hover {
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.065);
-}
-
-.main .main-container {
+.greet-container {
   max-width: 900px;
   margin: auto;
 }
-
-.main .main-container {
-  scrollbar-width: none;
-}
-
-.main .sub-greet {
+.sub-greet {
   font-size: 2.5rem;
   color: #c4c7c5;
 }
 
-.main .greet {
+.greet {
   margin: 30px 0px;
   font-size: 3.5rem;
   color: #c4c7c5;
@@ -49,7 +15,7 @@
   padding: 20px;
 }
 
-.main .greet span {
+.greet span {
   position: relative;
   display: inline-block;
   color: transparent;
@@ -69,35 +35,35 @@
   margin-right: 5px;
 }
 
-.user-info {
+
+.icon-images {
   display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.icon-wrapper {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.user-info .MuiAvatar-root {
-  margin-right: 8px;
+.icon-image {
+  width: 65px;
+  height: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
 }
 
-.user-info .user-name {
-  font-size: 16px;
-  color: #000;
+.icon-image:hover {
+  transform: scale(1.19);
 }
 
-.user-info:hover {
-  opacity: 0.8; 
-}
-
-
-/* Drop-Down Animation */
-@keyframes dropDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.icon-label {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .main .main-bottom {
@@ -186,13 +152,6 @@
 }
 
 @media (max-width: 600px) {
-  .main {
-    overflow: hidden;
-    height: 100lvh;
-    width: 100vw;
-    padding-bottom: 0;
-  }
-
   .main-bottom input {
     flex: none;
     width: 150px;
@@ -202,26 +161,16 @@
     width: 20px;
   }
 
-  .main .greet {
+  .greet {
     font-size: 2.75rem;
     margin: auto;
   }
 
-  .main .nav {
-    font-size: 18px;
-  }
-
-  .main .bottom-info {
+  .bottom-info {
     font-size: 12px;
   }
 
-  .main .loader hr {
-    height: 15px;
-  }
   .icon-label {
-    display: none;
-  }
-  .user-name{
     display: none;
   }
 }

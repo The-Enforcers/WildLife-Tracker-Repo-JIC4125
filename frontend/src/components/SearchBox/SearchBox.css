@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 10px;
-  width: 95%;
+  margin-block: 5px;
+  margin-inline: 10px;
 }
 
 .search-box {
@@ -142,7 +142,6 @@
   .search-container {
     flex-direction: column;
     align-items: stretch;
-    gap: 15px;
   }
 
   .search-box {

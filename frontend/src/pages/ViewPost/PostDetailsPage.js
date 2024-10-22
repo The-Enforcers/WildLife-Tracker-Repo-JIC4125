@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPostById } from '../../services/postService';
-import Sidebar from "../../components/Sidebar/Sidebar";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import ReactMarkdown from 'react-markdown';
 import ReactQuill from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import "./PostDetailsPage.css";
@@ -72,25 +69,9 @@ const PostDetailsPage = () => {
     if (error) return <div style={styles.error}>{error}</div>;
     if (!post) return <div style={styles.loading}>Loading...</div>;
 
-    var google_auth = `https://${window.location.hostname}:5001/auth/google`
-
     return (
         <>
-            <Sidebar />
             <div className="main">
-                <div className="nav">
-                    <p>Wildlife Tracker</p>
-                    {user ? (
-                        <span>{user.displayName}</span>
-                    ) : (
-                        <a href={google_auth}>
-                            <AccountCircleOutlinedIcon
-                                fontSize="large"
-                                sx={{ color: "black" }}
-                            />
-                        </a>
-                    )}
-                </div>
                 <div className="main-container">
                 <div className="button-container">
                     <div className="back-button-container">

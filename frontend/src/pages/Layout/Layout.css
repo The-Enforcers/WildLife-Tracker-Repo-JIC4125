@@ -1,0 +1,48 @@
+.main {
+  flex: 1;
+  max-height: 100vh;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 0;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.main .main-container {
+  margin-inline: 15px;
+}
+
+.main .main-container {
+  scrollbar-width: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info .MuiAvatar-root {
+  margin-right: 8px;
+}
+
+.user-info .user-name {
+  font-size: 16px;
+  color: #000;
+}
+
+.user-info:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .main {
+    overflow: hidden;
+    height: 100lvh;
+    width: 100vw;
+    padding-bottom: 0;
+  }
+
+  .main .nav {
+    font-size: 18px;
+  }
+}

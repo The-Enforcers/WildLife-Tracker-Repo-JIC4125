@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { createPost, getPostById, updatePost, uploadImage } from "../../services/postService";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import {
   Box,
   Button,
   TextField,
   Typography,
-  Container,
   Grid,
   IconButton,
   Select,
@@ -94,7 +92,7 @@ const ImageUploadArea = ({ type, image, handleImageChange }) => (
         <>
           <img
             src={image instanceof File ? URL.createObjectURL(image) : image}
-            alt={`${type} Image`}
+            alt={`${type} Images`}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <div style={{
@@ -385,9 +383,7 @@ const CreatePostPage = () => {
         </div>
       )}
 
-      <Sidebar />
-      <Container maxWidth="lg" sx={{ marginTop: 4, paddingBottom: 6 }}>
-        <Paper elevation={0} sx={{ padding: 3, marginBottom: 3 }}>
+        <Paper elevation={0} sx={{ padding: 1, marginBottom: 3 }}>
           <Typography variant="h4" gutterBottom>
             {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
           </Typography>
@@ -606,7 +602,6 @@ const CreatePostPage = () => {
             </Grid>
           </Box>
         </Paper>
-      </Container>
     </>
   );
 };

@@ -24,9 +24,6 @@ import {
   Favorite,
 } from "@mui/icons-material";
 
-// cutsom components
-import Sidebar from "../../components/Sidebar/Sidebar";
-
 // user context for user information
 import { UserContext } from "../../context/UserContext";
 
@@ -86,8 +83,6 @@ export default function ProfilePage() {
   };
 
   return (
-    <>
-      <Sidebar />
       <Box sx={{ flexGrow: 1 }}>
         <Container maxWidth="lg">
           <StyledPaper elevation={3}>
@@ -243,6 +238,5 @@ export default function ProfilePage() {
           </StyledPaper>
         </Container>
       </Box>
-    </>
   );
 }
