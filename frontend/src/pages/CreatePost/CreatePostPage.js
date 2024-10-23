@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
-import {
-  createPost,
-  getPostById,
-  updatePost,
-  uploadImage,
-} from "../../services/postService";
-import { useSnackbar } from "../../components/SnackBar/SnackBar";
+import { UserContext } from "../../context/UserContext";
 import {
   Box,
   Button,
@@ -16,24 +10,30 @@ import {
   IconButton,
   Select,
   MenuItem,
-  Chip,
   FormControl,
   InputLabel,
   Paper,
   Breadcrumbs,
+  Chip,
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
-//import Sidebar from "../../components/Sidebar/Sidebar";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Edit as EditIcon } from "@mui/icons-material";
+import {
+  createPost,
+  getPostById,
+  updatePost,
+  uploadImage,
+} from "../../services/postService";
+import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
+// Constants for image uploads
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"];
 
-//const mdParser = new MarkdownIt();
-
+// Options for data types
 const dataTypeOptions = [
   "Accelerometry",
   "Body Temperature",
@@ -43,6 +43,7 @@ const dataTypeOptions = [
   "Pressure (air or water)",
 ];
 
+// Component for main image upload
 const MainImageUploadArea = ({ type, image, handleImageChange }) => (
   <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
     <Box sx={{ position: "relative", width: "100%", maxWidth: 200 }}>
@@ -86,6 +87,7 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
   </Box>
 );
 
+// Component for additional image uploads (tracker, enclosure, attachment)
 const ImageUploadArea = ({ type, image, handleImageChange }) => (
   <Grid item xs={2} container alignItems="center" justifyContent="flex-end">
     <IconButton
@@ -170,9 +172,9 @@ const CreatePostPage = () => {
   const [error, setError] = useState("");
   const [errorOverlay, setErrorOverlay] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const { user, loading } = useContext(UserContext);
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
-  const [user, setUser] = useState(null);
 
   const [images, setImages] = useState({
     mainImage: null,
@@ -187,27 +189,13 @@ const CreatePostPage = () => {
     enclosureType: null,
     attachmentType: null,
   });
-
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("https://localhost:5001/api/user", {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else {
-          setShowPopup(true);
-        }
-      } catch (error) {
-        setShowPopup(true);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
+    if (!loading && !user) {
+      // Show popup if no user is logged in and loading is complete
+      setShowPopup(true);
+    }
+  }, [loading, user]);
+  
   useEffect(() => {
     const fetchPost = async () => {
       if (id) {
@@ -252,7 +240,7 @@ const CreatePostPage = () => {
   }, [id]);
 
   const handleClosePopup = () => {
-    window.location.href = "https://localhost:5001/auth/google";
+    window.location.href = "https://localhost:5001/auth/google"; // Redirect to Google OAuth
   };
 
   const handleImageChange = (field, e) => {
@@ -345,7 +333,6 @@ const CreatePostPage = () => {
 
       const uploadedImages = await Promise.all(imageUploads);
       const imageFilenames = Object.assign({}, ...uploadedImages);
-
       const postData = {
         postImage: imageFilenames.mainImage,
         title,
@@ -424,34 +411,53 @@ const CreatePostPage = () => {
         </div>
       )}
 
+      {/* Show the login popup if no user */}
       {showPopup && (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
-            padding: "20px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-            zIndex: 1000,
-            borderRadius: "8px",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            You must be logged in to create a post.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleClosePopup}
+        <>
+          {/* Blocking overlay to prevent background interaction */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+              zIndex: 999,
+              pointerEvents: "all",
+            }}
+          />
+
+          {/* Login popup */}
+          <div
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "#fff",
+              padding: "20px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+              zIndex: 1000,
+              borderRadius: "8px",
+              textAlign: "center",
+            }}
           >
-            OK
-          </Button>
-        </div>
+            <Typography variant="h6" gutterBottom>
+              You must be logged in to create a post.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleClosePopup}
+            >
+              OK
+            </Button>
+          </div>
+        </>
       )}
-      {/* Breadcrumbs section */}
+
+      {/* Breadcrumbs and the rest of the page content */}
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{ marginLeft: 4, marginBlock: 1 }}
@@ -463,7 +469,7 @@ const CreatePostPage = () => {
           {isEditing ? "Edit Post" : "Create Post"}
         </Typography>
       </Breadcrumbs>
-      
+
       <Paper elevation={0} sx={{ px: 4, marginBottom: 3 }}>
         <Typography variant="h4" gutterBottom>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}

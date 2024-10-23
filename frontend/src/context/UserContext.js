@@ -1,16 +1,18 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useSnackbar } from "../components/SnackBar/SnackBar";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const showSnackbar = useSnackbar(); 
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const [loading, setLoading] = useState(true);
+  const showSnackbar = useSnackbar();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
+      setLoading(true);
       try {
         const response = await fetch("https://localhost:5001/api/user", {
           credentials: "include",
@@ -25,12 +27,16 @@ export const UserProvider = ({ children }) => {
 
           if (!hasSeenWelcome) {
             showSnackbar("Welcome!", "success");
-            sessionStorage.setItem("hasSeenWelcome", "true"); // Mark as shown
+            sessionStorage.setItem("hasSeenWelcome", "true");
           }
+        } else {
+          setUser(null);
         }
       } catch (error) {
         setUser(null);
         console.log("User: not logged in");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -50,7 +56,7 @@ export const UserProvider = ({ children }) => {
         sessionStorage.removeItem("hasSeenWelcome");
 
         // Navigate to home after logout
-        navigate("/"); 
+        navigate("/");
       } else {
         console.error("Logout failed");
         showSnackbar("Logout failed!", "error");
@@ -61,7 +67,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logoutUser }}>
+    <UserContext.Provider value={{ user, setUser, logoutUser, loading }}>
       {children}
     </UserContext.Provider>
   );
