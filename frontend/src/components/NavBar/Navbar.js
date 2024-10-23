@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/UserContext"; 
+import { UserContext } from "../../context/UserContext";
 
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -22,10 +22,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [profilePicError, setProfilePicError] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleLogout = async () => {
-    await logoutUser(); 
+    await logoutUser();
     setAnchorEl(null);
   };
 
@@ -56,15 +57,18 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar
-                src={user?.picture || "https://via.placeholder.com/150"}
-                alt={user?.displayName || "User Avatar"}
-                sx={{ width: 32, height: 32, bgcolor: "white" }}
-              >
-                {!user?.picture && (
-                  <AccountCircleOutlinedIcon sx={{ fontSize: 35, color: "black", borderRadius: "50%" }} />
-                )}
-              </Avatar>
+              {user ? (
+                // Show profile picture or placeholder image if logged in
+                <Avatar
+                  src={!profilePicError && user.picture ? user.picture : "https://via.placeholder.com/150"}
+                  alt={user?.displayName || "User Avatar"}
+                  sx={{ width: 32, height: 32, bgcolor: "white" }}
+                  onError={() => setProfilePicError(true)} // Handle image load error
+                />
+              ) : (
+                // Show AccountCircleOutlinedIcon if not logged in
+                <AccountCircleOutlinedIcon sx={{ fontSize: 35, color: "black", borderRadius: "50%" }} />
+              )}
             </IconButton>
           </Tooltip>
         </Box>
