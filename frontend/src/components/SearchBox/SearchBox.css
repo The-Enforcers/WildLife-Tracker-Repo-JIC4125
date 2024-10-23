@@ -10,7 +10,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
   background-color: #f0f4f9;
   padding: 0px 20px;
   border-radius: 50px;
@@ -130,6 +129,33 @@
 .apply-button:hover {
     background-color: #787b7f;
 }
+.clear-icon {
+  cursor: pointer;
+  color: grey;
+}
+
+.results-container {
+  margin-top: 10px;
+  background-color: #f0f4f9;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.results-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.results-container li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.results-container li:last-child {
+  border-bottom: none;
+}
+
 
 /* For responsiveness (Keep in order)  */
 @media (max-width: 900px) {

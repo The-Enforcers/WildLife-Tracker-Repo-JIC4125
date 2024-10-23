@@ -19,7 +19,9 @@ export const createPost = async (postData) => {
 };
 
 export const searchPosts = async (searchParameters) => {
-    const response = await axios.get(`${API_URL}/search`);
+    const response = await axios.get(`${API_URL}/search`, {
+        params: { title: searchParameters }
+    });
     return response.data;
 };
 

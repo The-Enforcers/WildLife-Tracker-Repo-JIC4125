@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import ClearIcon from "@mui/icons-material/Clear"; // Import Clear Icon
 import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
 
@@ -22,6 +23,11 @@ const SearchBox = ({ input, setInput, onSearch }) => {
   // State for showing/hiding filters
   const [showFilters, setShowFilters] = useState(false);
 
+  // Function to clear input
+  const clearInput = () => {
+    setInput("");
+  };
+
   return (
     <>
       <div className="search-container">
@@ -33,6 +39,13 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             type="text"
             placeholder="Search by species or common name"
           />
+
+          {/* Clear Icon: Show only when there's input */}
+          {input && (
+            <span className="clear-icon" onClick={clearInput}>
+              <ClearIcon fontSize="small" />
+            </span>
+          )}
 
           <span
             className="filter-icon"
