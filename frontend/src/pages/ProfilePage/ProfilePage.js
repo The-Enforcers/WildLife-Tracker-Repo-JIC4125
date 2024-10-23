@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import {
   Avatar,
   Box,
+  Breadcrumbs,
   Card,
   Chip,
   Container,
@@ -26,15 +27,16 @@ import {
 
 // user context for user information
 import { UserContext } from "../../context/UserContext";
+import { Link } from "react-router-dom";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginTop: theme.spacing(3),
-  marginBottom: theme.spacing(3),
+  padding: theme.spacing(0),
+  marginTop: theme.spacing(0),
+  marginBottom: theme.spacing(0),
   [theme.breakpoints.up("md")]: {
-    marginTop: theme.spacing(6),
-    marginBottom: theme.spacing(6),
-    padding: theme.spacing(6),
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(3),
   },
 }));
 
@@ -84,6 +86,12 @@ export default function ProfilePage() {
 
   return (
       <Box sx={{ flexGrow: 1 }}>
+         <Breadcrumbs aria-label="breadcrumb" sx={{margin: 1}}>
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              Home
+            </Link>
+            <Typography color="text.primary">Profile</Typography>
+          </Breadcrumbs>
         <Container maxWidth="lg">
           <StyledPaper elevation={3}>
             <Grid container spacing={3}>
