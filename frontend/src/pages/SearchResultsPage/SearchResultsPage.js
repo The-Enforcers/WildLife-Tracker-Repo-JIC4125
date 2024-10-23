@@ -177,7 +177,7 @@ const SearchResultsPage = () => {
         <Grid container spacing={2}>
           {/* Filters on the left */}
           <Grid item xs={12} sm={3} md={2}>
-            <Box sx={{ padding: 2, borderRight: "1px solid #ddd", height: "100%", overflowY: "auto" }}>
+            <Box sx={{ padding: 1, borderRight: "1px solid #ddd", height: "100%", overflowY: "auto" }}>
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Animal Type</Typography>
