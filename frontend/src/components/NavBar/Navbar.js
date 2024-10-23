@@ -22,7 +22,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [imageError, setImageError] = useState(false); 
   const open = Boolean(anchorEl);
 
   const handleLogout = async () => {
@@ -57,19 +56,15 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              {/* If image doesn't load properly */}
-              {!imageError ? (
-                <Avatar
-                  src={user?.picture || "https://via.placeholder.com/150"}
-                  alt={user?.displayName || "User Avatar"}
-                  onError={() => setImageError(true)}  // If image fails to load, set error state to true
-                  sx={{ width: 32, height: 32, bgcolor: "white" }}
-                />
-              ) : (
-                <AccountCircleOutlinedIcon
-                  sx={{ fontSize: 35, color: "black", borderRadius: "50%" }}
-                />
-              )}
+              <Avatar
+                src={user?.picture || "https://via.placeholder.com/150"}
+                alt={user?.displayName || "User Avatar"}
+                sx={{ width: 32, height: 32, bgcolor: "white" }}
+              >
+                {!user?.picture && (
+                  <AccountCircleOutlinedIcon sx={{ fontSize: 35, color: "black", borderRadius: "50%" }} />
+                )}
+              </Avatar>
             </IconButton>
           </Tooltip>
         </Box>
