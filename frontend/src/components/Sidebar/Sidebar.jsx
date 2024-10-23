@@ -24,10 +24,29 @@ const Sidebar = () => {
   const [extended, setExtended] = useState(location.pathname === "/");
   const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
 
+  // auto-collapse sidebar on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1000) {
+        setExtended(false);
+      } else if (location.pathname === "/") {
+        setExtended(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [location]);
+
   useEffect(() => {
     setExtended(location.pathname === "/");
 
-    // Check if it's the beginning of a session
+    // Check if the user has visited the site before
     const isFirstVisit = !localStorage.getItem("hasVisitedBefore");
     if (isFirstVisit) {
       setIsHelpPopupOpen(true);
@@ -55,7 +74,7 @@ const Sidebar = () => {
     <>
       <div
         className={`sidebar ${extended ? "extended" : "collapsed"}`}
-        style={{ width: extended ? "17%" : "75px" }}
+        style={{ width: extended ? "260px" : "75px" }}
       >
         <div className="top">
           <div className="toggle-container">
