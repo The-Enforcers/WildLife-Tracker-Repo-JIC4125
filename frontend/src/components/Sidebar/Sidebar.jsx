@@ -31,9 +31,7 @@ const Sidebar = () => {
   const tutorialSteps = [
     { iconId: "new-post", text: "This is where you can create a new post.", refIndex: 1 },
     { iconId: "view-posts", text: "Here, you can view all the posts that have been submitted.", refIndex: 2 },
-    { iconId: "help", text: "Need help? Click here for assistance.", refIndex: 3 },
-    { iconId: "history", text: "This is your activity log, where you can see recent activity.", refIndex: 4 },
-    { iconId: "settings", text: "This is the Settings button. Click here to change your preferences.", refIndex: 5 },
+    { iconId: "help", text: "Need help? Click here for assistance.", refIndex: 3 }
   ];
 
   // Check if the user has visited before and initialize the tutorial state
@@ -177,20 +175,6 @@ const Sidebar = () => {
           >
             <HelpOutlineIcon />
             {extended && <p>Help</p>}
-          </div>
-          <div
-            ref={(el) => (iconRefs.current[4] = el)}
-            className={`bottom-item recent-entry ${currentStep === 4 ? "highlight" : ""}`}
-          >
-            <HistoryIcon />
-            {extended && <p>Activity</p>}
-          </div>
-          <div
-            ref={(el) => (iconRefs.current[5] = el)}
-            className={`bottom-item recent-entry ${currentStep === 5 ? "highlight" : ""}`}
-          >
-            <SettingsIcon />
-            {extended && <p>Settings</p>}
           </div>
         </div>
       </div>
