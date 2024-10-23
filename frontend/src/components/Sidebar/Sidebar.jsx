@@ -70,6 +70,7 @@ const Sidebar = () => {
 
   const handleNavigation = (path) => {
     navigate(path);
+    setExtended(false);
   };
 
   const closeHelpPopup = () => {
@@ -137,8 +138,6 @@ const Sidebar = () => {
             ref={(el) => (iconRefs.current[0] = el)}
             onClick={() => handleNavigation("/")}
             className={`new-post ${currentStep === 0 ? "highlight" : ""}`}
-            data-tooltip-id="home"
-            data-tooltip-content="Home"
           >
             <HomeIcon />
             <Tooltip id="home" place="bottom" />
@@ -149,8 +148,6 @@ const Sidebar = () => {
             ref={(el) => (iconRefs.current[1] = el)}
             onClick={() => handleNavigation("/create")}
             className={`new-post ${currentStep === 1 ? "highlight" : ""}`}
-            data-tooltip-id="new-post"
-            data-tooltip-content="New Post"
           >
             <AddIcon />
             <Tooltip id="new-post" place="bottom" />
@@ -161,8 +158,6 @@ const Sidebar = () => {
             ref={(el) => (iconRefs.current[2] = el)}
             onClick={() => handleNavigation("/results")}
             className={`view-posts ${currentStep === 2 ? "highlight" : ""}`}
-            data-tooltip-id="view-posts"
-            data-tooltip-content="View Posts"
           >
             <VisibilityIcon />
             <Tooltip id="view-posts" place="bottom" />
