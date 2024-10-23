@@ -9,12 +9,7 @@
 
 /* Post Details stuff */
 .button-container {
-  width: 60%;
-  margin: 0 auto;
-  padding-top: 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+margin-inline: 50px;
 }
 
 .button-content {
@@ -41,7 +36,7 @@
 
 .post-title {
   font-weight: bold;
-  font-size: 25px;
+  font-size: 30px;
   padding-right: 10px;
 }
 

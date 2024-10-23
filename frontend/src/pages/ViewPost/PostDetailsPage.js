@@ -92,7 +92,35 @@ const PostDetailsPage = () => {
         </Typography>
       </Breadcrumbs>
       <div className="main-container">
-        <div className="button-container">
+        
+        <div className="post-head">
+        
+          <div className="post-meta">
+            <p className="post-title"> {post.title} </p>
+            <div className="animal-names">
+              <div className="name-box">
+                <p className="name-header">Scientific Name</p>
+                <p className="scientific-name">{post.scientificName}</p>
+              </div>
+              <div className="name-box">
+                <p className="name-header">Species</p>
+                <p className="common-name">{post.animalType}</p>
+              </div>
+              <div className="name-box">
+                <p className="name-header">Tracker Type</p>
+                <p className="common-name">{post.trackerType}</p>
+              </div>
+              <div className="post-author">
+              <img
+                className="profile-picture"
+                src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg"
+                alt="Author"
+              />
+              <p className="author-name"> {post.author}</p>
+            </div>
+            </div>
+          </div>
+          <div className="button-container">
           {user && post && user.displayName === post.author && (
             <Button
               variant="contained"
@@ -111,32 +139,10 @@ const PostDetailsPage = () => {
                 padding: "8px 16px",
               }}
             >
-              Edit Post
+              Edit
             </Button>
           )}
         </div>
-        <div className="post-head">
-          <div className="post-meta">
-            <p className="post-title"> {post.title} </p>
-            <div className="post-author">
-              <img
-                className="profile-picture"
-                src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg"
-                alt="Author"
-              />
-              <p className="author-name"> {post.author}</p>
-            </div>
-            <div className="animal-names">
-              <div className="name-box">
-                <p className="name-header">Scientific Name</p>
-                <p className="scientific-name">{post.scientificName}</p>
-              </div>
-              <div className="name-box">
-                <p className="name-header">Common Name</p>
-                <p className="common-name">{post.commonName}</p>
-              </div>
-            </div>
-          </div>
           <div className="post-picture">
             <img
               className="post-image"
@@ -144,6 +150,7 @@ const PostDetailsPage = () => {
               alt="Post"
             />
           </div>
+          
         </div>
         <div className="tracker-info">
           <div className="tracker-info-head">
