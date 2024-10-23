@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { createPost, getPostById, updatePost, uploadImage } from "../../services/postService";
+import { useSnackbar } from '../../components/SnackBar/SnackBar';
 import {
   Box,
   Button,
@@ -140,6 +141,7 @@ const CreatePostPage = () => {
   const [errorOverlay, setErrorOverlay] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const showSnackbar = useSnackbar(); 
   const [user, setUser] = useState(null);
   
   const [images, setImages] = useState({
@@ -312,11 +314,15 @@ const CreatePostPage = () => {
   
       if (isEditing) {
         await updatePost(id, postData);
+        showSnackbar("Updated!", "success");
       } else {
         await createPost(postData);
+        showSnackbar("Posted!", "success");
+
       }
       navigate("/results");
     } catch (error) {
+      showSnackbar("Error creating/updating post", "error");
       console.error("Error creating/updating post:", error);
       setError("An error occurred while saving the post. Please try again.");
     }
