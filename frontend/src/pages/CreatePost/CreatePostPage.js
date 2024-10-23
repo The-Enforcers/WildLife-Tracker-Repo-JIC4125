@@ -16,11 +16,15 @@ import {
   Breadcrumbs,
   Chip,
 } from "@mui/material";
+
+// react quill for rich text editor
+import ReactQuill from "react-quill-new";
+import "react-quill/dist/quill.snow.css";
+
+// MUI Icons
+import { Edit as EditIcon } from "@mui/icons-material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { Edit as EditIcon } from "@mui/icons-material";
 import {
   createPost,
   getPostById,
@@ -195,7 +199,7 @@ const CreatePostPage = () => {
       setShowPopup(true);
     }
   }, [loading, user]);
-  
+
   useEffect(() => {
     const fetchPost = async () => {
       if (id) {
@@ -491,6 +495,8 @@ const CreatePostPage = () => {
 
             <Grid item xs={12} md={6}>
               <TextField
+                id="post-title"
+                name="post-title"
                 label="Post Title"
                 variant="outlined"
                 value={title}
@@ -500,6 +506,8 @@ const CreatePostPage = () => {
                 sx={{ marginBottom: 2 }}
               />
               <TextField
+                id="scientific-name"
+                name="scientific-name"
                 label="Scientific Name"
                 variant="outlined"
                 value={scientificName}
@@ -509,6 +517,8 @@ const CreatePostPage = () => {
                 sx={{ marginBottom: 2 }}
               />
               <TextField
+                id="common-name"
+                name="common-name"
                 label="Common Name(s)"
                 variant="outlined"
                 value={commonName}
@@ -518,8 +528,11 @@ const CreatePostPage = () => {
                 sx={{ marginBottom: 2 }}
               />
               <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Animal Type</InputLabel>
+                <InputLabel id="animal-type-label">Animal Type</InputLabel>
                 <Select
+                  id="animal-type"
+                  name="animal-type"
+                  labelId="animal-type-label"
                   value={animalType}
                   onChange={(e) => setAnimalType(e.target.value)}
                   label="Animal Type"
@@ -543,8 +556,13 @@ const CreatePostPage = () => {
               >
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel>Tracker Type</InputLabel>
+                    <InputLabel id="tracker-type-label">
+                      Tracker Type
+                    </InputLabel>
                     <Select
+                      id="tracker-type"
+                      name="tracker-type"
+                      labelId="tracker-type-label"
                       value={trackerType}
                       onChange={(e) => setTrackerType(e.target.value)}
                       label="Tracker Type"
@@ -569,6 +587,8 @@ const CreatePostPage = () => {
               </Grid>
               {trackerType === "custom" && (
                 <TextField
+                  id="custom-tracker-type"
+                  name="custom-tracker-type"
                   label="Custom Tracker Type"
                   variant="outlined"
                   value={customTrackerType}
@@ -587,8 +607,13 @@ const CreatePostPage = () => {
               >
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel>Enclosure Type</InputLabel>
+                    <InputLabel id="enclosure-type-label">
+                      Enclosure Type
+                    </InputLabel>
                     <Select
+                      id="enclosure-type"
+                      name="enclosure-type"
+                      labelId="enclosure-type-label"
                       value={enclosureType}
                       onChange={(e) => setEnclosureType(e.target.value)}
                       label="Enclosure Type"
@@ -610,6 +635,8 @@ const CreatePostPage = () => {
               </Grid>
               {enclosureType === "custom" && (
                 <TextField
+                  id="custom-enclosure-type"
+                  name="custom-enclosure-type"
                   label="Custom Enclosure Type"
                   variant="outlined"
                   value={customEnclosureType}
@@ -628,8 +655,13 @@ const CreatePostPage = () => {
               >
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel>Attachment Type</InputLabel>
+                    <InputLabel id="attachment-type-label">
+                      Attachment Type
+                    </InputLabel>
                     <Select
+                      id="attachment-type"
+                      name="attachment-type"
+                      labelId="attachment-type-label"
                       value={attachmentType}
                       onChange={(e) => setAttachmentType(e.target.value)}
                       label="Attachment Type"
@@ -652,6 +684,8 @@ const CreatePostPage = () => {
               </Grid>
               {attachmentType === "custom" && (
                 <TextField
+                  id="custom-attachment-type"
+                  name="custom-attachment-type"
                   label="Custom Attachment Type"
                   variant="outlined"
                   value={customAttachmentType}
