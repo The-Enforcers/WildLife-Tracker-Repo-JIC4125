@@ -57,7 +57,7 @@ const Navbar = () => {
               aria-expanded={open ? "true" : undefined}
             >
               <Avatar
-                src={user?.picture || ""}
+                src={user?.picture || "https://via.placeholder.com/150"}
                 alt={user?.displayName || "User Avatar"}
                 sx={{ width: 32, height: 32, bgcolor: "white" }}
               >
