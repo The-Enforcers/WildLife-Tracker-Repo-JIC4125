@@ -303,12 +303,14 @@ const CreatePostPage = () => {
       setError("All fields are required.");
       return;
     }
+  
+    // Refine the check for missing images (Only mark required if no existing image URL or no new image)
     const missingImages = [];
-    if (!images.mainImage) missingImages.push("Main Image");
-    if (!images.trackerType) missingImages.push("Tracker Type Image");
-    if (!images.enclosureType) missingImages.push("Enclosure Type Image");
-    if (!images.attachmentType) missingImages.push("Attachment Type Image");
-
+    if (!images.mainImage && !imageFiles.mainImage) missingImages.push("Main Image");
+    if (!images.trackerType && !imageFiles.trackerType) missingImages.push("Tracker Type Image");
+    if (!images.enclosureType && !imageFiles.enclosureType) missingImages.push("Enclosure Type Image");
+    if (!images.attachmentType && !imageFiles.attachmentType) missingImages.push("Attachment Type Image");
+  
     if (missingImages.length > 0) {
       const formattedMissingImages =
         missingImages.length > 1
@@ -321,20 +323,20 @@ const CreatePostPage = () => {
       );
       return;
     }
+  
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
           const filename = await uploadImage(image);
           return { [key]: filename };
         }
-        // If it's not a File object, it means we're using an existing image
-        // So we extract the filename from the URL
+        // Use existing image if no new file uploaded
         if (typeof imageFiles[key] === "string") {
           return { [key]: imageFiles[key].split("/").pop() };
         }
         return { [key]: null };
       });
-
+  
       const uploadedImages = await Promise.all(imageUploads);
       const imageFilenames = Object.assign({}, ...uploadedImages);
       const postData = {
@@ -355,7 +357,7 @@ const CreatePostPage = () => {
         recommendations,
         author: user.displayName,
       };
-
+  
       if (isEditing) {
         await updatePost(id, postData);
         showSnackbar("Updated!", "success");
@@ -370,7 +372,7 @@ const CreatePostPage = () => {
       setError("An error occurred while saving the post. Please try again.");
     }
   };
-
+  
   return (
     <>
       {errorOverlay && (
