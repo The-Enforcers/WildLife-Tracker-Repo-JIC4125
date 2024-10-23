@@ -9,24 +9,12 @@
 
 /* Post Details stuff */
 .button-container {
-  width: 90%;
+  width: 60%;
   margin: 0 auto;
   padding-top: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-}
-
-.back-button {
-  background-color: transparent;
-  background-repeat: no-repeat;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  outline: none;
-  font-weight: bold;
-  font-size: 15px;
-  display: flex;
 }
 
 .button-content {

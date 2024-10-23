@@ -7,35 +7,35 @@ import SearchResultsPage from "./pages/SearchResultsPage/SearchResultsPage.js";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.js";
 import LoginPage from "./pages/Login/login.js";
 import Layout from "./pages/Layout/Layout.js";
-import { UserProvider } from "./context/UserContext"; 
+import { UserProvider } from "./context/UserContext";
+import { SnackbarProvider } from "./components/SnackBar/SnackBar.js"; // Correct import for SnackbarProvider
 
 const AppRoutes = () => (
   <Router>
-    <UserProvider>
-      <Routes>
-        <Route
-          path="/*"
-          element={
-            <Layout> {/* Page layout - has Sidebar and Navbar */}
-              <Routes>
-                <Route path="/" element={<Main />} />
-                <Route path="/results" element={<SearchResultsPage />} />
-                <Route path="/post/:id" element={<PostDetailsPage />} />
-                <Route path="/edit-post/:id" element={<CreatePostPage />} />
-                <Route path="/create" element={<CreatePostPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-              </Routes>
-            </Layout>
-          }
-        />
+    <SnackbarProvider> {/* Page Notifications */}
+      <UserProvider>
+        <Routes>
+          <Route
+            path="/*"
+            element={
+              <Layout> {/* Page layout - has Sidebar and Navbar */}
+                <Routes>
+                  <Route path="/" element={<Main />} />
+                  <Route path="/results" element={<SearchResultsPage />} />
+                  <Route path="/post/:id" element={<PostDetailsPage />} />
+                  <Route path="/edit-post/:id" element={<CreatePostPage />} />
+                  <Route path="/create" element={<CreatePostPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+              </Layout>
+            }
+          />
 
-        {/* LoginPage without Layout */}
-        <Route
-          path="/login"
-          element={<LoginPage />} 
-        />
-      </Routes>
-    </UserProvider>
+          {/* LoginPage without Layout */}
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </UserProvider>
+    </SnackbarProvider>
   </Router>
 );
 

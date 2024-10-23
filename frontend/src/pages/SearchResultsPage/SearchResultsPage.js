@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Link as RouterLink } from "react-router-dom";  
 import {
   Box,
   Checkbox,
@@ -10,6 +11,7 @@ import {
   AccordionDetails,
   Typography,
   Grid,
+  Breadcrumbs, 
 } from "@mui/material";
 
 // MUI Imports
@@ -160,6 +162,14 @@ const SearchResultsPage = () => {
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       {/* Main content */}
       <Box sx={{ flexGrow: 1 }}>
+        {/* Breadcrumbs section */}
+        <Breadcrumbs aria-label="breadcrumb"  sx={{ marginLeft: 4, marginBlock:1 }}>
+            <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              Home
+            </RouterLink>
+            <Typography color="text.primary">Search Results</Typography>
+          </Breadcrumbs>
+
         <Box sx={{ marginBottom: 2 }}>
           <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
         </Box>

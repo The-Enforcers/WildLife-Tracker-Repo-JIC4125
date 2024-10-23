@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import './HelpPopup.css';
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import "./HelpPopup.css";
 
 const HelpPopup = ({ isOpen, onClose }) => {
   const [isVisible, setIsVisible] = useState(isOpen);
@@ -20,10 +20,16 @@ const HelpPopup = ({ isOpen, onClose }) => {
           <li>Use the sidebar to navigate between different sections.</li>
           <li>Click on "New Post" to create a new entry.</li>
           <li>View all your posts by clicking on "View Posts".</li>
-          <li>Access your recent activity and settings from the bottom of the sidebar.</li>
+          <li>
+            Access your recent activity and settings from the bottom of the
+            sidebar.
+          </li>
         </ul>
-        <p>If you need further assistance, don't hesitate to contact our support team!</p>
-        <button onClick={onClose}>Got it, thanks!</button>
+        <p>
+          If you need further assistance, don't hesitate to contact our support
+          team!
+        </p>
+        <button onClick={onClose}>Next</button>
       </div>
     </div>,
     document.body
