@@ -22,8 +22,8 @@ exports.getPostById = async (req, res) => {
 
 exports.createPost = async (req, res) => {
     console.log(req.body);
-    const { postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author } = req.body;
-    const newPost = new Post({ postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author  });
+    const { postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author, authorId, authorImage } = req.body;
+    const newPost = new Post({ postImage, title, scientificName, commonName, animalType, trackerType, trackerImage, dataTypes, enclosureType, enclosureImage, attachmentType, attachmentImage, recommendations, author, authorId, authorImage  });
 
     console.log(newPost);
 

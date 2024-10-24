@@ -57,6 +57,14 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  authorId: {
+    type: Number,
+    required: true,
+  },
+  authorImage: {
+    type: String,
+    required: false,
+  },
   date: {
     type: Date,
     default: Date.now,

@@ -356,6 +356,8 @@ const CreatePostPage = () => {
         attachmentImage: imageFilenames.attachmentType,
         recommendations,
         author: user.displayName,
+        authorId: user.googleId,
+        authorImage: user.picture,
       };
   
       if (isEditing) {

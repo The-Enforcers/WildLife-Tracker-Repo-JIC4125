@@ -4,7 +4,7 @@ import { getPostById } from "../../services/postService";
 // React quill
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
-// CSS file 
+// CSS file
 import "./PostDetailsPage.css";
 //MUI components
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -14,7 +14,6 @@ import { Breadcrumbs, Button, Typography } from "@mui/material";
 
 // User context
 import { UserContext } from "../../context/UserContext";
-
 
 const PostDetailsPage = () => {
   const navigate = useNavigate();
@@ -50,7 +49,6 @@ const PostDetailsPage = () => {
     fetchPost();
   }, [id]);
 
-
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
   };
@@ -70,7 +68,10 @@ const PostDetailsPage = () => {
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           Home
         </Link>
-        <Link to="/results" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/results"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           Search Results
         </Link>
         <Typography color="text.primary">
@@ -78,9 +79,7 @@ const PostDetailsPage = () => {
         </Typography>
       </Breadcrumbs>
       <div className="main-container">
-        
         <div className="post-head">
-        
           <div className="post-meta">
             <p className="post-title"> {post.title} </p>
             <div className="animal-names">
@@ -97,38 +96,43 @@ const PostDetailsPage = () => {
                 <p className="common-name">{post.trackerType}</p>
               </div>
               <div className="post-author">
-              <img
-                className="profile-picture"
-                src="https://zsuttonphoto.com/wp-content/uploads/2016/05/Los-Angeles-Headshot-Photography-8.jpg"
-                alt="Author"
-              />
-              <p className="author-name"> {post.author}</p>
-            </div>
+                <img
+                  className="profile-picture"
+                  src="https://lh3.googleusercontent.com/a/ACg8ocJn5ULmcVQ21AxS6dRbWawXIcoNByzL89arGgjqqfaKDdLaEXlhxg=s96-c"
+                  alt="Author"
+                  onError={(e) => {
+                    e.target.onerror = null; // Prevent infinite loop if fallback image also fails
+                    e.target.src = "https://via.placeholder.com/150"; // Fallback image
+                  }}
+                />
+
+                <p className="author-name"> {post.author}</p>
+              </div>
             </div>
           </div>
           <div className="button-container">
-          {user && post && user.displayName === post.author && (
-            <Button
-              variant="contained"
-              onClick={handleEdit}
-              startIcon={<EditIcon />}
-              sx={{
-                backgroundColor: "#212e38",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#303f9f",
-                },
-                textTransform: "none",
-                fontSize: "15px",
-                fontWeight: "bold",
-                borderRadius: "20px",
-                padding: "8px 16px",
-              }}
-            >
-              Edit
-            </Button>
-          )}
-        </div>
+            {user && post && user.displayName === post.author && (
+              <Button
+                variant="contained"
+                onClick={handleEdit}
+                startIcon={<EditIcon />}
+                sx={{
+                  backgroundColor: "#212e38",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#303f9f",
+                  },
+                  textTransform: "none",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                  borderRadius: "20px",
+                  padding: "8px 16px",
+                }}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
           <div className="post-picture">
             <img
               className="post-image"
@@ -136,7 +140,6 @@ const PostDetailsPage = () => {
               alt="Post"
             />
           </div>
-          
         </div>
         <div className="tracker-info">
           <div className="tracker-info-head">
