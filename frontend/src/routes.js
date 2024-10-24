@@ -21,7 +21,7 @@ const AppRoutes = () => (
               <Layout> {/* Page layout - has Sidebar and Navbar */}
                 <Routes>
                   <Route path="/" element={<Main />} />
-                  <Route path="/results" element={<SearchResultsPage />} />
+                  <Route path="/posts" element={<SearchResultsPage />} />
                   <Route path="/post/:id" element={<PostDetailsPage />} />
                   <Route path="/edit-post/:id" element={<CreatePostPage />} />
                   <Route path="/create" element={<CreatePostPage />} />

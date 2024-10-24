@@ -181,7 +181,7 @@ const SearchResultsPage = () => {
           >
             Home
           </RouterLink>
-          <Typography color="text.primary">Search Results</Typography>
+          <Typography color="text.primary">Posts</Typography>
         </Breadcrumbs>
 
         <Box sx={{ marginBottom: 2 }}>

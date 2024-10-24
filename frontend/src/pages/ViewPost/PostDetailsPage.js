@@ -69,10 +69,10 @@ const PostDetailsPage = () => {
           Home
         </Link>
         <Link
-          to="/results"
+          to="/posts"
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          Search Results
+          Posts
         </Link>
         <Typography color="text.primary">
           {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}

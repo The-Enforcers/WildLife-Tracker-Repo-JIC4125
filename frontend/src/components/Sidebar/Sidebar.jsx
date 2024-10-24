@@ -169,7 +169,7 @@ const Sidebar = () => {
 
           <div
             ref={(el) => (iconRefs.current[2] = el)}
-            onClick={() => handleNavigation("/results")}
+            onClick={() => handleNavigation("/posts")}
             className={`view-posts ${currentStep === 2 ? "highlight" : ""}`}
           >
             <VisibilityIcon />

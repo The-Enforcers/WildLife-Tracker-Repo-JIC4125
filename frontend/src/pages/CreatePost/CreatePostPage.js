@@ -367,7 +367,7 @@ const CreatePostPage = () => {
         await createPost(postData);
         showSnackbar("Posted!", "success");
       }
-      navigate("/results");
+      navigate("/posts");
     } catch (error) {
       showSnackbar("Error creating/updating post", "error");
       console.error("Error creating/updating post:", error);
