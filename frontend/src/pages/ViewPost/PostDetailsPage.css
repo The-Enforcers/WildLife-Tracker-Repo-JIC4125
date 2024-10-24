@@ -1,11 +1,4 @@
-.main {
-  flex: 1;
-  max-height: 100vh;
-  overflow: hidden;
-  position: relative;
-  padding-bottom: 0;
-  overflow-y: scroll;
-}
+
 
 /* Post Details stuff */
 .button-container {

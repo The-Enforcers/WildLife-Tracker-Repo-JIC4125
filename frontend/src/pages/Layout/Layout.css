@@ -3,9 +3,7 @@
   max-height: 100vh;
   overflow: hidden;
   position: relative;
-  padding-bottom: 0;
   overflow-y: auto;
-  max-height: 100vh;
 }
 
 .main .main-container {

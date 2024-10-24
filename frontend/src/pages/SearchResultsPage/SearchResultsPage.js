@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink } from "react-router-dom";  
+import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -11,7 +11,7 @@ import {
   AccordionDetails,
   Typography,
   Grid,
-  Breadcrumbs, 
+  Breadcrumbs,
 } from "@mui/material";
 
 // MUI Imports
@@ -21,13 +21,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PetsIcon from "@mui/icons-material/Pets";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import ScienceIcon from "@mui/icons-material/Science";
-import TerrainIcon from '@mui/icons-material/Terrain';  
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import WavesIcon from '@mui/icons-material/Waves';
-import WhatshotIcon from '@mui/icons-material/Whatshot';
-import CloudIcon from '@mui/icons-material/Cloud';
-import PublicIcon from '@mui/icons-material/Public';
-import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+import TerrainIcon from "@mui/icons-material/Terrain";
+import AcUnitIcon from "@mui/icons-material/AcUnit";
+import WavesIcon from "@mui/icons-material/Waves";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import CloudIcon from "@mui/icons-material/Cloud";
+import PublicIcon from "@mui/icons-material/Public";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
@@ -64,14 +64,14 @@ const SearchResultsPage = () => {
     GpsFixedIcon,
     ScienceIcon,
     TerrainIcon,
-    AcUnitIcon,      
-    WavesIcon,       
-    WhatshotIcon,    
-    CloudIcon,       
-    PublicIcon,      
-    ElectricBoltIcon 
+    AcUnitIcon,
+    WavesIcon,
+    WhatshotIcon,
+    CloudIcon,
+    PublicIcon,
+    ElectricBoltIcon,
   ];
-  
+
   // fetch animals data from the backend
   const fetchAnimals = useCallback(async () => {
     try {
@@ -97,7 +97,7 @@ const SearchResultsPage = () => {
   // function to randomly select icons
   const getRandomIcons = () => {
     const shuffledIcons = [...iconList].sort(() => 0.5 - Math.random());
-    return shuffledIcons.slice(0, 3); 
+    return shuffledIcons.slice(0, 3);
   };
 
   // function to handle checkbox changes
@@ -163,32 +163,94 @@ const SearchResultsPage = () => {
       {/* Main content */}
       <Box sx={{ flexGrow: 1 }}>
         {/* Breadcrumbs section */}
-        <Breadcrumbs aria-label="breadcrumb"  sx={{ marginLeft: 4, marginBlock:1 }}>
-            <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </RouterLink>
-            <Typography color="text.primary">Search Results</Typography>
-          </Breadcrumbs>
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          sx={{ marginLeft: 4, marginBlock: 1 }}
+        >
+          <RouterLink
+            to="/"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            Home
+          </RouterLink>
+          <Typography color="text.primary">Search Results</Typography>
+        </Breadcrumbs>
 
         <Box sx={{ marginBottom: 2 }}>
-          <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
+          <SearchBox
+            input={input}
+            setInput={setInput}
+            onSearch={fetchAnimals}
+          />
         </Box>
 
         <Grid container spacing={2}>
           {/* Filters on the left */}
           <Grid item xs={12} sm={3} md={2}>
-            <Box sx={{ padding: 1, borderRight: "1px solid #ddd", height: "100%", overflowY: "auto" }}>
+            <Box
+              sx={{
+                padding: 1,
+                borderRight: "1px solid #ddd",
+                height: "100%",
+                overflowY: "auto",
+              }}
+            >
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Animal Type</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.mammal} onChange={handleCheckboxChange} name="mammal" />} label="Mammal" />
-                    <FormControlLabel control={<Checkbox checked={filters.reptile} onChange={handleCheckboxChange} name="reptile" />} label="Reptile" />
-                    <FormControlLabel control={<Checkbox checked={filters.amphibian} onChange={handleCheckboxChange} name="amphibian" />} label="Amphibian" />
-                    <FormControlLabel control={<Checkbox checked={filters.fish} onChange={handleCheckboxChange} name="fish" />} label="Fish" />
-                    <FormControlLabel control={<Checkbox checked={filters.bird} onChange={handleCheckboxChange} name="bird" />} label="Bird" />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.mammal}
+                          onChange={handleCheckboxChange}
+                          name="mammal"
+                        />
+                      }
+                      label="Mammal"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.reptile}
+                          onChange={handleCheckboxChange}
+                          name="reptile"
+                        />
+                      }
+                      label="Reptile"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.amphibian}
+                          onChange={handleCheckboxChange}
+                          name="amphibian"
+                        />
+                      }
+                      label="Amphibian"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.fish}
+                          onChange={handleCheckboxChange}
+                          name="fish"
+                        />
+                      }
+                      label="Fish"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.bird}
+                          onChange={handleCheckboxChange}
+                          name="bird"
+                        />
+                      }
+                      label="Bird"
+                    />
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
@@ -199,13 +261,76 @@ const SearchResultsPage = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.vhf} onChange={handleCheckboxChange} name="vhf" />} label="VHF" />
-                    <FormControlLabel control={<Checkbox checked={filters.satellite} onChange={handleCheckboxChange} name="satellite" />} label="Satellite" />
-                    <FormControlLabel control={<Checkbox checked={filters.lora} onChange={handleCheckboxChange} name="lora" />} label="LoRa" />
-                    <FormControlLabel control={<Checkbox checked={filters.acoustic} onChange={handleCheckboxChange} name="acoustic" />} label="Acoustic" />
-                    <FormControlLabel control={<Checkbox checked={filters.cell} onChange={handleCheckboxChange} name="cell" />} label="Cellular / GSM" />
-                    <FormControlLabel control={<Checkbox checked={filters.bio} onChange={handleCheckboxChange} name="bio" />} label="Bio-logger" />
-                    <FormControlLabel control={<Checkbox checked={filters.rfid} onChange={handleCheckboxChange} name="rfid" />} label="RFID" />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.vhf}
+                          onChange={handleCheckboxChange}
+                          name="vhf"
+                        />
+                      }
+                      label="VHF"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.satellite}
+                          onChange={handleCheckboxChange}
+                          name="satellite"
+                        />
+                      }
+                      label="Satellite"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.lora}
+                          onChange={handleCheckboxChange}
+                          name="lora"
+                        />
+                      }
+                      label="LoRa"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.acoustic}
+                          onChange={handleCheckboxChange}
+                          name="acoustic"
+                        />
+                      }
+                      label="Acoustic"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.cell}
+                          onChange={handleCheckboxChange}
+                          name="cell"
+                        />
+                      }
+                      label="Cellular / GSM"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.bio}
+                          onChange={handleCheckboxChange}
+                          name="bio"
+                        />
+                      }
+                      label="Bio-logger"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.rfid}
+                          onChange={handleCheckboxChange}
+                          name="rfid"
+                        />
+                      }
+                      label="RFID"
+                    />
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
@@ -216,10 +341,46 @@ const SearchResultsPage = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.encapsulated} onChange={handleCheckboxChange} name="encapsulated" />} label="Encapsulated" />
-                    <FormControlLabel control={<Checkbox checked={filters.shrink} onChange={handleCheckboxChange} name="shrink" />} label="Shrink wrap" />
-                    <FormControlLabel control={<Checkbox checked={filters.potting} onChange={handleCheckboxChange} name="potting" />} label="Potting" />
-                    <FormControlLabel control={<Checkbox checked={filters.hematic} onChange={handleCheckboxChange} name="hematic" />} label="Hematic seal" />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.encapsulated}
+                          onChange={handleCheckboxChange}
+                          name="encapsulated"
+                        />
+                      }
+                      label="Encapsulated"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.shrink}
+                          onChange={handleCheckboxChange}
+                          name="shrink"
+                        />
+                      }
+                      label="Shrink wrap"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.potting}
+                          onChange={handleCheckboxChange}
+                          name="potting"
+                        />
+                      }
+                      label="Potting"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.hematic}
+                          onChange={handleCheckboxChange}
+                          name="hematic"
+                        />
+                      }
+                      label="Hematic seal"
+                    />
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
@@ -230,23 +391,72 @@ const SearchResultsPage = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.harness} onChange={handleCheckboxChange} name="harness" />} label="Harness" />
-                    <FormControlLabel control={<Checkbox checked={filters.collar} onChange={handleCheckboxChange} name="collar" />} label="Collar" />
-                    <FormControlLabel control={<Checkbox checked={filters.bolt} onChange={handleCheckboxChange} name="bolt" />} label="Bolt" />
-                    <FormControlLabel control={<Checkbox checked={filters.implant} onChange={handleCheckboxChange} name="implant" />} label="Implant" />
-                    <FormControlLabel control={<Checkbox checked={filters.adhesive} onChange={handleCheckboxChange} name="adhesive" />} label="Adhesive" />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.harness}
+                          onChange={handleCheckboxChange}
+                          name="harness"
+                        />
+                      }
+                      label="Harness"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.collar}
+                          onChange={handleCheckboxChange}
+                          name="collar"
+                        />
+                      }
+                      label="Collar"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.bolt}
+                          onChange={handleCheckboxChange}
+                          name="bolt"
+                        />
+                      }
+                      label="Bolt"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.implant}
+                          onChange={handleCheckboxChange}
+                          name="implant"
+                        />
+                      }
+                      label="Implant"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.adhesive}
+                          onChange={handleCheckboxChange}
+                          name="adhesive"
+                        />
+                      }
+                      label="Adhesive"
+                    />
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
 
-              <Button variant="contained" onClick={applyFilters} sx={{ marginTop: 2 }}>
+              <Button
+                variant="contained"
+                onClick={applyFilters}
+                sx={{ marginTop: 2 }}
+              >
                 Apply Filters
               </Button>
             </Box>
           </Grid>
 
           {/* Grid with animal cards */}
-          <Grid item xs={12} sm={9} md={10}>
+          <Grid item xs={12} sm={9} md={10} sx={{ pb: 2 }}>
             <Grid container spacing={2}>
               {animals.map((animal, index) => (
                 <Grid item key={index} xs={12} sm={6} md={4} lg={3}>

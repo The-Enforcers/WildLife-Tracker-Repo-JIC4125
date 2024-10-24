@@ -75,7 +75,7 @@ const PostDetailsPage = () => {
   const shortenedTitle = post.title.split(" ").slice(0, 3).join(" ");
 
   return (
-    <div className="main">
+    <>
       {/* Breadcrumbs section */}
       <Breadcrumbs
         aria-label="breadcrumb"
@@ -261,7 +261,7 @@ const PostDetailsPage = () => {
           theme="bubble"
         />
       </div>
-    </div>
+    </>
   );
 };
 
