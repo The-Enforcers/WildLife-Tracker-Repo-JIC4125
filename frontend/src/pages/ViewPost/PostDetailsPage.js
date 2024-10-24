@@ -98,11 +98,11 @@ const PostDetailsPage = () => {
               <div className="post-author">
                 <img
                   className="profile-picture"
-                  src="https://lh3.googleusercontent.com/a/ACg8ocJn5ULmcVQ21AxS6dRbWawXIcoNByzL89arGgjqqfaKDdLaEXlhxg=s96-c"
+                  src={post.authorImage || "https://via.placeholder.com/150"} // Use placeholder if post.authorImage is null or undefined
                   alt="Author"
                   onError={(e) => {
                     e.target.onerror = null; // Prevent infinite loop if fallback image also fails
-                    e.target.src = "https://via.placeholder.com/150"; // Fallback image
+                    e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
                   }}
                 />
 
