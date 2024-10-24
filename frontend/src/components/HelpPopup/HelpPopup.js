@@ -20,10 +20,6 @@ const HelpPopup = ({ isOpen, onClose }) => {
           <li>Use the sidebar to navigate between different sections.</li>
           <li>Click on "New Post" to create a new entry.</li>
           <li>View all your posts by clicking on "View Posts".</li>
-          <li>
-            Access your recent activity and settings from the bottom of the
-            sidebar.
-          </li>
         </ul>
         <p>
           If you need further assistance, don't hesitate to contact our support
