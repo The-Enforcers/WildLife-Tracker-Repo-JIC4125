@@ -237,7 +237,12 @@ export default function ProfilePage() {
                     {/* Set height and enable scrolling */}
                     <List>
                       {authorPosts.map((post) => (
-                        <ListItem key={post._id}>
+                        <ListItem
+                          key={post._id}
+                          component={Link}
+                          to={`/post/${post._id}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
                           <ListItemAvatar>
                             <Avatar
                               src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
