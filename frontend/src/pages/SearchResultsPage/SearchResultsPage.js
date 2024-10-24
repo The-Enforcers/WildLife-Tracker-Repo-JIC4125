@@ -12,6 +12,7 @@ import {
   Typography,
   Grid,
   Breadcrumbs,
+  CircularProgress,
 } from "@mui/material";
 
 // MUI Imports
@@ -35,6 +36,7 @@ import SearchBox from "../../components/SearchBox/SearchBox";
 const SearchResultsPage = () => {
   const [input, setInput] = useState("");
   const [animals, setAnimals] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     vhf: false,
     satellite: false,
@@ -74,6 +76,7 @@ const SearchResultsPage = () => {
 
   // fetch animals data from the backend
   const fetchAnimals = useCallback(async () => {
+    setLoading(true);
     try {
       let request = `https://${window.location.hostname}:5001/api/posts`;
 
@@ -86,6 +89,8 @@ const SearchResultsPage = () => {
       setAnimals(data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   }, [input]);
 
@@ -110,6 +115,7 @@ const SearchResultsPage = () => {
 
   // Function to handle filter button click
   const applyFilters = async () => {
+    setLoading(true);
     const trackerTypes = [];
     const attachmentTypes = [];
     const enclosureTypes = [];
@@ -155,6 +161,8 @@ const SearchResultsPage = () => {
       setAnimals(data);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -457,21 +465,34 @@ const SearchResultsPage = () => {
 
           {/* Grid with animal cards */}
           <Grid item xs={12} sm={9} md={10} sx={{ pb: 2 }}>
-            <Grid container spacing={2}>
-              {animals.map((animal, index) => (
-                <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                  <ImageCard
-                    title={animal.title}
-                    description={animal.trackerType}
-                    post_id={animal._id}
-                    image={animal.postImage}
-                    animalType={animal.animalType}
-                    trackerType={animal.trackerType}
-                    icons={getRandomIcons()}
-                  />
-                </Grid>
-              ))}
-            </Grid>
+            {loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Grid container spacing={2}>
+                {animals.map((animal, index) => (
+                  <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                    <ImageCard
+                      title={animal.title}
+                      description={animal.trackerType}
+                      post_id={animal._id}
+                      image={animal.postImage}
+                      animalType={animal.animalType}
+                      trackerType={animal.trackerType}
+                      icons={getRandomIcons()}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Box>
