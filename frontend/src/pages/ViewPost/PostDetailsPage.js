@@ -1,23 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getPostById } from "../../services/postService";
+// React quill
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
+// CSS file 
 import "./PostDetailsPage.css";
-
+//MUI components
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-
-import { Breadcrumbs, Button, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { Breadcrumbs, Button, Typography } from "@mui/material";
+
+// User context
+import { UserContext } from "../../context/UserContext";
+
 
 const PostDetailsPage = () => {
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+
   const { id } = useParams();
   const [post, setPost] = useState(null);
-  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [expandedBox, setExpandedBox] = useState(null);
-  const navigate = useNavigate();
 
   const handleBoxClick = (boxType) => {
     setExpandedBox((prev) => (prev === boxType ? null : boxType));
@@ -44,26 +50,6 @@ const PostDetailsPage = () => {
     fetchPost();
   }, [id]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(
-          `https://${window.location.hostname}:5001/api/user`,
-          {
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
