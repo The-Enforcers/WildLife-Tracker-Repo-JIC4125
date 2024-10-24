@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Avatar,
   Box,
@@ -24,10 +24,9 @@ import {
   CameraAlt,
   Favorite,
 } from "@mui/icons-material";
-
-// user context for user information
 import { UserContext } from "../../context/UserContext";
 import { Link } from "react-router-dom";
+import axios from "axios"; // Axios for API calls
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(0),
@@ -78,173 +77,206 @@ function TabPanel(props) {
 
 export default function ProfilePage() {
   const [value, setValue] = useState(0);
-  const { user } = useContext(UserContext); // access the user from UserContext
+  const { user } = useContext(UserContext); // Access user from UserContext
+  const [authorPosts, setAuthorPosts] = useState([]); // State to store author's posts
+  const [loading, setLoading] = useState(true); // State for loading
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  return (
-      <Box sx={{ flexGrow: 1 }}>
-         <Breadcrumbs aria-label="breadcrumb" sx={{margin: 1}}>
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </Link>
-            <Typography color="text.primary">Profile</Typography>
-          </Breadcrumbs>
-        <Container maxWidth="lg">
-          <StyledPaper elevation={3}>
-            <Grid container spacing={3}>
-              <Grid
-                item
-                xs={12}
-                md={4}
-                mt={8}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <ProfileAvatar
-                  alt={user?.displayName || "User Avatar"} // Use user data
-                  src={user?.picture || "/placeholder.svg?height=200&width=200"} // Use user data
-                />
-                <Typography variant="h5">{user?.displayName || "Anonymous"}</Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  {user?.bio || "Wildlife Enthusiast"} {/* Optional user bio */}
-                </Typography>
+  // Fetch posts by the author when the component mounts
+  useEffect(() => {
+    const fetchAuthorPosts = async () => {
+      if (user && user.googleId) {
+        try {
+          const response = await axios.get(
+            `https://${window.location.hostname}:5001/api/posts/author/${user.googleId}`
+          );
+          setAuthorPosts(response.data);
+        } catch (error) {
+          console.error("Error fetching author posts:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
 
-                <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                  <LocationOn fontSize="small" sx={{ mr: 1 }} />
-                  <Typography variant="body2">{user?.location || "Unknown Location"}</Typography>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                  <DateRange fontSize="small" sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    Member since: {user?.memberSince || "N/A"}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={8}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="profile tabs"
-                  >
-                    <Tab label="About" icon={<Pets />} iconPosition="start" />
-                    <Tab
-                      label="Recent Posts"
-                      icon={<CameraAlt />}
-                      iconPosition="start"
-                    />
-                  </Tabs>
-                </Box>
-                <TabPanel value={value} index={0}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
-                      <StatsCard>
-                        <Typography variant="h4">1,234</Typography>
-                        <Typography variant="subtitle1" color="textSecondary">
-                          Total Posts
-                        </Typography>
-                      </StatsCard>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <StatsCard>
-                        <Typography variant="h4">56</Typography>
-                        <Typography variant="subtitle1" color="textSecondary">
-                          Species Spotted
-                        </Typography>
-                      </StatsCard>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <StatsCard>
-                        <Typography variant="h4">789</Typography>
-                        <Typography variant="subtitle1" color="textSecondary">
-                          Photos Uploaded
-                        </Typography>
-                      </StatsCard>
-                    </Grid>
-                  </Grid>
-                  <Box mt={2}>
+    fetchAuthorPosts();
+  }, [user]);
+
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <Breadcrumbs aria-label="breadcrumb" sx={{ margin: 1 }}>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          Home
+        </Link>
+        <Typography color="text.primary">Profile</Typography>
+      </Breadcrumbs>
+      <Container maxWidth="lg">
+        <StyledPaper elevation={3}>
+          <Grid container spacing={3}>
+            <Grid
+              item
+              xs={12}
+              md={4}
+              mt={8}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <ProfileAvatar
+                alt={user?.displayName || "User Avatar"}
+                src={user?.picture || "/placeholder.svg?height=200&width=200"}
+              />
+              <Typography variant="h5">
+                {user?.displayName || "Anonymous"}
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                gutterBottom
+              >
+                {user?.bio || "Wildlife Enthusiast"}
+              </Typography>
+
+              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                <LocationOn fontSize="small" sx={{ mr: 1 }} />
+                <Typography variant="body2">
+                  {user?.location || "Unknown Location"}
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+                <DateRange fontSize="small" sx={{ mr: 1 }} />
+                <Typography variant="body2">
+                  Member since: {user?.memberSince || "N/A"}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="profile tabs"
+                >
+                  <Tab label="About" icon={<Pets />} iconPosition="start" />
+                  <Tab
+                    label="Recent Posts"
+                    icon={<CameraAlt />}
+                    iconPosition="start"
+                  />
+                </Tabs>
+              </Box>
+              <TabPanel value={value} index={0}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={4}>
                     <StatsCard>
-                      <Typography variant="body1">
-                        Passionate wildlife enthusiast with a keen eye for rare
-                        species. I've been tracking and documenting wildlife
-                        across North America for over 5 years.
+                      <Typography variant="h4">1,234</Typography>
+                      <Typography variant="subtitle1" color="textSecondary">
+                        Total Posts
                       </Typography>
                     </StatsCard>
-                  </Box>
-                  <br />
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {[
-                      "River Otter",
-                      "Grizzly Bear",
-                      "Bald Eagle",
-                      "Frog",
-                      "American Bison",
-                      "Elk",
-                      "Moose",
-                      "Mountain Lion",
-                      "Beaver",
-                    ].map((species) => (
-                      <Chip
-                        key={species}
-                        label={species}
-                        icon={<Favorite />}
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                  <List>
-                    {[
-                      {
-                        name: "Animal 1",
-                        location: "Lamar Valley",
-                        date: "2023-06-15",
-                      },
-                      {
-                        name: "Animal 2",
-                        location: "Hayden Valley",
-                        date: "2023-06-10",
-                      },
-                      {
-                        name: "Animal 3",
-                        location: "Yellowstone Lake",
-                        date: "2023-06-05",
-                      },
-                      {
-                        name: "Animal 4 ",
-                        location: "Old Faithful",
-                        date: "2023-05-30",
-                      },
-                    ].map((sighting, index) => (
-                      <ListItem key={index}>
-                        <ListItemAvatar>
-                          <Avatar
-                            src={`/placeholder.svg?height=40&width=40&text=${sighting.name}`}
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <StatsCard>
+                      <Typography variant="h4">56</Typography>
+                      <Typography variant="subtitle1" color="textSecondary">
+                        Species Spotted
+                      </Typography>
+                    </StatsCard>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <StatsCard>
+                      <Typography variant="h4">789</Typography>
+                      <Typography variant="subtitle1" color="textSecondary">
+                        Photos Uploaded
+                      </Typography>
+                    </StatsCard>
+                  </Grid>
+                </Grid>
+                <Box mt={2}>
+                  <StatsCard>
+                    <Typography variant="body1">
+                      Passionate wildlife enthusiast with a keen eye for rare
+                      species. I've been tracking and documenting wildlife
+                      across North America for over 5 years.
+                    </Typography>
+                  </StatsCard>
+                </Box>
+                <br />
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {[
+                    "River Otter",
+                    "Grizzly Bear",
+                    "Bald Eagle",
+                    "Frog",
+                    "American Bison",
+                    "Elk",
+                    "Moose",
+                    "Mountain Lion",
+                    "Beaver",
+                  ].map((species) => (
+                    <Chip
+                      key={species}
+                      label={species}
+                      icon={<Favorite />}
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                {loading ? (
+                  <Typography>Loading...</Typography>
+                ) : (
+                  <Box sx={{ maxHeight: 400, overflow: "auto" }}>
+                    {" "}
+                    {/* Set height and enable scrolling */}
+                    <List>
+                      {authorPosts.map((post) => (
+                        <ListItem key={post._id}>
+                          <ListItemAvatar>
+                            <Avatar
+                              src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
+                              alt={post.title}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={post.title}
+                            secondary={
+                              <>
+                                <Typography
+                                  component="span"
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {post.commonName}
+                                </Typography>
+                                <Typography
+                                  component="span"
+                                  variant="caption"
+                                  color="textSecondary"
+                                >
+                                  {` • ${new Date(
+                                    post.date
+                                  ).toLocaleDateString()}`}
+                                </Typography>
+                              </>
+                            }
                           />
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={sighting.name}
-                          secondary={`${sighting.location} - ${sighting.date}`}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </TabPanel>
-              </Grid>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </TabPanel>
             </Grid>
-          </StyledPaper>
-        </Container>
-      </Box>
+          </Grid>
+        </StyledPaper>
+      </Container>
+    </Box>
   );
 }
