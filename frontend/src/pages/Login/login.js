@@ -1,56 +1,69 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from 'react';
+import { Button, Typography, Container, Box } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const userParam = params.get("user");
-    if (userParam) {
-      const user = JSON.parse(decodeURIComponent(userParam));
-      localStorage.setItem("user", JSON.stringify(user));
-      navigate("/");
-    }
-  }, [location, navigate]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Implement your email/password login logic here
+  const handleGoogleSignIn = () => {
+    window.open("https://localhost:5001/auth/google", "_self"); 
   };
-
-  const handleGoogleLogin = () => {
-    window.open("https://localhost:5001/auth/google", "_self");
+  const handleBack = () => {
+    navigate('/');
   };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">
-          {isLogin ? "Login" : "Sign Up"}
-        </h2>
-        <form onSubmit={handleSubmit}>{/* Form fields */}</form>
+    <Container maxWidth="xs" sx={{ background: '#00000012' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: '8rem',
+          p: 3,
+        }}
+      >
+        <Typography variant="h5" component="h1" gutterBottom>
+          Sign in to your account
+        </Typography>
 
-        <button
-          className="w-full bg-red-500 text-white rounded-md py-2 px-4 mt-4 hover:bg-red-600"
-          onClick={handleGoogleLogin}
+        {/* Google Sign-In Button */}
+        <Button
+          variant="contained"
+          startIcon={<GoogleIcon />}
+          sx={{ backgroundColor: '#000', color: '#fff', width: '100%', marginBottom: 1 }}
+          onClick={handleGoogleSignIn}
         >
-          Login with Google
-        </button>
+          Sign in with Google
+        </Button>
 
-        <button
-          className="mt-4 text-sm text-blue-500 hover:underline"
-          onClick={() => setIsLogin(!isLogin)}
+        {/* Divider text */}
+        <Typography variant="body1" color="textSecondary" gutterBottom>
+          Or continue later
+        </Typography>
+
+        {/* Sign In Button */}
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 0, mb: 1, backgroundColor: '#000', color: '#fff', width: '50%' }}
+          onClick={handleBack}
         >
-          {isLogin
-            ? "Need an account? Sign up"
-            : "Already have an account? Login"}
-        </button>
-      </div>
-    </div>
+          back
+        </Button>
+
+        {/* Sign-up Link */}
+        <Typography variant="body2" color="textSecondary">
+          An account is needed to create posts.
+        </Typography>
+
+        <div className="main-bottom">
+          <p className="bottom-info">Developed by Georgia Tech Students</p>
+        </div>
+      </Box>
+    </Container>
   );
-};
+}
 
 export default LoginPage;
