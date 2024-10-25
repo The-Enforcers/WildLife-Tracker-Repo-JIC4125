@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -29,37 +29,43 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 import CloudIcon from "@mui/icons-material/Cloud";
 import PublicIcon from "@mui/icons-material/Public";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
-
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
 const SearchResultsPage = () => {
-  const [input, setInput] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get initial values from URL query params (or defaults)
+  const initialInput = searchParams.get("search") || "";
+  const [input, setInput] = useState(initialInput);
+
+  const initialFilters = {
+    vhf: searchParams.get("vhf") === "true",
+    satellite: searchParams.get("satellite") === "true",
+    lora: searchParams.get("lora") === "true",
+    acoustic: searchParams.get("acoustic") === "true",
+    cell: searchParams.get("cell") === "true",
+    bio: searchParams.get("bio") === "true",
+    rfid: searchParams.get("rfid") === "true",
+    encapsulated: searchParams.get("encapsulated") === "true",
+    potting: searchParams.get("potting") === "true",
+    shrink: searchParams.get("shrink") === "true",
+    hematic: searchParams.get("hematic") === "true",
+    harness: searchParams.get("harness") === "true",
+    collar: searchParams.get("collar") === "true",
+    adhesive: searchParams.get("adhesive") === "true",
+    bolt: searchParams.get("bolt") === "true",
+    implant: searchParams.get("implant") === "true",
+    mammal: searchParams.get("mammal") === "true",
+    reptile: searchParams.get("reptile") === "true",
+    amphibian: searchParams.get("amphibian") === "true",
+    fish: searchParams.get("fish") === "true",
+    bird: searchParams.get("bird") === "true",
+  };
+
+  const [filters, setFilters] = useState(initialFilters);
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    vhf: false,
-    satellite: false,
-    lora: false,
-    acoustic: false,
-    cell: false,
-    bio: false,
-    rfid: false,
-    encapsulated: false,
-    potting: false,
-    shrink: false,
-    hematic: false,
-    harness: false,
-    collar: false,
-    adhesive: false,
-    bolt: false,
-    implant: false,
-    mammal: false,
-    reptile: false,
-    amphibian: false,
-    fish: false,
-    bird: false,
-  });
 
   const iconList = [
     PetsIcon,
@@ -74,7 +80,21 @@ const SearchResultsPage = () => {
     ElectricBoltIcon,
   ];
 
-  // fetch animals data from the backend
+  // Update URL parameters whenever input or filters change
+  useEffect(() => {
+    const params = {
+      search: input,
+      ...Object.keys(filters)
+        .filter((key) => filters[key])
+        .reduce((acc, key) => {
+          acc[key] = "true";
+          return acc;
+        }, {}),
+    };
+    setSearchParams(params);
+  }, [input, filters, setSearchParams]);
+
+  // Fetch animals data from the backend
   const fetchAnimals = useCallback(async () => {
     setLoading(true);
     try {
@@ -94,7 +114,6 @@ const SearchResultsPage = () => {
     }
   }, [input]);
 
-  // Use fetchAnimals inside useEffect and include it in the dependency array
   useEffect(() => {
     fetchAnimals();
   }, [fetchAnimals]);

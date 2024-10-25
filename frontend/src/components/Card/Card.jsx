@@ -17,7 +17,7 @@ const ImageCard = ({ title, description, image, post_id, animalType, trackerType
         },
       }}
     >
-      <a href={`/post/${post_id}`} style={{ textDecoration: 'none' }}>
+      <a href={`/posts/${post_id}`} style={{ textDecoration: 'none' }}>
         <img src={`https://${window.location.hostname}:5001/api/posts/image/` + image} alt={title}
           style={{
             width: '100%',

@@ -111,7 +111,7 @@ const Main = () => {
 
   // Function to navigate to the post details page
   const navigateToPost = (postId) => {
-    navigate(`/post/${postId}`);
+    navigate(`/posts/${postId}`);
   };
 
   return (

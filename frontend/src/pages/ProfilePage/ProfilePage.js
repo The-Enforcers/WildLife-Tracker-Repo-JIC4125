@@ -238,7 +238,7 @@ export default function ProfilePage() {
                         <ListItem
                           key={post._id}
                           component={Link}
-                          to={`/post/${post._id}`}
+                          to={`/posts/${post._id}`}
                           style={{ textDecoration: "none", color: "inherit" }}
                         >
                           <ListItemAvatar>
