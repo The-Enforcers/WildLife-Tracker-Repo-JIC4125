@@ -30,6 +30,7 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import PublicIcon from '@mui/icons-material/Public';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import SearchIcon from '@mui/icons-material/Search';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { Tooltip } from "react-tooltip";
 
 import ImageCard from "../../components/Card/Card";
@@ -164,19 +165,54 @@ const SearchResultsPage = () => {
     });
   };
 
+  const resetFilters = (event) => {
+    
+    filters.vhf = false;
+    filters.satellite = false;
+    filters.lora = false;
+    filters.acoustic = false;
+    filters.cell = false;
+    filters.bio = false;
+    filters.rfid = false;
+
+    filters.encapsulated = false;
+    filters.potting = false;
+    filters.shrink = false;
+    filters.hematic = false;
+
+    filters.bolt = false;
+    filters.harness = false;
+    filters.collar = false;
+    filters.adhesive = false;
+    filters.implant = false;
+
+    filters.mammal = false;
+    filters.reptile = false;
+    filters.amphibian = false;
+    filters.fish = false;
+    filters.bird = false;
+
+    // Note: This function call doesnt exactly do anything,
+    // But it DOES trigger a UI event that updates the checkbox visible 
+    // values. Otherwise, the user would need to click in the form fields
+    // to get them to visually reset.
+    handleCheckboxChange(event);
+
+  }
+
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       {/* Main content */}
       <Box sx={{ flexGrow: 1}}>
 
-        <Box >
+        <Box>
           <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
         </Box>
 
         <Grid container spacing={2}>
           {/* Filters on the left */}
           <Grid item xs={12} sm={3} md={2}>
-            <Box sx={{ padding: 2, /*borderRight: "1px solid #ddd",*/ height: "100%", /*overflowY: "auto"*/ }}>
+            <Box sx={{ padding: 2, /*borderRight: "1px solid #ddd",*/ height: "105%", overflowY: "auto" }}>
               <div class="filter-group">
                 <div class="filter-group-head-div-wrapper">
                   <div class="filter-group-head-div">
@@ -237,19 +273,34 @@ const SearchResultsPage = () => {
                 </FormGroup>
               </div>
 
-              {/* Post button */}
-              <div className="apply-filter-container">
-                {/* Add Icon */}
-                <div
-                  className="apply-filter-icon"
-                  onClick={fetchAnimals}
-                  data-tooltip-id="apply-filter"
-                  data-tooltip-content="Apply Filters"
-                >
-                  <SearchIcon fontSize="medium" />
-                  <div>Apply Filters</div>
+              {/* Filters button */}
+              <div className="filters-button-box">
+                <div className="apply-filter-container filter-button-container">
+                  {/* Filter Icon */}
+                  <div
+                    className="apply-filter-icon"
+                    onClick={fetchAnimals}
+                    data-tooltip-id="apply-filter"
+                    data-tooltip-content="Apply Filters"
+                  >
+                    <SearchIcon fontSize="medium" />
+                    <div>Apply </div>
+                  </div>
+                </div>
+                <div className="reset-filter-container filter-button-container">
+                  {/* Reset Icon */}
+                  <div
+                    className="reset-filter-icon "
+                    onClick={resetFilters}
+                    data-tooltip-id="reset-filter"
+                    data-tooltip-content="Reset"
+                  >
+                    <CancelIcon fontSize="medium" />
+                    <div>Reset</div>
+                  </div>
                 </div>
               </div>
+              
             </Box>
           </Grid>
 
