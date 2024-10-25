@@ -110,9 +110,13 @@ app.get("/auth/logout", (req, res) => {
       console.error("Error during logout:", err);
       return res.status(500).json({ error: "Error during logout" });
     }
-    res.status(200).json({ message: "Logged out successfully" });
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.status(200).json({ message: "Logged out successfully" });
+    });
   });
 });
+
 
 app.get("/api/user", (req, res) => {
   if (req.isAuthenticated()) {
