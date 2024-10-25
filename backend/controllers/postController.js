@@ -72,6 +72,8 @@ exports.createPost = async (req, res) => {
     author,
     authorId,
     authorImage,
+    date: new Date(),
+    lastUpdated: null,
   });
 
   console.log(newPost);
@@ -177,7 +179,7 @@ exports.updatePost = async (req, res) => {
         }
       }
     );
-
+    updateData.lastUpdated = new Date();
     const updatedPost = await Post.findByIdAndUpdate(id, updateData, {
       new: true,
     });

@@ -68,10 +68,7 @@ const PostDetailsPage = () => {
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           Home
         </Link>
-        <Link
-          to="/posts"
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
+        <Link to="/posts" style={{ textDecoration: "none", color: "inherit" }}>
           Posts
         </Link>
         <Typography color="text.primary">
@@ -95,6 +92,7 @@ const PostDetailsPage = () => {
                 <p className="name-header">Tracker Type</p>
                 <p className="common-name">{post.trackerType}</p>
               </div>
+              
               <div className="post-author">
                 <img
                   className="profile-picture"
@@ -108,6 +106,24 @@ const PostDetailsPage = () => {
 
                 <p className="author-name"> {post.author}</p>
               </div>
+              {post.lastUpdated && (
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                >
+                  Last updated:{" "}
+                  {new Date(post.lastUpdated).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}{" "}
+                  at{" "}
+                  {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Typography>
+              )}
             </div>
           </div>
           <div className="button-container">

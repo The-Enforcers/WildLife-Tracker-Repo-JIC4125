@@ -177,6 +177,7 @@ const CreatePostPage = () => {
   const [errorOverlay, setErrorOverlay] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const { user, loading } = useContext(UserContext);
+  const [lastUpdatedDate, setLastUpdatedDate] = useState(null);
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
 
@@ -235,6 +236,7 @@ const CreatePostPage = () => {
             enclosureType: null,
             attachmentType: null,
           });
+          setLastUpdatedDate(postData.lastUpdated);
         } catch (error) {
           console.error("Error fetching post for editing:", error);
         }
@@ -323,7 +325,7 @@ const CreatePostPage = () => {
       );
       return;
     }
-  
+
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
@@ -336,7 +338,7 @@ const CreatePostPage = () => {
         }
         return { [key]: null };
       });
-  
+
       const uploadedImages = await Promise.all(imageUploads);
       const imageFilenames = Object.assign({}, ...uploadedImages);
       const postData = {
@@ -358,11 +360,13 @@ const CreatePostPage = () => {
         author: user.displayName,
         authorId: user.googleId,
         authorImage: user.picture,
+        lastUpdated: new Date().toISOString(),
       };
-  
+
       if (isEditing) {
         await updatePost(id, postData);
         showSnackbar("Updated!", "success");
+        setLastUpdatedDate(new Date().toLocaleString());
       } else {
         await createPost(postData);
         showSnackbar("Posted!", "success");
@@ -374,7 +378,7 @@ const CreatePostPage = () => {
       setError("An error occurred while saving the post. Please try again.");
     }
   };
-  
+
   return (
     <>
       {errorOverlay && (
@@ -482,6 +486,22 @@ const CreatePostPage = () => {
         <Typography variant="h4" gutterBottom>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
+        {lastUpdatedDate && (
+          <Typography variant="body2" color="textSecondary">
+            Edited:{" "}
+            {new Date(lastUpdatedDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}{" "}
+            at{" "}
+            {new Date(lastUpdatedDate).toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Typography>
+        )}
+
         {error && (
           <Typography color="error" sx={{ mb: 2 }}>
             {error}
