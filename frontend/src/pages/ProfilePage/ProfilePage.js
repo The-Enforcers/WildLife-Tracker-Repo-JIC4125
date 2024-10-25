@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Axios for API calls
+import { getPostsByAuthor } from "../../services/postService";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(0),
@@ -85,25 +85,23 @@ export default function ProfilePage() {
     setValue(newValue);
   };
 
-  // Fetch posts by the author when the component mounts
   useEffect(() => {
     const fetchAuthorPosts = async () => {
-      if (user && user.googleId) {
-        try {
-          const response = await axios.get(
-            `https://${window.location.hostname}:5001/api/posts/author/${user.googleId}`
-          );
-          setAuthorPosts(response.data);
-        } catch (error) {
-          console.error("Error fetching author posts:", error);
-        } finally {
-          setLoading(false);
+        if (user && user.googleId) {
+            try {
+                const authorPosts = await getPostsByAuthor(user.googleId);
+                setAuthorPosts(authorPosts);
+            } catch (error) {
+                console.error("Error fetching author posts:", error);
+            } finally {
+                setLoading(false);
+            }
         }
-      }
     };
 
     fetchAuthorPosts();
-  }, [user]);
+}, [user]);
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
