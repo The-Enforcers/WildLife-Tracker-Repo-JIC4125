@@ -20,28 +20,40 @@ export const UserProvider = ({ children }) => {
 
         if (response.ok) {
           const userData = await response.json();
-          setUser(userData);
 
-          // Check if the welcome message has already been shown during the session
-          const hasSeenWelcome = sessionStorage.getItem("hasSeenWelcome");
+          // Ensure userData contains expected properties
+          if (userData && userData.googleId && userData.email) {
+            setUser(userData);
 
-          if (!hasSeenWelcome) {
-            showSnackbar("Welcome!", "success");
-            sessionStorage.setItem("hasSeenWelcome", "true");
+            // Show welcome message only once per session
+            const hasSeenWelcome = sessionStorage.getItem("hasSeenWelcome");
+            if (!hasSeenWelcome) {
+              showSnackbar("Welcome!", "success");
+              sessionStorage.setItem("hasSeenWelcome", "true");
+            }
+          } else {
+            setUser(null);
+            console.error("Invalid user data structure");
+            showSnackbar("Login failed: Invalid user data", "error");
           }
-        } else {
+        } else if (response.status === 401 || response.status === 403) {
+          // User is unauthorized or forbidden
           setUser(null);
+          showSnackbar("Please log in to continue.", "info");
+        } else {
+          // Other error status
+          setUser(null);
+          showSnackbar("Error retrieving user data", "error");
         }
       } catch (error) {
         setUser(null);
-        console.log("User: not logged in");
       } finally {
         setLoading(false);
       }
     };
 
     fetchUser();
-  }, [showSnackbar]);
+  }, [showSnackbar, navigate]);
 
   const logoutUser = async () => {
     try {
