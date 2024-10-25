@@ -38,6 +38,8 @@ const SearchResultsPage = () => {
   // Get initial values from URL query params (or defaults)
   const initialInput = searchParams.get("search") || "";
   const [input, setInput] = useState(initialInput);
+  const [animals, setAnimals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const initialFilters = {
     vhf: searchParams.get("vhf") === "true",
@@ -62,10 +64,34 @@ const SearchResultsPage = () => {
     fish: searchParams.get("fish") === "true",
     bird: searchParams.get("bird") === "true",
   };
-
   const [filters, setFilters] = useState(initialFilters);
-  const [animals, setAnimals] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  // clear all filters
+  const clearFilters = () => {
+    setFilters({
+      vhf: false,
+      satellite: false,
+      lora: false,
+      acoustic: false,
+      cell: false,
+      bio: false,
+      rfid: false,
+      encapsulated: false,
+      potting: false,
+      shrink: false,
+      hematic: false,
+      harness: false,
+      collar: false,
+      adhesive: false,
+      bolt: false,
+      implant: false,
+      mammal: false,
+      reptile: false,
+      amphibian: false,
+      fish: false,
+      bird: false,
+    });
+  };
 
   const iconList = [
     PetsIcon,
@@ -211,7 +237,7 @@ const SearchResultsPage = () => {
           />
         </Box>
 
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           {/* Filters on the left */}
           <Grid item xs={12} sm={3} md={2}>
             <Box
@@ -471,11 +497,25 @@ const SearchResultsPage = () => {
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
-
+              {/* Clear Filters Button */}
+              <Button
+                variant="outlined"
+                onClick={clearFilters}
+                sx={{
+                  marginTop: 2,
+                  color: "#2e3339fc",
+                  borderColor: "#2e333994",
+                }}
+                fullWidth
+              >
+                Clear Filters
+              </Button>
+              {/* Apply Filters Button */}
               <Button
                 variant="contained"
                 onClick={applyFilters}
-                sx={{ marginTop: 2 }}
+                sx={{ marginTop: 1, backgroundColor: "#212e38" }}
+                fullWidth
               >
                 Apply Filters
               </Button>
