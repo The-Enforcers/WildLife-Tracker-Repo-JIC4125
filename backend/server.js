@@ -31,14 +31,7 @@ app.use(passport.session());
 const postRoutes = require("./routes/postRoutes");
 app.use("/api/posts", postRoutes);
 
-// MongoDB User schema
-const UserSchema = new mongoose.Schema({
-  googleId: String,
-  displayName: String,
-  email: String,
-  picture: String,
-});
-const User = mongoose.model("User", UserSchema);
+const User = require('./models/user');
 
 // Google OAuth setup
 passport.use(
