@@ -87,21 +87,20 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchAuthorPosts = async () => {
-        if (user && user.googleId) {
-            try {
-                const authorPosts = await getPostsByAuthor(user.googleId);
-                setAuthorPosts(authorPosts);
-            } catch (error) {
-                console.error("Error fetching author posts:", error);
-            } finally {
-                setLoading(false);
-            }
+      if (user && user.googleId) {
+        try {
+          const authorPosts = await getPostsByAuthor(user.googleId);
+          setAuthorPosts(authorPosts);
+        } catch (error) {
+          console.error("Error fetching author posts:", error);
+        } finally {
+          setLoading(false);
         }
+      }
     };
 
     fetchAuthorPosts();
-}, [user]);
-
+  }, [user]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -149,7 +148,14 @@ export default function ProfilePage() {
               <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                 <DateRange fontSize="small" sx={{ mr: 1 }} />
                 <Typography variant="body2">
-                  Member since: {user?.memberSince || "N/A"}
+                  Member since:{" "}
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "N/A"}
                 </Typography>
               </Box>
             </Grid>
