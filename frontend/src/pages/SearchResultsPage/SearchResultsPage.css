@@ -28,13 +28,12 @@
 }
 
 .filter-button-container {
-    margin: 0px 5px;
+    margin: 0px;
 }
 
 
 .filters-button-box {
 
-    display: flex;
 
 }
 
@@ -42,6 +41,8 @@
     display: flex;
     gap: 10px;
     width: 100%;
+    margin-bottom: 15px;
+
 }
 
 .apply-filter-icon {
@@ -86,4 +87,10 @@
 
 .reset-filter-icon:hover {
     background-color: #ff594e;
+}
+
+.post-grid-container {
+
+    padding-top: 16px;
+
 }

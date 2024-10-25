@@ -45,15 +45,24 @@ const Navbar = () => {
     navigate("/profile");
   };
 
-  return (
-    <div className="nav">
-      <p>Wildlife Tracker</p>
-      <Breadcrumbs aria-label="breadcrumb">
+  /*
+
+  Will readd breadcrumbs
+
+  <Breadcrumbs aria-label="breadcrumb">
             <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
               Home
             </RouterLink>
             <Typography color="text.primary">Search Results</Typography>
           </Breadcrumbs>
+      
+
+  */
+
+  return (
+    <div className="nav">
+      <p>Wildlife Tracker</p>
+      
       <div className="user-info">
         <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
           <Tooltip title="Account settings">
@@ -65,7 +74,7 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-                      {/* Breadcrumbs section */}
+              {/* Breadcrumbs section */}
 
               <Avatar
                 src={user?.picture || ""}

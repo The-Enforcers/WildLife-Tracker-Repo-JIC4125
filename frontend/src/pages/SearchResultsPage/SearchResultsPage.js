@@ -306,6 +306,7 @@ const SearchResultsPage = () => {
 
           {/* Grid with animal cards */}
           <Grid item xs={12} sm={9} md={10}>
+            <div class="post-grid-container">
             <Grid container spacing={2}>
               {animals.map((animal, index) => (
                 <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
@@ -321,6 +322,7 @@ const SearchResultsPage = () => {
                 </Grid>
               ))}
             </Grid>
+            </div>
           </Grid>
         </Grid>
       </Box>

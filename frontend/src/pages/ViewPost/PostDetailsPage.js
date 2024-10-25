@@ -29,13 +29,13 @@ const PostDetailsPage = () => {
         const data = await getPostById(id);
         setPost(data);
 
-        if (data.trackerImage) {
+        /*if (data.trackerImage) {
           setExpandedBox("tracker");
         } else if (data.enclosureImage) {
           setExpandedBox("enclosure");
         } else if (data.attachmentImage) {
           setExpandedBox("attachment");
-        }
+        }*/
       } catch (error) {
         setError("Failed to fetch post data.");
         console.error("Failed to fetch post", error);
@@ -75,10 +75,10 @@ const PostDetailsPage = () => {
   const shortenedTitle = post.title.split(" ").slice(0, 3).join(" ");
 
   return (
-    <div className="main">
+    <div className="post-main">
       {/* Breadcrumbs section */}
 
-      <div className="main-container">
+      <div className="post-main-container">
         <div className="button-container">
           {user && post && user.displayName === post.author && (
             <Button
@@ -239,6 +239,7 @@ const PostDetailsPage = () => {
           value={post.recommendations || ""}
           readOnly={true}
           theme="bubble"
+          className="recommendations"
         />
       </div>
     </div>
