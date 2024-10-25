@@ -232,7 +232,7 @@ export default function ProfilePage() {
                 {loading ? (
                   <Typography>Loading...</Typography>
                 ) : (
-                  <Box sx={{ maxHeight: 400, overflow: "auto" }}>
+                  <Box sx={{ maxHeight: 300, overflow: "auto" }}>
                     {" "}
                     {/* Set height and enable scrolling */}
                     <List>
