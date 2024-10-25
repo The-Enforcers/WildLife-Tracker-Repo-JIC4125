@@ -4,12 +4,13 @@
   overflow: hidden;
   position: relative;
   padding-bottom: 0;
-  overflow-y: auto;
+  overflow-y: hidden;
   max-height: 100vh;
 }
 
 .main .main-container {
   margin-inline: 15px;
+  overflow-y:scroll;
 }
 
 .main .main-container {

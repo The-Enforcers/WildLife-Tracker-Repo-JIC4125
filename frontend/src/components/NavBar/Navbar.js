@@ -12,9 +12,12 @@ import {
   ListItemIcon,
   Divider,
   IconButton,
-  Tooltip,
+  Tooltip,Typography,
+  Breadcrumbs, 
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import { Link as RouterLink } from "react-router-dom";  
+
 
 import "./Navbar.css";
 
@@ -45,6 +48,12 @@ const Navbar = () => {
   return (
     <div className="nav">
       <p>Wildlife Tracker</p>
+      <Breadcrumbs aria-label="breadcrumb">
+            <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              Home
+            </RouterLink>
+            <Typography color="text.primary">Search Results</Typography>
+          </Breadcrumbs>
       <div className="user-info">
         <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
           <Tooltip title="Account settings">
@@ -56,6 +65,8 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
+                      {/* Breadcrumbs section */}
+
               <Avatar
                 src={user?.picture || ""}
                 alt={user?.displayName || "User Avatar"}

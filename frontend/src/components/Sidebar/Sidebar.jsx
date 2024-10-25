@@ -13,6 +13,8 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsIcon from "@mui/icons-material/Settings";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import SearchIcon from '@mui/icons-material/Search';
+
 
 // wildlife movement institute logo
 import logo from "../../assets/logo.png";
@@ -158,13 +160,13 @@ const Sidebar = () => {
           <div
             ref={(el) => (iconRefs.current[2] = el)}
             onClick={() => handleNavigation("/results")}
-            className={`view-posts ${currentStep === 2 ? "highlight" : ""}`}
-            data-tooltip-id="view-posts"
-            data-tooltip-content="View Posts"
+            className={`search-posts ${currentStep === 2 ? "highlight" : ""}`}
+            data-tooltip-id="search-posts"
+            data-tooltip-content="Search Posts"
           >
-            <VisibilityIcon />
-            <Tooltip id="view-posts" place="bottom" />
-            {extended && <p>View Posts</p>}
+            <SearchIcon />
+            <Tooltip id="search-posts" place="bottom" />
+            {extended && <p>Search Posts</p>}
           </div>
         </div>
         <div className="bottom">

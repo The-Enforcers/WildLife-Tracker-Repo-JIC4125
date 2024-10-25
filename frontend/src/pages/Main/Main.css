@@ -1,4 +1,5 @@
 .greet-container {
+  padding-top: 10vh;
   max-width: 900px;
   margin: auto;
 }

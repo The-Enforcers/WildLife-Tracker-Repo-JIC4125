@@ -8,7 +8,7 @@ import "./PostDetailsPage.css";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-import { Breadcrumbs, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 const PostDetailsPage = () => {
@@ -77,20 +77,7 @@ const PostDetailsPage = () => {
   return (
     <div className="main">
       {/* Breadcrumbs section */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{ marginLeft: 4, marginBlock: 1 }}
-      >
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Home
-        </Link>
-        <Link to="/results" style={{ textDecoration: "none", color: "inherit" }}>
-          Search Results
-        </Link>
-        <Typography color="text.primary">
-          {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
-        </Typography>
-      </Breadcrumbs>
+
       <div className="main-container">
         <div className="button-container">
           {user && post && user.displayName === post.author && (

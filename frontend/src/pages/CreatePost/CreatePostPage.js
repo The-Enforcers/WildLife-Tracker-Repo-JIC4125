@@ -13,7 +13,6 @@ import {
   FormControl,
   InputLabel,
   Paper,
-  Breadcrumbs,
   Chip,
 } from "@mui/material";
 
@@ -461,18 +460,7 @@ const CreatePostPage = () => {
         </>
       )}
 
-      {/* Breadcrumbs and the rest of the page content */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{ marginLeft: 4, marginBlock: 1 }}
-      >
-        <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Home
-        </RouterLink>
-        <Typography color="text.primary">
-          {isEditing ? "Edit Post" : "Create Post"}
-        </Typography>
-      </Breadcrumbs>
+      {/* page content */}
 
       <Paper elevation={0} sx={{ px: 4, marginBottom: 3 }}>
         <Typography variant="h4" gutterBottom>

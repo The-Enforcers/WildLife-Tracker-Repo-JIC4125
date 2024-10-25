@@ -149,12 +149,12 @@ mongoose
       });
     } else {
       console.error("SSL certificate files not found. HTTPS server not started.");
-      process.exit(1);
+      //process.exit(1);
     }
   })
   .catch((err) => {
     console.error("MongoDB connection error:", err);
-    process.exit(1);
+    //process.exit(1); // TODO: Re-enable this
   });
 
 // Global error handler

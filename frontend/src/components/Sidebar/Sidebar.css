@@ -30,7 +30,7 @@
 }
 
 .sidebar .new-post,
-.sidebar .view-posts {
+.sidebar .search-posts {
   margin-top: 20px;
   height: 40px;
   width: 100%;
@@ -50,13 +50,13 @@
 }
 
 .sidebar .new-post:hover,
-.sidebar .view-posts:hover {
+.sidebar .search-posts:hover {
   background-color: #cfd5db;
   transform: translateX(5px);
 }
 
 .sidebar .new-post p,
-.sidebar .view-posts p {
+.sidebar .search-posts p {
   text-wrap: nowrap;
   opacity: 1;
   transition: opacity 0.3s ease;
@@ -64,13 +64,13 @@
 }
 
 .sidebar.collapsed .new-post p,
-.sidebar.collapsed .view-posts p {
+.sidebar.collapsed .search-posts p {
   opacity: 0;
   width: 0;
 }
 
 .sidebar .new-post img,
-.sidebar .view-posts img {
+.sidebar .search-posts img {
   width: 16px;
   filter: brightness(0);
 }

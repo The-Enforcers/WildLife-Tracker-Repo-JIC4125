@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import {
   Avatar,
   Box,
-  Breadcrumbs,
   Card,
   Chip,
   Container,
@@ -86,12 +85,6 @@ export default function ProfilePage() {
 
   return (
       <Box sx={{ flexGrow: 1 }}>
-         <Breadcrumbs aria-label="breadcrumb" sx={{margin: 1}}>
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </Link>
-            <Typography color="text.primary">Profile</Typography>
-          </Breadcrumbs>
         <Container maxWidth="lg">
           <StyledPaper elevation={3}>
             <Grid container spacing={3}>

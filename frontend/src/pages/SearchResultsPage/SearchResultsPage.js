@@ -10,9 +10,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-  Grid,
-  Breadcrumbs, 
+  Grid, 
 } from "@mui/material";
+
+import "./SearchResultsPage.css";
 
 // MUI Imports
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -28,6 +29,8 @@ import WhatshotIcon from '@mui/icons-material/Whatshot';
 import CloudIcon from '@mui/icons-material/Cloud';
 import PublicIcon from '@mui/icons-material/Public';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+import SearchIcon from '@mui/icons-material/Search';
+import { Tooltip } from "react-tooltip";
 
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
@@ -71,14 +74,67 @@ const SearchResultsPage = () => {
     PublicIcon,      
     ElectricBoltIcon 
   ];
-  
+
   // fetch animals data from the backend
   const fetchAnimals = useCallback(async () => {
     try {
-      let request = `https://${window.location.hostname}:5001/api/posts`;
+
+      /*if (first_search) {
+        console.log("ADFGDSGDSGS");
+        // Grab the search query from the URL (if there)
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // Update the input based on the URL parameters
+        const titleQuery = searchParams.get('title') || "";
+
+        // Update the title input
+        setInput(titleQuery);
+      }*/
+
+      const trackerTypes = [];
+      const attachmentTypes = [];
+      const enclosureTypes = [];
+      const animalFamily = [];
+
+      // Build arrays based on selected filters
+      if (filters.vhf) trackerTypes.push("VHF");
+      if (filters.satellite) trackerTypes.push("Satellite");
+      if (filters.lora) trackerTypes.push("LoRa");
+      if (filters.acoustic) trackerTypes.push("Acoustic");
+      if (filters.cell) trackerTypes.push("Cellular / GSM");
+      if (filters.bio) trackerTypes.push("Bio-logger");
+      if (filters.rfid) trackerTypes.push("RFID");
+
+      if (filters.encapsulated) enclosureTypes.push("Encapsulated");
+      if (filters.potting) enclosureTypes.push("Potting");
+      if (filters.shrink) enclosureTypes.push("Shrink wrap");
+      if (filters.hematic) enclosureTypes.push("Hematic seal");
+
+      if (filters.bolt) attachmentTypes.push("Bolt");
+      if (filters.harness) attachmentTypes.push("Harness");
+      if (filters.collar) attachmentTypes.push("Collar");
+      if (filters.adhesive) attachmentTypes.push("Adhesive");
+      if (filters.implant) attachmentTypes.push("Implant");
+
+      if (filters.mammal) animalFamily.push("Mammal");
+      if (filters.reptile) animalFamily.push("Reptile");
+      if (filters.amphibian) animalFamily.push("Amphibians");
+      if (filters.fish) animalFamily.push("Fish");
+      if (filters.bird) animalFamily.push("Bird");
+
+      // Create query strings
+      const trackerTypeQuery = trackerTypes.join(",");
+      const attachmentTypeQuery = attachmentTypes.join(",");
+      const enclosureTypeQuery = enclosureTypes.join(",");
+      const animalFamilyQuery = animalFamily.join(",");
+
+      console.log(animalFamilyQuery);
+
+      //const titleQuery = searchParams.get('title');
+      let request = `https://${window.location.hostname}:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`;
 
       if (input && input.length > 0) {
-        request += "/search?title=" + input;
+        request += "&title=" + input;
       }
 
       const response = await fetch(request);
@@ -108,140 +164,92 @@ const SearchResultsPage = () => {
     });
   };
 
-  // Function to handle filter button click
-  const applyFilters = async () => {
-    const trackerTypes = [];
-    const attachmentTypes = [];
-    const enclosureTypes = [];
-    const animalFamily = [];
-
-    // Build arrays based on selected filters
-    if (filters.vhf) trackerTypes.push("VHF");
-    if (filters.satellite) trackerTypes.push("Satellite");
-    if (filters.lora) trackerTypes.push("LoRa");
-    if (filters.acoustic) trackerTypes.push("Acoustic");
-    if (filters.cell) trackerTypes.push("Cellular / GSM");
-    if (filters.bio) trackerTypes.push("Bio-logger");
-    if (filters.rfid) trackerTypes.push("RFID");
-
-    if (filters.encapsulated) enclosureTypes.push("Encapsulated");
-    if (filters.potting) enclosureTypes.push("Potting");
-    if (filters.shrink) enclosureTypes.push("Shrink wrap");
-    if (filters.hematic) enclosureTypes.push("Hematic seal");
-
-    if (filters.bolt) attachmentTypes.push("Bolt");
-    if (filters.harness) attachmentTypes.push("Harness");
-    if (filters.collar) attachmentTypes.push("Collar");
-    if (filters.adhesive) attachmentTypes.push("Adhesive");
-    if (filters.implant) attachmentTypes.push("Implant");
-
-    if (filters.mammal) animalFamily.push("Mammal");
-    if (filters.reptile) animalFamily.push("Reptile");
-    if (filters.amphibian) animalFamily.push("Amphibians");
-    if (filters.fish) animalFamily.push("Fish");
-    if (filters.bird) animalFamily.push("Bird");
-
-    // Create query strings
-    const trackerTypeQuery = trackerTypes.join(",");
-    const attachmentTypeQuery = attachmentTypes.join(",");
-    const enclosureTypeQuery = enclosureTypes.join(",");
-    const animalFamilyQuery = animalFamily.join(",");
-
-    try {
-      const response = await fetch(
-        `https://${window.location.hostname}:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
-      );
-      const data = await response.json();
-      setAnimals(data);
-    } catch (error) {
-      console.error("Error fetching filtered data:", error);
-    }
-  };
-
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
       {/* Main content */}
-      <Box sx={{ flexGrow: 1 }}>
-        {/* Breadcrumbs section */}
-        <Breadcrumbs aria-label="breadcrumb"  sx={{ marginLeft: 4, marginBlock:1 }}>
-            <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </RouterLink>
-            <Typography color="text.primary">Search Results</Typography>
-          </Breadcrumbs>
+      <Box sx={{ flexGrow: 1}}>
 
-        <Box sx={{ marginBottom: 2 }}>
+        <Box >
           <SearchBox input={input} setInput={setInput} onSearch={fetchAnimals} />
         </Box>
 
         <Grid container spacing={2}>
           {/* Filters on the left */}
           <Grid item xs={12} sm={3} md={2}>
-            <Box sx={{ padding: 2, borderRight: "1px solid #ddd", height: "100%", overflowY: "auto" }}>
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Animal Type</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.mammal} onChange={handleCheckboxChange} name="mammal" />} label="Mammal" />
-                    <FormControlLabel control={<Checkbox checked={filters.reptile} onChange={handleCheckboxChange} name="reptile" />} label="Reptile" />
-                    <FormControlLabel control={<Checkbox checked={filters.amphibian} onChange={handleCheckboxChange} name="amphibian" />} label="Amphibian" />
-                    <FormControlLabel control={<Checkbox checked={filters.fish} onChange={handleCheckboxChange} name="fish" />} label="Fish" />
-                    <FormControlLabel control={<Checkbox checked={filters.bird} onChange={handleCheckboxChange} name="bird" />} label="Bird" />
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
+            <Box sx={{ padding: 2, /*borderRight: "1px solid #ddd",*/ height: "100%", /*overflowY: "auto"*/ }}>
+              <div class="filter-group">
+                <div class="filter-group-head-div-wrapper">
+                  <div class="filter-group-head-div">
+                    <Typography class="filter-group-head">Animal Type</Typography>
+                  </div>
+                </div>
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox checked={filters.mammal} onChange={handleCheckboxChange} name="mammal" />} label="Mammal" />
+                  <FormControlLabel control={<Checkbox checked={filters.reptile} onChange={handleCheckboxChange} name="reptile" />} label="Reptile" />
+                  <FormControlLabel control={<Checkbox checked={filters.amphibian} onChange={handleCheckboxChange} name="amphibian" />} label="Amphibian" />
+                  <FormControlLabel control={<Checkbox checked={filters.fish} onChange={handleCheckboxChange} name="fish" />} label="Fish" />
+                  <FormControlLabel control={<Checkbox checked={filters.bird} onChange={handleCheckboxChange} name="bird" />} label="Bird" />
+                </FormGroup>
+              </div>
 
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Tracker Type</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.vhf} onChange={handleCheckboxChange} name="vhf" />} label="VHF" />
-                    <FormControlLabel control={<Checkbox checked={filters.satellite} onChange={handleCheckboxChange} name="satellite" />} label="Satellite" />
-                    <FormControlLabel control={<Checkbox checked={filters.lora} onChange={handleCheckboxChange} name="lora" />} label="LoRa" />
-                    <FormControlLabel control={<Checkbox checked={filters.acoustic} onChange={handleCheckboxChange} name="acoustic" />} label="Acoustic" />
-                    <FormControlLabel control={<Checkbox checked={filters.cell} onChange={handleCheckboxChange} name="cell" />} label="Cellular / GSM" />
-                    <FormControlLabel control={<Checkbox checked={filters.bio} onChange={handleCheckboxChange} name="bio" />} label="Bio-logger" />
-                    <FormControlLabel control={<Checkbox checked={filters.rfid} onChange={handleCheckboxChange} name="rfid" />} label="RFID" />
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
+              <div class="filter-group">
+                <div class="filter-group-head-div-wrapper">
+                  <div class="filter-group-head-div">
+                    <Typography class="filter-group-head">Tracker Type</Typography>
+                  </div>
+                </div>
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox checked={filters.vhf} onChange={handleCheckboxChange} name="vhf" />} label="VHF" />
+                  <FormControlLabel control={<Checkbox checked={filters.satellite} onChange={handleCheckboxChange} name="satellite" />} label="Satellite" />
+                  <FormControlLabel control={<Checkbox checked={filters.lora} onChange={handleCheckboxChange} name="lora" />} label="LoRa" />
+                  <FormControlLabel control={<Checkbox checked={filters.acoustic} onChange={handleCheckboxChange} name="acoustic" />} label="Acoustic" />
+                  <FormControlLabel control={<Checkbox checked={filters.cell} onChange={handleCheckboxChange} name="cell" />} label="Cellular / GSM" />
+                  <FormControlLabel control={<Checkbox checked={filters.bio} onChange={handleCheckboxChange} name="bio" />} label="Bio-logger" />
+                  <FormControlLabel control={<Checkbox checked={filters.rfid} onChange={handleCheckboxChange} name="rfid" />} label="RFID" />
+                </FormGroup>
+              </div>
+              <div class="filter-group">
+                <div class="filter-group-head-div-wrapper">
+                  <div class="filter-group-head-div">
+                    <Typography class="filter-group-head">Enclosure Type</Typography>
+                  </div>
+                </div>
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox checked={filters.encapsulated} onChange={handleCheckboxChange} name="encapsulated" />} label="Encapsulated" />
+                  <FormControlLabel control={<Checkbox checked={filters.shrink} onChange={handleCheckboxChange} name="shrink" />} label="Shrink wrap" />
+                  <FormControlLabel control={<Checkbox checked={filters.potting} onChange={handleCheckboxChange} name="potting" />} label="Potting" />
+                  <FormControlLabel control={<Checkbox checked={filters.hematic} onChange={handleCheckboxChange} name="hematic" />} label="Hematic seal" />
+                </FormGroup>
+              </div>
 
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Enclosure Type</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.encapsulated} onChange={handleCheckboxChange} name="encapsulated" />} label="Encapsulated" />
-                    <FormControlLabel control={<Checkbox checked={filters.shrink} onChange={handleCheckboxChange} name="shrink" />} label="Shrink wrap" />
-                    <FormControlLabel control={<Checkbox checked={filters.potting} onChange={handleCheckboxChange} name="potting" />} label="Potting" />
-                    <FormControlLabel control={<Checkbox checked={filters.hematic} onChange={handleCheckboxChange} name="hematic" />} label="Hematic seal" />
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
+              <div class="filter-group">
+                <div class="filter-group-head-div-wrapper">
+                  <div class="filter-group-head-div">
+                    <Typography class="filter-group-head">Attachment Type</Typography>
+                  </div>
+                </div>
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox checked={filters.harness} onChange={handleCheckboxChange} name="harness" />} label="Harness" />
+                  <FormControlLabel control={<Checkbox checked={filters.collar} onChange={handleCheckboxChange} name="collar" />} label="Collar" />
+                  <FormControlLabel control={<Checkbox checked={filters.bolt} onChange={handleCheckboxChange} name="bolt" />} label="Bolt" />
+                  <FormControlLabel control={<Checkbox checked={filters.implant} onChange={handleCheckboxChange} name="implant" />} label="Implant" />
+                  <FormControlLabel control={<Checkbox checked={filters.adhesive} onChange={handleCheckboxChange} name="adhesive" />} label="Adhesive" />
+                </FormGroup>
+              </div>
 
-              <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Attachment Type</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FormGroup>
-                    <FormControlLabel control={<Checkbox checked={filters.harness} onChange={handleCheckboxChange} name="harness" />} label="Harness" />
-                    <FormControlLabel control={<Checkbox checked={filters.collar} onChange={handleCheckboxChange} name="collar" />} label="Collar" />
-                    <FormControlLabel control={<Checkbox checked={filters.bolt} onChange={handleCheckboxChange} name="bolt" />} label="Bolt" />
-                    <FormControlLabel control={<Checkbox checked={filters.implant} onChange={handleCheckboxChange} name="implant" />} label="Implant" />
-                    <FormControlLabel control={<Checkbox checked={filters.adhesive} onChange={handleCheckboxChange} name="adhesive" />} label="Adhesive" />
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
-
-              <Button variant="contained" onClick={applyFilters} sx={{ marginTop: 2 }}>
-                Apply Filters
-              </Button>
+              {/* Post button */}
+              <div className="apply-filter-container">
+                {/* Add Icon */}
+                <div
+                  className="apply-filter-icon"
+                  onClick={fetchAnimals}
+                  data-tooltip-id="apply-filter"
+                  data-tooltip-content="Apply Filters"
+                >
+                  <SearchIcon fontSize="medium" />
+                  <div>Apply Filters</div>
+                </div>
+              </div>
             </Box>
           </Grid>
 
