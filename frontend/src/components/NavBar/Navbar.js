@@ -13,6 +13,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  styled,
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
 
@@ -42,12 +43,18 @@ const Navbar = () => {
     handleClose();
     navigate("/profile");
   };
+  const ProfileAvatar = styled(Avatar)(({ theme }) => ({
+    width: theme.spacing(18),
+    height: theme.spacing(18),
+  }));
 
   return (
     <div className="nav">
       <p>Wildlife Tracker</p>
       <div className="user-info">
-        <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", textAlign: "center" }}
+        >
           <Tooltip title="Account settings">
             <IconButton
               onClick={handleClick}
@@ -59,15 +66,21 @@ const Navbar = () => {
             >
               {user ? (
                 // Show profile picture or placeholder image if logged in
-                <Avatar
-                  src={!profilePicError && user.picture ? user.picture : "https://via.placeholder.com/150"}
+                <ProfileAvatar
+                  src={
+                    !profilePicError && user.picture
+                      ? user.picture
+                      : "https://via.placeholder.com/150"
+                  }
                   alt={user?.displayName || "User Avatar"}
                   sx={{ width: 32, height: 32, bgcolor: "white" }}
                   onError={() => setProfilePicError(true)} // Handle image load error
                 />
               ) : (
                 // Show AccountCircleOutlinedIcon if not logged in
-                <AccountCircleOutlinedIcon sx={{ fontSize: 35, color: "black", borderRadius: "50%" }} />
+                <AccountCircleOutlinedIcon
+                  sx={{ fontSize: 35, color: "black", borderRadius: "50%" }}
+                />
               )}
             </IconButton>
           </Tooltip>
@@ -124,7 +137,12 @@ const Navbar = () => {
               </MenuItem>,
             ]
           ) : (
-            <MenuItem key="login" onClick={() => (window.location.href = "https://localhost:5001/auth/google")}>
+            <MenuItem
+              key="login"
+              onClick={() =>
+                (window.location.href = "https://localhost:5001/auth/google")
+              }
+            >
               <ListItemIcon>
                 <GoogleIcon fontSize="small" />
               </ListItemIcon>

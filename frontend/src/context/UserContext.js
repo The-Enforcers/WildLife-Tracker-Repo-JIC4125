@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
   const [loading, setLoading] = useState(true);
   const showSnackbar = useSnackbar();
   const navigate = useNavigate();
@@ -21,11 +21,10 @@ export const UserProvider = ({ children }) => {
         if (response.ok) {
           const userData = await response.json();
 
-          // Ensure userData contains expected properties
           if (userData && userData.googleId && userData.email) {
             setUser(userData);
+            localStorage.setItem("user", JSON.stringify(userData));
 
-            // Show welcome message only once per session
             const hasSeenWelcome = sessionStorage.getItem("hasSeenWelcome");
             if (!hasSeenWelcome) {
               showSnackbar("Welcome!", "success");
@@ -33,20 +32,21 @@ export const UserProvider = ({ children }) => {
             }
           } else {
             setUser(null);
-            console.error("Invalid user data structure");
+            localStorage.removeItem("user");
             showSnackbar("Login failed: Invalid user data", "error");
           }
         } else if (response.status === 401 || response.status === 403) {
-          // User is unauthorized or forbidden
           setUser(null);
+          localStorage.removeItem("user");
           showSnackbar("Please log in to continue.", "info");
         } else {
-          // Other error status
           setUser(null);
+          localStorage.removeItem("user");
           showSnackbar("Error retrieving user data", "error");
         }
       } catch (error) {
         setUser(null);
+        localStorage.removeItem("user");
       } finally {
         setLoading(false);
       }
@@ -64,10 +64,9 @@ export const UserProvider = ({ children }) => {
 
       if (response.ok) {
         setUser(null);
+        localStorage.removeItem("user");
         showSnackbar("Logged out!", "info");
         sessionStorage.removeItem("hasSeenWelcome");
-
-        // Navigate to home after logout
         navigate("/");
       } else {
         console.error("Logout failed");
