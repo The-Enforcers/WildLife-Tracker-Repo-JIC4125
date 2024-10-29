@@ -31,7 +31,7 @@ app.use(passport.session());
 const postRoutes = require("./routes/postRoutes");
 app.use("/api/posts", postRoutes);
 
-const User = require('./models/user');
+const User = require('./models/User');
 
 // Google OAuth setup
 passport.use(
