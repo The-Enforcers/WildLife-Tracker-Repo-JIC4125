@@ -6,6 +6,8 @@ const session = require("express-session");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const https = require("https");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("./middleware/authMiddleware");  // Import the middleware
 require("dotenv").config();
 
 // Create an Express app
@@ -13,8 +15,8 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://localhost:3000', // Update this to your frontend's HTTPS URL
-  credentials: true // Allow credentials
+  origin: 'https://localhost:3000',
+  credentials: true
 }));
 app.use(express.json());
 app.use(
@@ -22,55 +24,71 @@ app.use(
     secret: process.env.SESSION_SECRET || "your-secret-key",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true } // Use secure cookies
+    cookie: { secure: true }
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
 const postRoutes = require("./routes/postRoutes");
-app.use("/api/posts", postRoutes);
+app.use("/api/posts", verifyToken, postRoutes); // Use token verification for post routes
 
 const User = require('./models/user');
 
-// Google OAuth setup
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://localhost:5001/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const picture = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "https://localhost:5001/auth/google/callback",
+},
+async (accessToken, refreshToken, profile, done) => {
+  try {
+    const picture = profile.photos && profile.photos[0] ? profile.photos[0].value : null;
 
-        let user = await User.findOne({ googleId: profile.id });
-        if (!user) {
-          user = await new User({
-            googleId: profile.id,
-            displayName: profile.displayName,
-            email: profile.emails[0].value,
-            picture: picture,
-          }).save();
-        } else {
-          // update user information if it might have changed
-          user.displayName = profile.displayName;
-          user.email = profile.emails[0].value;
-          user.picture = picture; 
-          await user.save();
-        }
-        return done(null, user);
-      } catch (err) {
-        return done(err, null);
-      }
+    // Check if user exists by googleId
+    let user = await User.findOne({ googleId: profile.id });
+    
+    if (!user) {
+      // Create a new user if one does not exist
+      user = new User({
+        googleId: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails[0].value,
+        picture: picture,
+      });
+
+      // Save the new user to the database
+      await user.save();
+      console.log("New user created:", user);  // Log successful creation
+    } else {
+      // Update existing user details if necessary
+      user.displayName = profile.displayName;
+      user.email = profile.emails[0].value;
+      user.picture = picture;
+      await user.save();
+      console.log("Existing user updated:", user);  // Log successful update
     }
-  )
-);
 
+    // Log user._id after save to confirm it exists
+    console.log("User ID after save:", user._id);
+
+    // Generate JWT token (optional for other purposes, but not needed for serializeUser)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    console.log("JWT token generated:", token);  // Log token
+
+    return done(null, user);  // Pass only the user object to done()
+  } catch (err) {
+    console.error("Error in Google OAuth callback:", err);
+    return done(err, null);
+  }
+}));
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  console.log("User passed to serializeUser:", user);  // Log to confirm user details
+  if (user && user._id) {
+    done(null, user._id);  // Use _id for serialization
+  } else {
+    done(new Error("User _id not found for serialization"));
+  }
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -82,34 +100,21 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Google Auth Routes
-app.get(
-  "/auth/google",
-  (req, res, next) => {
-    console.log("Received request for /auth/google");
-    next();
-  },
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// Authentication routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-app.get(
-  "/auth/google/callback",
+app.get("/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "https://localhost:3000/login" }),
   (req, res) => {
-    console.log("Google authentication callback received");
-
-    // Use the session to keep user logged in and just redirect to the homepage
-    res.redirect("https://localhost:3000/");
+    const token = req.user.token;
+    res.redirect(`https://localhost:3000/login?token=${token}`);
   }
 );
 
-
+// Logout route
 app.get("/auth/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error("Error during logout:", err);
-      return res.status(500).json({ error: "Error during logout" });
-    }
+  req.logout(err => {
+    if (err) return res.status(500).json({ error: "Error during logout" });
     req.session.destroy(() => {
       res.clearCookie('connect.sid');
       res.status(200).json({ message: "Logged out successfully" });
@@ -117,14 +122,15 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
-
-app.get("/api/user", (req, res) => {
+app.get("/api/user", verifyToken, (req, res) => {
   if (req.isAuthenticated()) {
     res.json(req.user);
   } else {
     res.status(204).end();
   }
 });
+
+// MongoDB connection and HTTPS server setup remains the same
 
 // Connect to MongoDB
 mongoose
@@ -156,6 +162,6 @@ mongoose
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).send('An unexpected error occurred');
+  console.error("Unhandled error:", err);  // Add full error logging
+  res.status(500).json({ message: 'An unexpected error occurred', error: err.message });
 });

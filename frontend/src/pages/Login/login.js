@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Typography, Container, Box } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useNavigate } from 'react-router-dom';
@@ -6,28 +6,36 @@ import { useNavigate } from 'react-router-dom';
 function LoginPage() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      localStorage.setItem('authToken', token);
+      navigate('/');
+    }
+  }, [navigate]);
+
   const handleGoogleSignIn = () => {
     window.open("https://localhost:5001/auth/google", "_self"); 
   };
+
   const handleBack = () => {
     navigate('/');
   };
+
   return (
     <Container maxWidth="xs" sx={{ background: '#00000012' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginTop: '8rem',
-          p: 3,
-        }}
-      >
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: '8rem',
+        p: 3,
+      }}>
         <Typography variant="h5" component="h1" gutterBottom>
           Sign in to your account
         </Typography>
 
-        {/* Google Sign-In Button */}
         <Button
           variant="contained"
           startIcon={<GoogleIcon />}
@@ -37,12 +45,10 @@ function LoginPage() {
           Sign in with Google
         </Button>
 
-        {/* Divider text */}
         <Typography variant="body1" color="textSecondary" gutterBottom>
           Or continue later
         </Typography>
 
-        {/* Sign In Button */}
         <Button
           type="submit"
           fullWidth
@@ -53,7 +59,6 @@ function LoginPage() {
           back
         </Button>
 
-        {/* Sign-up Link */}
         <Typography variant="body2" color="textSecondary">
           An account is needed to create posts.
         </Typography>
