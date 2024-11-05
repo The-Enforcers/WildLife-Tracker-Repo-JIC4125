@@ -106,10 +106,11 @@ app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "em
 app.get("/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "https://localhost:3000/login" }),
   (req, res) => {
-    const token = req.user.token;
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.redirect(`https://localhost:3000/login?token=${token}`);
   }
 );
+
 
 // Logout route
 app.get("/auth/logout", (req, res) => {
@@ -123,7 +124,9 @@ app.get("/auth/logout", (req, res) => {
 });
 
 app.get("/api/user", verifyToken, (req, res) => {
+  
   if (req.isAuthenticated()) {
+  
     res.json(req.user);
   } else {
     res.status(204).end();

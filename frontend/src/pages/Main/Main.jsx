@@ -20,7 +20,7 @@ import icon5 from "../../assets/Fish.png";
 const animalNames = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra"];
 
 const Main = () => {
-  const { user } = useContext(UserContext);
+  const { user, token } = useContext(UserContext); 
   const [input, setInput] = useState("");
   // state variables for the typing animation
   const [currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
