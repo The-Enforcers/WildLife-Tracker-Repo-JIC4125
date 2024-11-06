@@ -33,7 +33,7 @@ app.use(passport.session());
 const postRoutes = require("./routes/postRoutes");
 app.use("/api/posts",  postRoutes); // Use token verification for post routes
 
-const User = require('./models/user');
+const User = require('./models/User');
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -165,6 +165,8 @@ mongoose
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);  // Add full error logging
-  res.status(500).json({ message: 'An unexpected error occurred', error: err.message });
+
+  console.error("Unhandled error:", err);
+  res.status(500).send('An unexpected error occurred');
+
 });

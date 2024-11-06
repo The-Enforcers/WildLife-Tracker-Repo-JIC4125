@@ -55,35 +55,56 @@ const Navbar = () => {
         <Box
           sx={{ display: "flex", alignItems: "center", textAlign: "center" }}
         >
-          <Tooltip title="Account settings">
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              sx={{ ml: 2 }}
-              aria-controls={open ? "account-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
+          {user ? (
+            // Show profile picture or account icon image if logged in
+            <>
+              <Tooltip title="Account settings">
+                <IconButton
+                  onClick={handleClick}
+                  size="small"
+                  sx={{ ml: 2 }}
+                  aria-controls={open ? "account-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                >
+                  {!profilePicError && user.picture ? (
+                    <ProfileAvatar
+                      src={user.picture}
+                      alt={user?.displayName || "User Avatar"}
+                      sx={{ width: 32, height: 32, bgcolor: "white" }}
+                      onError={() => setProfilePicError(true)} // Handle image load error
+                    />
+                  ) : (
+                    <AccountCircleOutlinedIcon
+                      sx={{ fontSize: 35, color: "black", borderRadius: "50%" }}
+                    />
+                  )}
+                </IconButton>
+              </Tooltip>
+            </>
+          ) : (
+            // Show Sign In button if not logged in
+            <button
+              onClick={() =>
+                (window.location.href = "https://localhost:5001/auth/google")
+              }
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "8px 16px",
+                borderRadius: "20px",
+                backgroundColor: "#212e38",
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+                margin: "8px",
+              }}
             >
-              {user ? (
-                // Show profile picture or placeholder image if logged in
-                <ProfileAvatar
-                  src={
-                    !profilePicError && user.picture
-                      ? user.picture
-                      : "https://via.placeholder.com/150"
-                  }
-                  alt={user?.displayName || "User Avatar"}
-                  sx={{ width: 32, height: 32, bgcolor: "white" }}
-                  onError={() => setProfilePicError(true)} // Handle image load error
-                />
-              ) : (
-                // Show AccountCircleOutlinedIcon if not logged in
-                <AccountCircleOutlinedIcon
-                  sx={{ fontSize: 35, color: "black", borderRadius: "50%" }}
-                />
-              )}
-            </IconButton>
-          </Tooltip>
+              <GoogleIcon style={{ marginRight: "8px" }} />
+              Sign In
+            </button>
+          )}
         </Box>
         <Menu
           anchorEl={anchorEl}
