@@ -1,29 +1,33 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';  // Added useContext here
 import { Button, Typography, Container, Box } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useNavigate } from 'react-router-dom';
-
+import { UserContext } from '../../context/UserContext.js';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { setToken } = useContext(UserContext); // Access setToken from UserContext
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
 
     if (token) {
-      // Store token in localStorage and clear URL params
+      // Store token in localStorage
       localStorage.setItem('authToken', token);
       
+      // Update token in the React state (via context)
+      setToken(token);  // This will trigger re-render and update other components
 
-      setTimeout(() => {
-        navigate('/');
-      }, 5000); // Adjust the delay duration as needed
-        
-      
-      
-       // Redirect to the main page
+      // Clear URL params after setting the token (optional)
+      window.history.replaceState({}, '', window.location.pathname);
+
+      // Optionally, wait for a bit before redirecting
+
+        navigate('/');  // Navigate to the main page
+
     }
-  }, [navigate]);
+  }, [navigate, setToken]);
 
   const handleGoogleSignIn = () => {
     window.open("https://localhost:5001/auth/google", "_self"); 

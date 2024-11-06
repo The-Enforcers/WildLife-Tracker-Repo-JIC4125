@@ -71,8 +71,11 @@ export const UserProvider = ({ children }) => {
       fetchUser();
     } else {
       console.log("Token is not present. Calling fetchUser.");
+      
       setLoading(false);
     }
+
+
   }, [token, showSnackbar, navigate]);
 
   const logoutUser = async () => {
