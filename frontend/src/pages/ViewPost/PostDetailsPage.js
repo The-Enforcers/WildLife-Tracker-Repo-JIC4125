@@ -51,8 +51,11 @@ const PostDetailsPage = () => {
         } else if (data.attachmentImage) {
           setExpandedBox("attachment");
         }
-        // Check if post is bookmarked by this user
-        setIsBookmarked(user.bookmarkedPosts.includes(id));
+
+        // Check if user and bookmarkedPosts exist before accessing bookmarkedPosts
+        if (user && user.bookmarkedPosts) {
+          setIsBookmarked(user.bookmarkedPosts.includes(id));
+        }
       } catch (error) {
         setError("Failed to fetch post data.");
         console.error("Failed to fetch post", error);
@@ -131,10 +134,7 @@ const PostDetailsPage = () => {
                 <p className="author-name"> {post.author}</p>
               </div>
               {post.lastUpdated && (
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                >
+                <Typography variant="body2" color="textSecondary">
                   Last updated:{" "}
                   {new Date(post.lastUpdated).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -152,64 +152,68 @@ const PostDetailsPage = () => {
           </div>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
-             <Tooltip
-             title="Edit post"
-             placement="top"
-             PopperProps={{
-               modifiers: [
-                 {
-                   name: "offset",
-                   options: {
-                     offset: [0, -8], 
-                   },
-                 },
-               ],
-             }}
-           >
-             <Button
-               variant="contained"
-               onClick={handleEdit}
-               startIcon={<EditIcon />}
-               sx={{
-                 backgroundColor: "#212e38",
-                 color: "white",
-                 "&:hover": {
-                   backgroundColor: "#303f9f",
-                 },
-                 textTransform: "none",
-                 fontSize: "15px",
-                 fontWeight: "bold",
-                 borderRadius: "20px",
-                 padding: "8px 16px",
-               }}
-             >
-               Edit
-             </Button>
-           </Tooltip>
-           
-            )}
-            <IconButton
-              onClick={handleBookmark}
-              aria-label="bookmark post"
-              sx={{
-                backgroundColor: "#212e38",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#303f9f",
-                },
-                borderRadius: "50%",
-                padding: "10px",
-                marginLeft: "8px",
-              }}
-            >
               <Tooltip
-                title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                title="Edit post"
                 placement="top"
+                PopperProps={{
+                  modifiers: [
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, -8],
+                      },
+                    },
+                  ],
+                }}
               >
-                {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                <Button
+                  variant="contained"
+                  onClick={handleEdit}
+                  startIcon={<EditIcon />}
+                  sx={{
+                    backgroundColor: "#212e38",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    textTransform: "none",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    borderRadius: "20px",
+                    padding: "8px 16px",
+                  }}
+                >
+                  Edit
+                </Button>
               </Tooltip>
-            </IconButton>
+            )}
+
+            {/* Conditionally render the bookmark button only if user is logged in */}
+            {user && (
+              <IconButton
+                onClick={handleBookmark}
+                aria-label="bookmark post"
+                sx={{
+                  backgroundColor: "#212e38",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#303f9f",
+                  },
+                  borderRadius: "50%",
+                  padding: "10px",
+                  marginLeft: "8px",
+                }}
+              >
+                <Tooltip
+                  title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                  placement="top"
+                >
+                  {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                </Tooltip>
+              </IconButton>
+            )}
           </div>
+
           <div className="post-picture">
             <img
               className="post-image"
