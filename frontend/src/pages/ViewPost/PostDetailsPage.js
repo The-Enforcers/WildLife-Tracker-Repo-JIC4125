@@ -15,7 +15,13 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import EditIcon from "@mui/icons-material/Edit";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import { Breadcrumbs, Button, Typography, IconButton } from "@mui/material";
+import {
+  Breadcrumbs,
+  Button,
+  Typography,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { UserContext } from "../../context/UserContext";
 
 const PostDetailsPage = () => {
@@ -134,28 +140,62 @@ const PostDetailsPage = () => {
           </div>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
-              <Button
-                variant="contained"
-                onClick={handleEdit}
-                startIcon={<EditIcon />}
-                sx={{
-                  backgroundColor: "#212e38",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "#303f9f",
-                  },
-                  textTransform: "none",
-                  fontSize: "15px",
-                  fontWeight: "bold",
-                  borderRadius: "20px",
-                  padding: "8px 16px",
-                }}
-              >
-                Edit
-              </Button>
+             <Tooltip
+             title="Edit post"
+             placement="top"
+             PopperProps={{
+               modifiers: [
+                 {
+                   name: "offset",
+                   options: {
+                     offset: [0, -8], 
+                   },
+                 },
+               ],
+             }}
+           >
+             <Button
+               variant="contained"
+               onClick={handleEdit}
+               startIcon={<EditIcon />}
+               sx={{
+                 backgroundColor: "#212e38",
+                 color: "white",
+                 "&:hover": {
+                   backgroundColor: "#303f9f",
+                 },
+                 textTransform: "none",
+                 fontSize: "15px",
+                 fontWeight: "bold",
+                 borderRadius: "20px",
+                 padding: "8px 16px",
+               }}
+             >
+               Edit
+             </Button>
+           </Tooltip>
+           
             )}
-            <IconButton onClick={handleBookmark} aria-label="bookmark post">
-              {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            <IconButton
+              onClick={handleBookmark}
+              aria-label="bookmark post"
+              sx={{
+                backgroundColor: "#212e38",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#303f9f",
+                },
+                borderRadius: "50%",
+                padding: "10px",
+                marginLeft: "8px",
+              }}
+            >
+              <Tooltip
+                title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                placement="top"
+              >
+                {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+              </Tooltip>
             </IconButton>
           </div>
           <div className="post-picture">
