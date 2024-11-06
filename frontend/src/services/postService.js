@@ -86,3 +86,33 @@ export const uploadImage = async (imageFile) => {
     console.error("Error uploading image:", error);
   }
 };
+
+export const bookmarkPost = async (userId, postId) => {
+  try {
+    const response = await axios.post(`${API_URL}/${userId}/${postId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to bookmark post", error);
+    throw error;
+  }
+};
+
+export const unbookmarkPost = async (userId, postId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/${userId}/${postId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to unbookmark post", error);
+    throw error;
+  }
+};
+
+export const getBookmarkedPosts = async (userId) => {
+  try {
+    const response = await axios.get(`${API_URL}/${userId}/bookmarked`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch bookmarked posts", error);
+    throw error;
+  }
+};
