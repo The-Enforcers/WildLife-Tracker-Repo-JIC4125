@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
+import { useNavigate } from "react-router-dom"; // Import useNavigate from React Router
 import { UserContext } from "../../context/UserContext";
 
 import { searchPosts } from "../../services/postService"; // Import searchPosts
-import CircularProgress from '@mui/material/CircularProgress'; // Import MUI spinner
+import CircularProgress from "@mui/material/CircularProgress"; // Import MUI spinner
 
 // CSS file
 import "./Main.css";
@@ -28,8 +28,8 @@ const Main = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [animationStarted, setAnimationStarted] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const [loadingImages, setLoadingImages] = useState({}); 
-  const navigate = useNavigate(); 
+  const [loadingImages, setLoadingImages] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,7 +40,6 @@ const Main = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
 
   // Define the base URL for image API (adjust this based on your server configuration)
   const imageApiBaseUrl = "https://localhost:5001/api/posts/image/";
@@ -82,9 +81,9 @@ const Main = () => {
 
   useEffect(() => {
     if (input.length > 1) {
-      handleSearch(input); 
+      handleSearch(input);
     } else {
-      setSearchResults([]); 
+      setSearchResults([]);
     }
   }, [input]);
 
@@ -115,18 +114,16 @@ const Main = () => {
   };
 
   return (
-      <div className="greet-container">
-        {user && (
-          <div className="greet">
-            <p>
-              <span>Hello, {user.displayName}</span>
-            </p>
-            <p className="sub-greet">
-              Tracker Repository for{" "}
-              <span className="animal-word">{displayedText}</span>
-            </p>
-          </div>
-        )}
+    <div className="greet-container">
+      <div className="greet">
+        <p>
+          <span>Hello, {user?.displayName || "there"}</span>
+        </p>
+        <p className="sub-greet">
+          Tracker Repository for{" "}
+          <span className="animal-word">{displayedText}</span>
+        </p>
+      </div>
 
       <SearchBox input={input} setInput={setInput} />
 
@@ -138,14 +135,17 @@ const Main = () => {
               <div
                 key={post._id}
                 className="search-result-item"
-                onClick={() => navigateToPost(post._id)}  
-                style={{ cursor: 'pointer' }}  
+                onClick={() => navigateToPost(post._id)}
+                style={{ cursor: "pointer" }}
               >
                 <div className="post-details">
                   <h3>{post.title}</h3>
-                  <p><strong>Common Name:</strong> {post.commonName}</p>
-                  <p><strong>Tracker Type:</strong> {post.trackerType}</p>
-
+                  <p>
+                    <strong>Common Name:</strong> {post.commonName}
+                  </p>
+                  <p>
+                    <strong>Tracker Type:</strong> {post.trackerType}
+                  </p>
                 </div>
 
                 {/* Image loading state handling */}
@@ -154,7 +154,7 @@ const Main = () => {
                     <CircularProgress size={24} />
                   </div>
                 )}
-                
+
                 <img
                   src={`${imageApiBaseUrl}${post.postImage}`}
                   alt={post.title}
@@ -163,7 +163,7 @@ const Main = () => {
                   onError={() => handleImageError(post._id)}
                   onLoadStart={() => handleImageLoading(post._id)}
                   style={{
-                    display: loadingImages[post._id] ? 'none' : 'block', // Hide image while loading
+                    display: loadingImages[post._id] ? "none" : "block", // Hide image while loading
                   }}
                 />
               </div>
