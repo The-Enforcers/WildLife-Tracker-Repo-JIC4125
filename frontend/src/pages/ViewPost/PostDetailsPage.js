@@ -27,7 +27,8 @@ import { UserContext } from "../../context/UserContext";
 const PostDetailsPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const { id } = useParams(); // postId
+
+  const { id } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [expandedBox, setExpandedBox] = useState(null);
@@ -43,6 +44,13 @@ const PostDetailsPage = () => {
         const data = await getPostById(id);
         setPost(data);
 
+        if (data.trackerImage) {
+          setExpandedBox("tracker");
+        } else if (data.enclosureImage) {
+          setExpandedBox("enclosure");
+        } else if (data.attachmentImage) {
+          setExpandedBox("attachment");
+        }
         // Check if post is bookmarked by this user
         setIsBookmarked(user.bookmarkedPosts.includes(id));
       } catch (error) {
@@ -119,10 +127,14 @@ const PostDetailsPage = () => {
                     e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
                   }}
                 />
+
                 <p className="author-name"> {post.author}</p>
               </div>
               {post.lastUpdated && (
-                <Typography variant="body2" color="textSecondary">
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                >
                   Last updated:{" "}
                   {new Date(post.lastUpdated).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -230,8 +242,56 @@ const PostDetailsPage = () => {
                 )}
               </div>
             </div>
-            {/* Additional sections for enclosure and attachment */}
+
+            <div
+              className={`tracker-info-box-${
+                expandedBox === "enclosure" ? "selected" : ""
+              }`}
+              onClick={() => post.enclosureImage && handleBoxClick("enclosure")}
+              style={{ cursor: post.enclosureImage ? "pointer" : "default" }}
+            >
+              <p className="tracker-info-actual">{post.enclosureType}</p>
+              <p className="tracker-info-header">Enclosure</p>
+              <div
+                className={`expand-icon ${
+                  !post.enclosureImage ? "no-image" : ""
+                }`}
+              >
+                {expandedBox === "enclosure" ? <p>hide</p> : <p>show</p>}
+                {expandedBox === "enclosure" ? (
+                  <ExpandLessIcon />
+                ) : (
+                  <ExpandMoreIcon />
+                )}
+              </div>
+            </div>
+
+            <div
+              className={`tracker-info-box-${
+                expandedBox === "attachment" ? "selected" : ""
+              }`}
+              onClick={() =>
+                post.attachmentImage && handleBoxClick("attachment")
+              }
+              style={{ cursor: post.attachmentImage ? "pointer" : "default" }}
+            >
+              <p className="tracker-info-actual">{post.attachmentType}</p>
+              <p className="tracker-info-header">Attachment</p>
+              <div
+                className={`expand-icon ${
+                  !post.attachmentImage ? "no-image" : ""
+                }`}
+              >
+                {expandedBox === "attachment" ? <p>hide</p> : <p>show</p>}
+                {expandedBox === "attachment" ? (
+                  <ExpandLessIcon />
+                ) : (
+                  <ExpandMoreIcon />
+                )}
+              </div>
+            </div>
           </div>
+
           <div
             className={`expanded-images-container ${
               expandedBox ? "expanded" : ""
@@ -244,9 +304,23 @@ const PostDetailsPage = () => {
                 style={styles.expandedImage}
               />
             )}
-            {/* Additional images for enclosure and attachment */}
+            {expandedBox === "enclosure" && post.enclosureImage && (
+              <img
+                src={`https://${window.location.hostname}:5001/api/posts/image/${post.enclosureImage}`}
+                alt="Enclosure"
+                style={styles.expandedImage}
+              />
+            )}
+            {expandedBox === "attachment" && post.attachmentImage && (
+              <img
+                src={`https://${window.location.hostname}:5001/api/posts/image/${post.attachmentImage}`}
+                alt="Attachment"
+                style={styles.expandedImage}
+              />
+            )}
           </div>
         </div>
+
         <ReactQuill
           value={post.recommendations || ""}
           readOnly={true}
