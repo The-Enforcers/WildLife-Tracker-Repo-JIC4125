@@ -67,6 +67,7 @@ export const UserProvider = ({ children }) => {
 
     if (token) {
       console.log("Token is present. Calling fetchUser.");
+      setLoading(true);
       fetchUser();
     } else {
       console.log("Token is not present. Calling fetchUser.");

@@ -132,7 +132,8 @@ const SearchResultsPage = () => {
 
       const response = await fetch(request);
       const data = await response.json();
-      setAnimals(data);
+      setAnimals(Array.isArray(data) ? data : []);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -203,7 +204,8 @@ const SearchResultsPage = () => {
         `https://${window.location.hostname}:5001/api/posts/search?trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
       );
       const data = await response.json();
-      setAnimals(data);
+      setAnimals(Array.isArray(data) ? data : []);
+
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     } finally {

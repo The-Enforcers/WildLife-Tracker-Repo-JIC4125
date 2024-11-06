@@ -45,6 +45,14 @@ const Main = () => {
   // Define the base URL for image API (adjust this based on your server configuration)
   const imageApiBaseUrl = "https://localhost:5001/api/posts/image/";
 
+// Watch for `user` changes and re-render greeting
+useEffect(() => {
+  if (token) {
+    console.log("User logged in:", token);
+  }
+}, [token]);
+
+
   const handleSearch = async (searchTerm) => {
     try {
       const results = await searchPosts(searchTerm); // Use searchPosts from postService

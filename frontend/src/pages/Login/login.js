@@ -3,15 +3,25 @@ import { Button, Typography, Container, Box } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useNavigate } from 'react-router-dom';
 
+
 function LoginPage() {
   const navigate = useNavigate();
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+
     if (token) {
+      // Store token in localStorage and clear URL params
       localStorage.setItem('authToken', token);
-      navigate('/');
+      
+
+      setTimeout(() => {
+        navigate('/');
+      }, 5000); // Adjust the delay duration as needed
+        
+      
+      
+       // Redirect to the main page
     }
   }, [navigate]);
 
@@ -56,7 +66,7 @@ function LoginPage() {
           sx={{ mt: 0, mb: 1, backgroundColor: '#000', color: '#fff', width: '50%' }}
           onClick={handleBack}
         >
-          back
+          Back
         </Button>
 
         <Typography variant="body2" color="textSecondary">

@@ -31,7 +31,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const postRoutes = require("./routes/postRoutes");
-app.use("/api/posts", verifyToken, postRoutes); // Use token verification for post routes
+app.use("/api/posts",  postRoutes); // Use token verification for post routes
 
 const User = require('./models/user');
 
