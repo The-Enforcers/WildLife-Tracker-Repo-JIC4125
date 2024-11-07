@@ -17,4 +17,7 @@ router.post("/image", upload.single("image"), imageController.uploadImage);
 router.get("/image/:filename", imageController.getImage);
 router.get("/author/:authorId", postController.getPostsByAuthorId);
 
+
+router.put("/:userId/profile", postController.updateUserProfile);
+
 module.exports = router;

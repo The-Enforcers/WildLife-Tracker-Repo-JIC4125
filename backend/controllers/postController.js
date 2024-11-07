@@ -189,3 +189,24 @@ exports.updatePost = async (req, res) => {
   }
 };
 
+
+// Update user bio and occupation
+exports.updateUserProfile = async (req, res) => {
+  const { userId } = req.params;
+  const { bio, occupation } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { bio, occupation },
+      { new: true, runValidators: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
