@@ -3,11 +3,13 @@
   max-height: 100vh;
   overflow: hidden;
   position: relative;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .main .main-container {
   margin-inline: 15px;
+  overflow-y: auto;
+  height: 95%;
 }
 
 .main .main-container {
