@@ -17,9 +17,6 @@ router.post("/image", upload.single("image"), imageController.uploadImage);
 router.get("/image/:filename", imageController.getImage);
 router.get("/author/:authorId", postController.getPostsByAuthorId);
 
-router.post("/:userId/:id/bookmark", postController.bookmarkPost);
-router.delete("/:userId/:id/bookmark", postController.unbookmarkPost);
-router.get("/:userId/bookmarked", postController.getBookmarkedPosts);
 
 router.put("/:userId/profile", postController.updateUserProfile);
 
