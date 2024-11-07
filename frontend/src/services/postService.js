@@ -121,10 +121,10 @@ export const getBookmarkedPosts = async (userId) => {
   }
 };
 
-// src/services/postService.js
+// updates user profile bio and occupation
 export const updateUserProfile = async (userId, bio, occupation) => {
   try {
-    const response = await axios.put(`${API_URL}/${userId}/profile`, {
+    const response = await axios.put(`${API_URL}/user/${userId}/profile`, {
       bio,
       occupation,
     });
