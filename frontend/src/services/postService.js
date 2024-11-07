@@ -1,7 +1,7 @@
 // src/services/postService.js
 import axios from "axios";
 
-const API_URL = `https://${window.location.hostname}:5001/api/posts`;
+const API_URL = `https://${window.location.hostname}:5001/api`;
 
 // get all posts
 export const getPosts = async () => {
@@ -11,7 +11,7 @@ export const getPosts = async () => {
 
 // get post by id
 export const getPostById = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axios.get(`${API_URL}/posts/${id}`);
   return response.data;
 };
 
@@ -23,7 +23,7 @@ export const getPostsByAuthor = async (googleId) => {
   }
 
   try {
-    const response = await axios.get(`${API_URL}/author/${googleId}`);
+    const response = await axios.get(`${API_URL}/posts/author/${googleId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching posts by author:", error);
@@ -33,7 +33,7 @@ export const getPostsByAuthor = async (googleId) => {
 
 // create post
 export const createPost = async (postData) => {
-  const response = await axios.post(API_URL, postData);
+  const response = await axios.post(`${API_URL}/posts`, postData);
   return response.data;
 };
 
@@ -45,14 +45,14 @@ export const updatePost = async (id, postData) => {
     "with data:",
     postData
   );
-  const response = await axios.put(`${API_URL}/${id}`, postData);
+  const response = await axios.put(`${API_URL}/posts/${id}`, postData);
   console.log("Update response:", response.data);
   return response.data;
 };
 
 // search posts
 export const searchPosts = async (searchParameters) => {
-  const response = await axios.get(`${API_URL}/search`, {
+  const response = await axios.get(`${API_URL}/posts/search`, {
     params: { title: searchParameters },
   });
   return response.data;
@@ -70,7 +70,7 @@ export const uploadImage = async (imageFile) => {
 
   // Perform the request to the server using fetch
   try {
-    const response = await fetch(`${API_URL}/image`, {
+    const response = await fetch(`${API_URL}/posts/image`, {
       method: "POST",
       body: formData, // Send the FormData containing the image
     });
@@ -89,7 +89,7 @@ export const uploadImage = async (imageFile) => {
 
 export const bookmarkPost = async (userId, postId) => {
   try {
-    const response = await axios.post(`${API_URL}/${userId}/${postId}/bookmark`);
+    const response = await axios.post(`${API_URL}/user/${userId}/${postId}/bookmark`);
     return response.data;
   } catch (error) {
     console.error("Failed to bookmark post", error);
@@ -99,7 +99,7 @@ export const bookmarkPost = async (userId, postId) => {
 
 export const unbookmarkPost = async (userId, postId) => {
   try {
-    const response = await axios.delete(`${API_URL}/${userId}/${postId}/bookmark`);
+    const response = await axios.delete(`${API_URL}/user/${userId}/${postId}/bookmark`);
     return response.data;
   } catch (error) {
     console.error("Failed to unbookmark post", error);
@@ -109,7 +109,7 @@ export const unbookmarkPost = async (userId, postId) => {
 
 export const getBookmarkedPosts = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/${userId}/bookmarked`);
+    const response = await axios.get(`${API_URL}/user/${userId}/bookmarked`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch bookmarked posts", error);
