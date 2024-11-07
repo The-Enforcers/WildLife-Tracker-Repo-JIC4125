@@ -21,4 +21,6 @@ router.post("/:userId/:id/bookmark", postController.bookmarkPost);
 router.delete("/:userId/:id/bookmark", postController.unbookmarkPost);
 router.get("/:userId/bookmarked", postController.getBookmarkedPosts);
 
+router.put("/:userId/profile", postController.updateUserProfile);
+
 module.exports = router;

@@ -116,3 +116,17 @@ export const getBookmarkedPosts = async (userId) => {
     throw error;
   }
 };
+
+// src/services/postService.js
+export const updateUserProfile = async (userId, bio, occupation) => {
+  try {
+    const response = await axios.put(`${API_URL}/${userId}/profile`, {
+      bio,
+      occupation,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update user profile", error);
+    throw error;
+  }
+};

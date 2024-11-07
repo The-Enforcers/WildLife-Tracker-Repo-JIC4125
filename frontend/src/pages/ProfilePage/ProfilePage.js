@@ -15,6 +15,8 @@ import {
   Tab,
   Tabs,
   Typography,
+  TextField,
+  Button,
   styled,
 } from "@mui/material";
 import {
@@ -26,7 +28,7 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
 import { Link } from "react-router-dom";
-import { getPostsByAuthor } from "../../services/postService";
+import { getPostsByAuthor, updateUserProfile } from "../../services/postService";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(0),
@@ -77,12 +79,40 @@ function TabPanel(props) {
 
 export default function ProfilePage() {
   const [value, setValue] = useState(0);
-  const { user } = useContext(UserContext); // Access user from UserContext
-  const [authorPosts, setAuthorPosts] = useState([]); // State to store author's posts
-  const [loading, setLoading] = useState(true); // State for loading
+  const { user } = useContext(UserContext);
+  const [authorPosts, setAuthorPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // State for bio and occupation editing
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [bioText, setBioText] = useState(user?.bio || "Wildlife Enthusiast");
+  const [isEditingOccupation, setIsEditingOccupation] = useState(false);
+  const [occupationText, setOccupationText] = useState(
+    user?.occupation || "Wildlife Enthusiast"
+  );
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleSaveBio = async () => {
+    try {
+      const updatedUser = await updateUserProfile(user._id, bioText, user.occupation);
+      setBioText(updatedUser.bio);
+      setIsEditingBio(false);
+    } catch (error) {
+      console.error("Error updating bio:", error);
+    }
+  };
+
+  const handleSaveOccupation = async () => {
+    try {
+      const updatedUser = await updateUserProfile(user._id, user.bio, occupationText);
+      setOccupationText(updatedUser.occupation);
+      setIsEditingOccupation(false);
+    } catch (error) {
+      console.error("Error updating occupation:", error);
+    }
   };
 
   useEffect(() => {
@@ -131,12 +161,36 @@ export default function ProfilePage() {
               <Typography variant="h5">
                 {user?.displayName || "Anonymous"}
               </Typography>
-              <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                gutterBottom
-              >
-                {user?.bio || "Wildlife Enthusiast"}
+
+              <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+                {isEditingOccupation ? (
+                  <Box>
+                    <TextField
+                      fullWidth
+                      value={occupationText}
+                      onChange={(e) => setOccupationText(e.target.value)}
+                      variant="outlined"
+                      placeholder="Enter your occupation"
+                    />
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+                      <Button variant="contained" color="primary" onClick={handleSaveOccupation}>
+                        Save
+                      </Button>
+                      <Button variant="text" color="secondary" onClick={() => setIsEditingOccupation(false)}>
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <Typography variant="body1">
+                      {occupationText}
+                    </Typography>
+                    <Button variant="text" color="primary" onClick={() => setIsEditingOccupation(true)}>
+                      Edit
+                    </Button>
+                  </Box>
+                )}
               </Typography>
 
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
@@ -161,53 +215,62 @@ export default function ProfilePage() {
             </Grid>
             <Grid item xs={12} md={8}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  aria-label="profile tabs"
-                >
+                <Tabs value={value} onChange={handleChange} aria-label="profile tabs">
                   <Tab label="About" icon={<Pets />} iconPosition="start" />
-                  <Tab
-                    label="Recent Posts"
-                    icon={<CameraAlt />}
-                    iconPosition="start"
-                  />
+                  <Tab label="Recent Posts" icon={<CameraAlt />} iconPosition="start" />
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={6}>
                     <StatsCard>
-                      <Typography variant="h4">1,234</Typography>
+                      <Typography variant="h4">
+                        {loading ? "..." : authorPosts.length}
+                      </Typography>
                       <Typography variant="subtitle1" color="textSecondary">
                         Total Posts
                       </Typography>
                     </StatsCard>
                   </Grid>
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={6}>
                     <StatsCard>
                       <Typography variant="h4">56</Typography>
                       <Typography variant="subtitle1" color="textSecondary">
-                        Species Spotted
-                      </Typography>
-                    </StatsCard>
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <StatsCard>
-                      <Typography variant="h4">789</Typography>
-                      <Typography variant="subtitle1" color="textSecondary">
-                        Photos Uploaded
+                        Likes
                       </Typography>
                     </StatsCard>
                   </Grid>
                 </Grid>
                 <Box mt={2}>
                   <StatsCard>
-                    <Typography variant="body1">
-                      Passionate wildlife enthusiast with a keen eye for rare
-                      species. I've been tracking and documenting wildlife
-                      across North America for over 5 years.
-                    </Typography>
+                    {isEditingBio ? (
+                      <Box>
+                        <TextField
+                          fullWidth
+                          multiline
+                          rows={4}
+                          value={bioText}
+                          onChange={(e) => setBioText(e.target.value)}
+                          variant="outlined"
+                          placeholder="Describe your passion for wildlife..."
+                        />
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+                          <Button variant="contained" color="primary" onClick={handleSaveBio}>
+                            Save
+                          </Button>
+                          <Button variant="text" color="secondary" onClick={() => setIsEditingBio(false)}>
+                            Cancel
+                          </Button>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <Typography variant="body1">{bioText}</Typography>
+                        <Button variant="text" color="primary" onClick={() => setIsEditingBio(true)}>
+                          Edit
+                        </Button>
+                      </Box>
+                    )}
                   </StatsCard>
                 </Box>
                 <br />
@@ -248,30 +311,17 @@ export default function ProfilePage() {
                           style={{ textDecoration: "none", color: "inherit" }}
                         >
                           <ListItemAvatar>
-                            <Avatar
-                              src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                              alt={post.title}
-                            />
+                            <Avatar src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`} alt={post.title} />
                           </ListItemAvatar>
                           <ListItemText
                             primary={post.title}
                             secondary={
                               <>
-                                <Typography
-                                  component="span"
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
+                                <Typography component="span" variant="body2" color="textSecondary">
                                   {post.commonName}
                                 </Typography>
-                                <Typography
-                                  component="span"
-                                  variant="caption"
-                                  color="textSecondary"
-                                >
-                                  {` • ${new Date(
-                                    post.date
-                                  ).toLocaleDateString()}`}
+                                <Typography component="span" variant="caption" color="textSecondary">
+                                  {` • ${new Date(post.date).toLocaleDateString()}`}
                                 </Typography>
                               </>
                             }
