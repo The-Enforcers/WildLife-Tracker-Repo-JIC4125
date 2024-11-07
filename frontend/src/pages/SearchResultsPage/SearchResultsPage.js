@@ -15,6 +15,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+import { createTheme } from "@mui/material/styles";
+
+import "./SearchResultsPage.css";
 // MUI Imports
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -29,6 +32,9 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 import CloudIcon from "@mui/icons-material/Cloud";
 import PublicIcon from "@mui/icons-material/Public";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import SearchIcon from '@mui/icons-material/Search';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { Tooltip } from "react-tooltip";
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
@@ -296,12 +302,23 @@ const SearchResultsPage = () => {
             <Box
               sx={{
                 padding: 1,
-                borderRight: "1px solid #ddd",
                 height: "100%",
                 overflowY: "auto",
               }}
             >
-              <Accordion>
+              <Accordion className="filter-group" defaultExpanded="true"
+              
+                sx={{
+                    
+                  backgroundColor: "#f0f4f9", 
+                  boxShadow: "none",
+                  borderRadius: "15px",
+                  "&:first-of-type": {
+                    borderRadius: "15px"
+                  }
+                }}
+              
+              >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Animal Type</Typography>
                 </AccordionSummary>
@@ -361,7 +378,18 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
+              <Accordion className="filter-group" defaultExpanded="true"
+              
+              sx={{
+                  
+                backgroundColor: "#f0f4f9", 
+                boxShadow: "none",
+                borderRadius: "15px",
+                "&:first-of-type": {
+                  borderRadius: "15px"
+                }
+              }}
+              >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Tracker Type</Typography>
                 </AccordionSummary>
@@ -441,7 +469,18 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
+              <Accordion className="filter-group"  defaultExpanded="true"
+              
+              sx={{
+                  
+                backgroundColor: "#f0f4f9", 
+                boxShadow: "none",
+                borderRadius: "15px",
+                "&:first-of-type": {
+                  borderRadius: "15px"
+                }
+              }}
+              >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Enclosure Type</Typography>
                 </AccordionSummary>
@@ -491,7 +530,19 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
+              <Accordion className="filter-group" defaultExpanded="true"
+              
+              sx={{
+                  
+                backgroundColor: "#f0f4f9", 
+                boxShadow: "none",
+                borderRadius: "15px",
+                "&:first-of-type": {
+                  borderRadius: "15px"
+                }
+              }}
+              
+              >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Attachment Type</Typography>
                 </AccordionSummary>
@@ -550,61 +601,71 @@ const SearchResultsPage = () => {
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
-              {/* Clear Filters Button */}
-              <Button
-                variant="outlined"
-                onClick={clearFilters}
-                sx={{
-                  marginTop: 2,
-                  color: "#2e3339fc",
-                  borderColor: "#2e333994",
-                }}
-                fullWidth
-              >
-                Clear Filters
-              </Button>
-              {/* Apply Filters Button */}
-              <Button
-                variant="contained"
-                onClick={applyFilters}
-                sx={{ marginTop: 1, backgroundColor: "#212e38" }}
-                fullWidth
-              >
-                Apply Filters
-              </Button>
+
+              {/* Filters button */}
+              <div className="filters-button-box">
+                <div className="apply-filter-container filter-button-container">
+                  {/* Filter Icon */}
+                  <div
+                    className="apply-filter-icon"
+                    onClick={applyFilters}
+                    data-tooltip-id="apply-filter"
+                    data-tooltip-content="Apply Filters"
+                  >
+                    <SearchIcon fontSize="medium" />
+                    <div>Apply </div>
+                  </div>
+                </div>
+                <div className="reset-filter-container filter-button-container">
+                  {/* Reset Icon */}
+                  <div
+                    className="reset-filter-icon "
+                    onClick={clearFilters}
+                    data-tooltip-id="reset-filter"
+                    data-tooltip-content="Reset"
+                  >
+                    <CancelIcon fontSize="medium" />
+                    <div>Clear</div>
+                  </div>
+                </div>
+              </div>
+
+              
             </Box>
           </Grid>
 
           {/* Grid with animal cards */}
-          <Grid item xs={12} sm={9} md={10} sx={{ pb: 2 }}>
-            {loading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Grid container spacing={2}>
-                {animals.map((animal, index) => (
-                  <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                    <ImageCard
-                      title={animal.title}
-                      description={animal.trackerType}
-                      post_id={animal._id}
-                      image={animal.postImage}
-                      animalType={animal.animalType}
-                      trackerType={animal.trackerType}
-                      icons={getRandomIcons()}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            )}
+          <Grid item xs={12} sm={9} md={10} sx={{ pb: 2}}>
+            <Box sx={{margin: "16px"}}>
+              {loading ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Grid container spacing={2}>
+                  {animals.map((animal, index) => (
+                    <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                      <ImageCard
+                        title={animal.title}
+                        description={animal.trackerType}
+                        post_id={animal._id}
+                        image={animal.postImage}
+                        animalType={animal.animalType}
+                        trackerType={animal.trackerType}
+                        icons={getRandomIcons()}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Box>
