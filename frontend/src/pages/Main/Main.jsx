@@ -181,6 +181,18 @@ const Main = () => {
     navigate(`/posts/${postId}`);
   };
 
+  const handleIconSearchFilter = (animalType) => {
+
+    // Construct query string
+    const queryParams = new URLSearchParams();
+
+    if (animalType.length > 0) queryParams.append(animalType, true);
+    if (input) queryParams.append("search", input);
+
+    // Navigate to the search results page with query string
+    navigate(`/posts?${queryParams.toString()}`);
+  };
+
   return (
     <div className="greet-container">
       <div className="greet">
@@ -190,7 +202,7 @@ const Main = () => {
         </p>
       </div>
 
-      <SearchBox input={input} setInput={setInput} onSearch={searchFunc} setFilters={setFilters}/>
+      <SearchBox input={input} setInput={setInput} onSearch={searchFunc} setFilters={handleIconSearchFilter}/>
 
       {/* Display search results */}
       {input && (
@@ -242,23 +254,23 @@ const Main = () => {
       {/* Icon Images with Labels */}
       {searchResults.length == 0 ? (<div><div className="icon-images">
         <div className="icon-wrapper">
-          <img src={icon1} alt="Mammals Icon" className="icon-image" />
+          <img src={icon1} alt="Mammal Icon" className="icon-image" onClick={() => handleIconSearchFilter("mammal")}/>
           <p className="icon-label">Mammals</p>
         </div>
         <div className="icon-wrapper">
-          <img src={icon2} alt="Reptiles Icon" className="icon-image" />
+          <img src={icon2} alt="Reptiles Icon" className="icon-image" onClick={() => handleIconSearchFilter("reptiles")}/>
           <p className="icon-label">Reptiles</p>
         </div>
         <div className="icon-wrapper">
-          <img src={icon3} alt="Amphibians Icon" className="icon-image" />
+          <img src={icon3} alt="Amphibians Icon" className="icon-image" onClick={() => handleIconSearchFilter("amphibian")}/>
           <p className="icon-label">Amphibians</p>
         </div>
         <div className="icon-wrapper">
-          <img src={icon5} alt="Fish Icon" className="icon-image" />
+          <img src={icon5} alt="Fish Icon" className="icon-image" onClick={() => handleIconSearchFilter("fish")}/>
           <p className="icon-label">Fish</p>
         </div>
         <div className="icon-wrapper">
-          <img src={icon4} alt="Birds Icon" className="icon-image" />
+          <img src={icon4} alt="Birds Icon" className="icon-image" onClick={() => handleIconSearchFilter("bird")}/>
           <p className="icon-label">Birds</p>
         </div>
       </div>

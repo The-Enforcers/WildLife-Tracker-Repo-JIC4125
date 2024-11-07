@@ -106,8 +106,11 @@ const SearchResultsPage = () => {
     ElectricBoltIcon,
   ];
 
+  var firstSearch = true;
+
   // Update URL parameters whenever input or filters change
   useEffect(() => {
+
     const params = {
       search: input,
       ...Object.keys(filters)
