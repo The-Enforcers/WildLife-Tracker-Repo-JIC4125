@@ -122,15 +122,22 @@ export default function ProfilePage() {
           const authorPosts = await getPostsByAuthor(user.googleId);
           setAuthorPosts(authorPosts);
         } catch (error) {
-          console.error("Error fetching author posts:", error);
+          if (error.response && error.response.status === 404) {
+            // No posts found, set to an empty array
+            setAuthorPosts([]);
+          } else {
+            // Log any other errors
+            console.error("Error fetching author posts:", error);
+          }
         } finally {
           setLoading(false);
         }
       }
     };
-
+  
     fetchAuthorPosts();
   }, [user]);
+  
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -234,7 +241,7 @@ export default function ProfilePage() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <StatsCard>
-                      <Typography variant="h4">56</Typography>
+                      <Typography variant="h4">0</Typography>
                       <Typography variant="subtitle1" color="textSecondary">
                         Likes
                       </Typography>

@@ -15,7 +15,6 @@ export const getPostById = async (id) => {
   return response.data;
 };
 
-// get posts by author
 export const getPostsByAuthor = async (googleId) => {
   if (!googleId) {
     console.error("No Google ID provided.");
@@ -26,10 +25,15 @@ export const getPostsByAuthor = async (googleId) => {
     const response = await axios.get(`${API_URL}/author/${googleId}`);
     return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("No posts found for this author.");
+      return []; // Return an empty array if no posts are found
+    }
     console.error("Error fetching posts by author:", error);
     throw error;
   }
 };
+
 
 // create post
 export const createPost = async (postData) => {
