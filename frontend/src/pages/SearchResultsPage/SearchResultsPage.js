@@ -178,10 +178,6 @@ const SearchResultsPage = () => {
     }
   }, [input]);
 
-  useEffect(() => {
-    fetchAnimals();
-  }, [fetchAnimals]);
-
   // function to randomly select icons
   const getRandomIcons = () => {
     const shuffledIcons = [...iconList].sort(() => 0.5 - Math.random());
@@ -190,13 +186,10 @@ const SearchResultsPage = () => {
 
   // function to handle checkbox changes
   const handleCheckboxChange = (event) => {
-    console.log(event.target.name);
-    console.log(event.target.checked);
     setFilters({
       ...filters,
       [event.target.name]: event.target.checked,
     });
-    console.log(filters);
   };
 
   // Function to handle filter button click
@@ -252,6 +245,10 @@ const SearchResultsPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    applyFilters();
+  }, []);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
