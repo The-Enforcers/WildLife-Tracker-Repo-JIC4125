@@ -20,7 +20,6 @@ import {
   styled,
 } from "@mui/material";
 import {
-  LocationOn,
   DateRange,
   Pets,
   CameraAlt,
@@ -28,7 +27,10 @@ import {
 } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
 import { Link } from "react-router-dom";
-import { getPostsByAuthor, updateUserProfile } from "../../services/postService";
+import {
+  getPostsByAuthor,
+  updateUserProfile,
+} from "../../services/postService";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(0),
@@ -97,7 +99,11 @@ export default function ProfilePage() {
 
   const handleSaveBio = async () => {
     try {
-      const updatedUser = await updateUserProfile(user._id, bioText, user.occupation);
+      const updatedUser = await updateUserProfile(
+        user._id,
+        bioText,
+        user.occupation
+      );
       setBioText(updatedUser.bio);
       setIsEditingBio(false);
     } catch (error) {
@@ -107,7 +113,11 @@ export default function ProfilePage() {
 
   const handleSaveOccupation = async () => {
     try {
-      const updatedUser = await updateUserProfile(user._id, user.bio, occupationText);
+      const updatedUser = await updateUserProfile(
+        user._id,
+        user.bio,
+        occupationText
+      );
       setOccupationText(updatedUser.occupation);
       setIsEditingOccupation(false);
     } catch (error) {
@@ -134,10 +144,9 @@ export default function ProfilePage() {
         }
       }
     };
-  
+
     fetchAuthorPosts();
   }, [user]);
-  
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -169,7 +178,11 @@ export default function ProfilePage() {
                 {user?.displayName || "Anonymous"}
               </Typography>
 
-              <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+              <Typography
+                variant="subtitle1"
+                color="textSecondary"
+                gutterBottom
+              >
                 {isEditingOccupation ? (
                   <Box>
                     <TextField
@@ -179,34 +192,50 @@ export default function ProfilePage() {
                       variant="outlined"
                       placeholder="Enter your occupation"
                     />
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
-                      <Button variant="contained" color="primary" onClick={handleSaveOccupation}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        mt: 1,
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveOccupation}
+                      >
                         Save
                       </Button>
-                      <Button variant="text" color="secondary" onClick={() => setIsEditingOccupation(false)}>
+                      <Button
+                        variant="text"
+                        color="secondary"
+                        onClick={() => setIsEditingOccupation(false)}
+                      >
                         Cancel
                       </Button>
                     </Box>
                   </Box>
                 ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <Typography variant="body1">
-                      {occupationText}
-                    </Typography>
-                    <Button variant="text" color="primary" onClick={() => setIsEditingOccupation(true)}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography variant="body1">{occupationText}</Typography>
+                    <Button
+                      variant="text"
+                      color="primary"
+                      onClick={() => setIsEditingOccupation(true)}
+                    >
                       Edit
                     </Button>
                   </Box>
                 )}
               </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <LocationOn fontSize="small" sx={{ mr: 1 }} />
-                <Typography variant="body2">
-                  {user?.location || "Unknown Location"}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
                 <DateRange fontSize="small" sx={{ mr: 1 }} />
                 <Typography variant="body2">
                   Member since:{" "}
@@ -222,9 +251,17 @@ export default function ProfilePage() {
             </Grid>
             <Grid item xs={12} md={8}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs value={value} onChange={handleChange} aria-label="profile tabs">
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="profile tabs"
+                >
                   <Tab label="About" icon={<Pets />} iconPosition="start" />
-                  <Tab label="Recent Posts" icon={<CameraAlt />} iconPosition="start" />
+                  <Tab
+                    label="Recent Posts"
+                    icon={<CameraAlt />}
+                    iconPosition="start"
+                  />
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>
@@ -261,19 +298,43 @@ export default function ProfilePage() {
                           variant="outlined"
                           placeholder="Describe your passion for wildlife..."
                         />
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
-                          <Button variant="contained" color="primary" onClick={handleSaveBio}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            mt: 1,
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSaveBio}
+                          >
                             Save
                           </Button>
-                          <Button variant="text" color="secondary" onClick={() => setIsEditingBio(false)}>
+                          <Button
+                            variant="text"
+                            color="secondary"
+                            onClick={() => setIsEditingBio(false)}
+                          >
                             Cancel
                           </Button>
                         </Box>
                       </Box>
                     ) : (
-                      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <Typography variant="body1">{bioText}</Typography>
-                        <Button variant="text" color="primary" onClick={() => setIsEditingBio(true)}>
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() => setIsEditingBio(true)}
+                        >
                           Edit
                         </Button>
                       </Box>
@@ -318,17 +379,30 @@ export default function ProfilePage() {
                           style={{ textDecoration: "none", color: "inherit" }}
                         >
                           <ListItemAvatar>
-                            <Avatar src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`} alt={post.title} />
+                            <Avatar
+                              src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
+                              alt={post.title}
+                            />
                           </ListItemAvatar>
                           <ListItemText
                             primary={post.title}
                             secondary={
                               <>
-                                <Typography component="span" variant="body2" color="textSecondary">
+                                <Typography
+                                  component="span"
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
                                   {post.commonName}
                                 </Typography>
-                                <Typography component="span" variant="caption" color="textSecondary">
-                                  {` • ${new Date(post.date).toLocaleDateString()}`}
+                                <Typography
+                                  component="span"
+                                  variant="caption"
+                                  color="textSecondary"
+                                >
+                                  {` • ${new Date(
+                                    post.date
+                                  ).toLocaleDateString()}`}
                                 </Typography>
                               </>
                             }
