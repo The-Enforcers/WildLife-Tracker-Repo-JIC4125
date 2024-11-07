@@ -109,7 +109,7 @@ const SearchResultsPage = () => {
   var firstSearch = true;
 
   // Update URL parameters whenever input or filters change
-  useEffect(() => {
+  /*useEffect(() => {
 
     const params = {
       search: input,
@@ -121,7 +121,7 @@ const SearchResultsPage = () => {
         }, {}),
     };
     setSearchParams(params);
-  }, [input, filters, setSearchParams]);
+  }, [input, filters, setSearchParams]);*/
 
   // Fetch animals data from the backend
   const fetchAnimals = useCallback(async () => {
@@ -234,6 +234,17 @@ const SearchResultsPage = () => {
     const attachmentTypeQuery = attachmentTypes.join(",");
     const enclosureTypeQuery = enclosureTypes.join(",");
     const animalFamilyQuery = animalFamily.join(",");
+
+    const params = {
+      search: input,
+      ...Object.keys(filters)
+        .filter((key) => filters[key])
+        .reduce((acc, key) => {
+          acc[key] = "true";
+          return acc;
+        }, {}),
+    };
+    setSearchParams(params);
 
     try {
       const response = await fetch(
