@@ -1,7 +1,11 @@
-// src/services/postService.js
 import axios from "axios";
 
 const API_URL = `https://${window.location.hostname}:5001/api`;
+
+// Helper function to get token
+const getAuthToken = () => {
+  return localStorage.getItem('authToken');
+};
 
 // get all posts
 export const getPosts = async () => {
@@ -37,12 +41,25 @@ export const getPostsByAuthor = async (googleId) => {
 
 // create post
 export const createPost = async (postData) => {
+  const token = getAuthToken();
+  const response = await axios.post(API_URL, postData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
   const response = await axios.post(`${API_URL}/posts`, postData);
   return response.data;
 };
 
 // update post
 export const updatePost = async (id, postData) => {
+  const token = getAuthToken();
+  const response = await axios.put(`${API_URL}/${id}`, postData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
   console.log(
     "Sending update request for post ID:",
     id,
@@ -69,6 +86,7 @@ export const uploadImage = async (imageFile) => {
     return;
   }
 
+  const token = getAuthToken();
   const formData = new FormData();
   formData.append("image", imageFile); // Append the image file to FormData
 
@@ -76,6 +94,9 @@ export const uploadImage = async (imageFile) => {
   try {
     const response = await fetch(`${API_URL}/posts/image`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       body: formData, // Send the FormData containing the image
     });
 
