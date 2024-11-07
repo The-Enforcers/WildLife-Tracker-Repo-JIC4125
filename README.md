@@ -100,6 +100,7 @@ GOOGLE_CLIENT_ID=YYYYYYY
 GOOGLE_CLIENT_SECRET=ZZZZZZZZ
 HTTPS_PORT=5001
 SESSION_SECRET=a_secure_random_string
+JWT_SECRET=SomethingsSomethingPleaseChange
 ```
 
 Replace XXXXXX with your MongoDB connection string. To find this string, follow these steps:

@@ -10,7 +10,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AddIcon from "@mui/icons-material/Add";
 import HomeIcon from "@mui/icons-material/Home";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import SearchIcon from "@mui/icons-material/Search";
 
 // wildlife movement institute logo
 import logo from "../../assets/logo.png";
@@ -33,8 +33,8 @@ const Sidebar = () => {
       refIndex: 1,
     },
     {
-      iconId: "view-posts",
-      text: "Here, you can view all the posts that have been submitted.",
+      iconId: "search-posts",
+      text: "Here, you can search for all the posts that have been submitted.",
       refIndex: 2,
     },
     {
@@ -170,11 +170,11 @@ const Sidebar = () => {
           <div
             ref={(el) => (iconRefs.current[2] = el)}
             onClick={() => handleNavigation("/posts")}
-            className={`view-posts ${currentStep === 2 ? "highlight" : ""}`}
+            className={`search-posts ${currentStep === 2 ? "highlight" : ""}`}
           >
-            <VisibilityIcon />
-            <Tooltip id="view-posts" place="bottom" />
-            {extended && <p>View Posts</p>}
+            <SearchIcon />
+            <Tooltip id="search-posts" place="bottom" />
+            {extended && <p>Search Posts</p>}
           </div>
         </div>
         <div className="bottom">

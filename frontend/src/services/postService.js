@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = `https://${window.location.hostname}:5001/api/posts`;
+const API_URL = `https://${window.location.hostname}:5001/api`;
 
 // Helper function to get token
 const getAuthToken = () => {
@@ -15,11 +15,10 @@ export const getPosts = async () => {
 
 // get post by id
 export const getPostById = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axios.get(`${API_URL}/posts/${id}`);
   return response.data;
 };
 
-// get posts by author
 export const getPostsByAuthor = async (googleId) => {
   if (!googleId) {
     console.error("No Google ID provided.");
@@ -27,13 +26,18 @@ export const getPostsByAuthor = async (googleId) => {
   }
 
   try {
-    const response = await axios.get(`${API_URL}/author/${googleId}`);
+    const response = await axios.get(`${API_URL}/posts/author/${googleId}`);
     return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("No posts found for this author.");
+      return []; // Return an empty array if no posts are found
+    }
     console.error("Error fetching posts by author:", error);
     throw error;
   }
 };
+
 
 // create post
 export const createPost = async (postData) => {
@@ -43,6 +47,7 @@ export const createPost = async (postData) => {
       Authorization: `Bearer ${token}`
     }
   });
+  const response = await axios.post(`${API_URL}/posts`, postData);
   return response.data;
 };
 
@@ -54,12 +59,21 @@ export const updatePost = async (id, postData) => {
       Authorization: `Bearer ${token}`
     }
   });
+
+  console.log(
+    "Sending update request for post ID:",
+    id,
+    "with data:",
+    postData
+  );
+  const response = await axios.put(`${API_URL}/posts/${id}`, postData);
+  console.log("Update response:", response.data);
   return response.data;
 };
 
 // search posts
 export const searchPosts = async (searchParameters) => {
-  const response = await axios.get(`${API_URL}/search`, {
+  const response = await axios.get(`${API_URL}/posts/search`, {
     params: { title: searchParameters },
   });
   return response.data;
@@ -78,7 +92,7 @@ export const uploadImage = async (imageFile) => {
 
   // Perform the request to the server using fetch
   try {
-    const response = await fetch(`${API_URL}/image`, {
+    const response = await fetch(`${API_URL}/posts/image`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -95,5 +109,49 @@ export const uploadImage = async (imageFile) => {
     return data.filename; // Return the filename
   } catch (error) {
     console.error("Error uploading image:", error);
+  }
+};
+
+export const bookmarkPost = async (userId, postId) => {
+  try {
+    const response = await axios.post(`${API_URL}/user/${userId}/${postId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to bookmark post", error);
+    throw error;
+  }
+};
+
+export const unbookmarkPost = async (userId, postId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/user/${userId}/${postId}/bookmark`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to unbookmark post", error);
+    throw error;
+  }
+};
+
+export const getBookmarkedPosts = async (userId) => {
+  try {
+    const response = await axios.get(`${API_URL}/user/${userId}/bookmarked`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch bookmarked posts", error);
+    throw error;
+  }
+};
+
+// updates user profile bio and occupation
+export const updateUserProfile = async (userId, bio, occupation) => {
+  try {
+    const response = await axios.put(`${API_URL}/user/${userId}/profile`, {
+      bio,
+      occupation,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update user profile", error);
+    throw error;
   }
 };
