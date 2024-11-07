@@ -42,19 +42,18 @@ export const getPostsByAuthor = async (googleId) => {
 // create post
 export const createPost = async (postData) => {
   const token = getAuthToken();
-  const response = await axios.post(API_URL, postData, {
+  const response = await axios.post(`${API_URL}/posts`, postData, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   });
-  const response = await axios.post(`${API_URL}/posts`, postData);
   return response.data;
 };
 
 // update post
 export const updatePost = async (id, postData) => {
   const token = getAuthToken();
-  const response = await axios.put(`${API_URL}/${id}`, postData, {
+  const response = await axios.put(`${API_URL}/posts/${id}`, postData, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -66,7 +65,6 @@ export const updatePost = async (id, postData) => {
     "with data:",
     postData
   );
-  const response = await axios.put(`${API_URL}/posts/${id}`, postData);
   console.log("Update response:", response.data);
   return response.data;
 };

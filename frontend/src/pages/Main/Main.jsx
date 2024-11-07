@@ -20,7 +20,7 @@ import icon5 from "../../assets/Fish.png";
 const animalNames = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra"];
 
 const Main = () => {
-  const { user, token } = useContext(UserContext); 
+  const { user, token } = useContext(UserContext);
   const [input, setInput] = useState("");
   // state variables for the typing animation
   const [currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
@@ -43,14 +43,6 @@ const Main = () => {
 
   // Define the base URL for image API (adjust this based on your server configuration)
   const imageApiBaseUrl = "https://localhost:5001/api/posts/image/";
-
-// Watch for `user` changes and re-render greeting
-useEffect(() => {
-  if (token) {
-    console.log("User logged in:", token);
-  }
-}, [token]);
-
 
   const handleSearch = async (searchTerm) => {
     try {
