@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getPostById } from "../../services/postService";
-// React quill
+import {
+  getPostById,
+  bookmarkPost,
+  unbookmarkPost,
+} from "../../services/postService";
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
 // CSS file
@@ -10,10 +13,17 @@ import "./PostDetailsPage.css";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import EditIcon from "@mui/icons-material/Edit";
-import { Breadcrumbs, Button, Typography } from "@mui/material";
-
-// User context
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import {
+  Breadcrumbs,
+  Button,
+  Typography,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { UserContext } from "../../context/UserContext";
+import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
 const PostDetailsPage = () => {
   const navigate = useNavigate();
@@ -23,6 +33,8 @@ const PostDetailsPage = () => {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [expandedBox, setExpandedBox] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const showSnackbar = useSnackbar();
 
   const handleBoxClick = (boxType) => {
     setExpandedBox((prev) => (prev === boxType ? null : boxType));
@@ -41,16 +53,36 @@ const PostDetailsPage = () => {
         } else if (data.attachmentImage) {
           setExpandedBox("attachment");
         }
+
+        // Check if user and bookmarkedPosts exist before accessing bookmarkedPosts
+        if (user && user.bookmarkedPosts) {
+          setIsBookmarked(user.bookmarkedPosts.includes(id));
+        }
       } catch (error) {
         setError("Failed to fetch post data.");
         console.error("Failed to fetch post", error);
       }
     };
     fetchPost();
-  }, [id]);
+  }, [id, user]);
 
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
+  };
+
+  const handleBookmark = async () => {
+    try {
+      if (isBookmarked) {
+        await unbookmarkPost(user._id, id); 
+        showSnackbar("Bookmark Removed", "error");
+      } else {
+        await bookmarkPost(user._id, id); 
+        showSnackbar("Bookmark Added", "success");
+      }
+      setIsBookmarked(!isBookmarked);
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
   };
 
   if (error) return <div style={styles.error}>{error}</div>;
@@ -92,14 +124,13 @@ const PostDetailsPage = () => {
                 <p className="name-header">Tracker Type</p>
                 <p className="common-name">{post.trackerType}</p>
               </div>
-              
               <div className="post-author">
                 <img
                   className="profile-picture"
-                  src={post.authorImage || "https://via.placeholder.com/150"} // Use placeholder if post.authorImage is null or undefined
+                  src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
                   alt="Author"
                   onError={(e) => {
-                    e.target.onerror = null; // Prevent infinite loop if fallback image also fails
+                    e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
                   }}
                 />
@@ -107,10 +138,7 @@ const PostDetailsPage = () => {
                 <p className="author-name"> {post.author}</p>
               </div>
               {post.lastUpdated && (
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                >
+                <Typography variant="body2" color="textSecondary">
                   Last updated:{" "}
                   {new Date(post.lastUpdated).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -128,27 +156,68 @@ const PostDetailsPage = () => {
           </div>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
-              <Button
-                variant="contained"
-                onClick={handleEdit}
-                startIcon={<EditIcon />}
+              <Tooltip
+                title="Edit post"
+                placement="top"
+                PopperProps={{
+                  modifiers: [
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, -8],
+                      },
+                    },
+                  ],
+                }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={handleEdit}
+                  startIcon={<EditIcon />}
+                  sx={{
+                    backgroundColor: "#212e38",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    textTransform: "none",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                    borderRadius: "20px",
+                    padding: "8px 16px",
+                  }}
+                >
+                  Edit
+                </Button>
+              </Tooltip>
+            )}
+
+            {/* Conditionally render the bookmark button only if user is logged in */}
+            {user && (
+              <IconButton
+                onClick={handleBookmark}
+                aria-label="bookmark post"
                 sx={{
                   backgroundColor: "#212e38",
                   color: "white",
                   "&:hover": {
                     backgroundColor: "#303f9f",
                   },
-                  textTransform: "none",
-                  fontSize: "15px",
-                  fontWeight: "bold",
-                  borderRadius: "20px",
-                  padding: "8px 16px",
+                  borderRadius: "50%",
+                  padding: "10px",
+                  marginLeft: "8px",
                 }}
               >
-                Edit
-              </Button>
+                <Tooltip
+                  title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
+                  placement="top"
+                >
+                  {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                </Tooltip>
+              </IconButton>
             )}
           </div>
+
           <div className="post-picture">
             <img
               className="post-image"
@@ -321,10 +390,10 @@ const styles = {
     color: "red",
   },
   expandedImage: {
-    display: "block", // Ensure the image is a block element
-    margin: "10px auto", // Center the image
-    width: "80%", // Optional: Control the image size
-    maxWidth: "600px", // Optional: Max width for the image
+    display: "block",
+    margin: "10px auto",
+    width: "80%",
+    maxWidth: "600px",
     height: "auto",
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

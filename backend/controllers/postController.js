@@ -1,5 +1,5 @@
-// backend/controllers/postController.js
 const Post = require("../models/Post");
+const User = require("../models/User");
 //returns all posts
 exports.getAllPosts = async (req, res) => {
   try {
@@ -188,3 +188,4 @@ exports.updatePost = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+

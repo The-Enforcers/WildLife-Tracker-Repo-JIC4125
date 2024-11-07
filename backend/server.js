@@ -28,8 +28,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// post routes
 const postRoutes = require("./routes/postRoutes");
 app.use("/api/posts", postRoutes);
+
+// user routes
+const userRoutes = require("./routes/userRoutes");
+app.use("/api/user", userRoutes);
 
 const User = require('./models/User');
 
