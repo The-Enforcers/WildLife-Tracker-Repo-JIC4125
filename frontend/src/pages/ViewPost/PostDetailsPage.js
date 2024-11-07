@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { UserContext } from "../../context/UserContext";
+import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
 const PostDetailsPage = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const PostDetailsPage = () => {
   const [error, setError] = useState(null);
   const [expandedBox, setExpandedBox] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const showSnackbar = useSnackbar();
 
   const handleBoxClick = (boxType) => {
     setExpandedBox((prev) => (prev === boxType ? null : boxType));
@@ -71,9 +73,11 @@ const PostDetailsPage = () => {
   const handleBookmark = async () => {
     try {
       if (isBookmarked) {
-        await unbookmarkPost(user._id, id); // Pass userId and postId
+        await unbookmarkPost(user._id, id); 
+        showSnackbar("Bookmark Removed", "error");
       } else {
-        await bookmarkPost(user._id, id); // Pass userId and postId
+        await bookmarkPost(user._id, id); 
+        showSnackbar("Bookmark Added", "success");
       }
       setIsBookmarked(!isBookmarked);
     } catch (error) {
