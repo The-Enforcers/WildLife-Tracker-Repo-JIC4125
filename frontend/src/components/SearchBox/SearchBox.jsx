@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import SearchIcon from "@mui/icons-material/Search"
 import ClearIcon from "@mui/icons-material/Clear"; // Import Clear Icon
 import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
@@ -27,6 +28,24 @@ const SearchBox = ({ input, setInput, onSearch }) => {
   const clearInput = () => {
     setInput("");
   };
+  
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        onSearch();
+      }
+    };
+
+    const inputElement = inputRef.current;
+    inputElement.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      inputElement.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <>
@@ -37,6 +56,7 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             onChange={(e) => setInput(e.target.value)}
             value={input}
             type="text"
+            ref={inputRef}
             placeholder="Search by species or common name"
           />
 
@@ -48,12 +68,12 @@ const SearchBox = ({ input, setInput, onSearch }) => {
           )}
 
           <span
-            className="filter-icon"
-            onClick={() => setShowFilters(!showFilters)}
+            className="search-icon"
+            onClick={() => onSearch()}
           >
-            <FilterListIcon
-              data-tooltip-id="filter"
-              data-tooltip-content="Filter results"
+            <SearchIcon
+              data-tooltip-id="search"
+              data-tooltip-content="search results"
               fontSize="medium"
             />
             <Tooltip
