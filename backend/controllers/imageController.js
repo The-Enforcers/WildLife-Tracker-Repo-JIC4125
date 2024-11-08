@@ -5,7 +5,6 @@ const gridfsStream = require('gridfs-stream');
 const { GridFSBucket } = require('mongodb');
 const path = require('path');
 
-
 // Image storage
 let gfs;
 let gridFSBucket;
@@ -21,8 +20,8 @@ conn.once('open', () => {
     });
 });
 
-exports.getImage = async(req, res) => {
-
+// Get image from GridFS
+exports.getImage = async (req, res) => {
     const file = await gfs.files.findOne({ filename: req.params.filename });
 
     if (!file || file.length === 0) {
@@ -36,23 +35,31 @@ exports.getImage = async(req, res) => {
         const readStream = gridFSBucket.openDownloadStreamByName(file.filename);
         readStream.pipe(res);
     } else {
-        res.status(404).send('Not an image.');   
+        res.status(404).send('Not an image.');
     }
+};
 
-}
+// Allowed MIME types for image uploads
+const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
-exports.uploadImage = async(req, res) => {
-
-    console.log(req.file);
-
+// Upload image to GridFS
+exports.uploadImage = async (req, res) => {
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
+    }
+
+    // Dynamically import file-type for compatibility
+    const { fileTypeFromBuffer } = await import('file-type');
+    const fileSignature = await fileTypeFromBuffer(req.file.buffer);
+
+    // Validate MIME type and file signature
+    if (!fileSignature || !allowedMimeTypes.includes(fileSignature.mime)) {
+        return res.status(400).send('Invalid file type. Only JPEG, PNG, and GIF files are allowed.');
     }
 
     const randomBytes = crypto.randomBytes(16).toString('hex');
     const fileExtension = path.extname(req.file.originalname);
     const randomFileName = `${randomBytes}${fileExtension}`;
-
     const contentType = req.file.mimetype;
 
     // Create a GridFS stream to upload the file
@@ -64,7 +71,6 @@ exports.uploadImage = async(req, res) => {
     writeStream.end(req.file.buffer);
 
     writeStream.on('finish', (file) => {
-        // File upload complete
         console.log(file);
         res.status(201).json({
             message: 'File uploaded successfully',
@@ -76,5 +82,4 @@ exports.uploadImage = async(req, res) => {
         console.error('Error uploading file:', err);
         res.status(500).send('Error uploading file.');
     });
-// i see a nut muncher
-}
+};
