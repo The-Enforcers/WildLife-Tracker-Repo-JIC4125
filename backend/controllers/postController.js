@@ -36,7 +36,15 @@ exports.getPostById = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-  console.log(req.body);
+  const MAX_SIZE = 10 * 1024 * 1024; // 10 MB in bytes
+
+  // Calculate size of req.body
+  const requestSize = JSON.stringify(req.body).length;
+
+  if (requestSize > MAX_SIZE) {
+    return res.status(400).json({ message: "Post size exceeds 10 MB limit." });
+  }
+
   const {
     postImage,
     title,
@@ -55,6 +63,7 @@ exports.createPost = async (req, res) => {
     authorId,
     authorImage,
   } = req.body;
+
   const newPost = new Post({
     postImage,
     title,
@@ -76,8 +85,6 @@ exports.createPost = async (req, res) => {
     lastUpdated: null,
   });
 
-  console.log(newPost);
-
   try {
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
@@ -85,6 +92,7 @@ exports.createPost = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
 
 // Add nut muncher easter egg soon
 // please
