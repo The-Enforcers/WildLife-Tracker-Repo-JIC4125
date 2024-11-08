@@ -149,7 +149,7 @@ export default function ProfilePage() {
   }, [user]);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, overflowY: "scroll", height: "100%" }}>
       <Breadcrumbs aria-label="breadcrumb" sx={{ margin: 1 }}>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           Home
