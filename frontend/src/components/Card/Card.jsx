@@ -6,6 +6,7 @@ const ImageCard = ({ title, image, post_id, animalType, trackerType, enclosureTy
     <Card
       sx={{
         maxWidth: 340,
+        margin: "0px auto",
         borderRadius: 9,
         overflow: 'hidden',
         boxShadow: 3,
