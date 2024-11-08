@@ -42,6 +42,7 @@
     overflow-x: visible;
     margin: 0px auto;
     max-width: 1500px;
+    min-width: 1000px;
     padding-bottom: 16px;
     margin-bottom: 48px;
 

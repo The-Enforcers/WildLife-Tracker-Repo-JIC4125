@@ -12,8 +12,11 @@ import {
   Typography,
   Grid,
   Breadcrumbs,
-  CircularProgress,
+  CircularProgress
 } from "@mui/material";
+
+import SearchIcon from '@mui/icons-material/Search';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import { createTheme } from "@mui/material/styles";
 
@@ -552,19 +555,35 @@ const SearchResultsPage = () => {
                 </Box>
               ) : (
                 <Grid container spacing={2} sx={{marginBottom: "64px"}}>
-                  {animals.map((animal, index) => (
-                    <Grid item key={index} xs={12} sm={6} md={4} lg={3} spacing={0}>
-                      <ImageCard
-                        title={animal.title}
-                        description={animal.trackerType}
-                        post_id={animal._id}
-                        image={animal.postImage}
-                        animalType={animal.animalType}
-                        trackerType={animal.trackerType}
-                        enclosureType={animal.enclosureType}
-                      />
-                    </Grid>
-                  ))}
+                  {animals.map((animal, index) => {
+                    const itemCount = animals.length;
+
+                    // Determine column width based on the number of items
+                    let gridProps;
+                    if (itemCount === 1) {
+                      gridProps = { xs: 12, sm: 12, md: 12, lg: 12 }; // Full width for a single item
+                    } else if (itemCount === 2) {
+                      gridProps = { xs: 12, sm: 6, md: 6, lg: 6 }; // Half width for two items
+                    } else if (itemCount === 3) {
+                      gridProps = { xs: 12, sm: 4, md: 4, lg: 4 }; // One-third width for three items
+                    } else {
+                      gridProps = { xs: 12, sm: 6, md: 4, lg: 3 }; // Standard layout for four or more items
+                    }
+
+                    return (
+                      <Grid item key={index} {...gridProps} spacing={0}>
+                        <ImageCard
+                          title={animal.title}
+                          description={animal.trackerType}
+                          post_id={animal._id}
+                          image={animal.postImage}
+                          animalType={animal.animalType}
+                          trackerType={animal.trackerType}
+                          enclosureType={animal.enclosureType}
+                        />
+                      </Grid>
+                    );
+                  })}
                 </Grid>
               )}
             </div>
