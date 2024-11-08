@@ -19,16 +19,6 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // MUI Icons
-import PetsIcon from "@mui/icons-material/Pets";
-import GpsFixedIcon from "@mui/icons-material/GpsFixed";
-import ScienceIcon from "@mui/icons-material/Science";
-import TerrainIcon from "@mui/icons-material/Terrain";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import WavesIcon from "@mui/icons-material/Waves";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
-import CloudIcon from "@mui/icons-material/Cloud";
-import PublicIcon from "@mui/icons-material/Public";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
@@ -93,19 +83,6 @@ const SearchResultsPage = () => {
     });
   };
 
-  const iconList = [
-    PetsIcon,
-    GpsFixedIcon,
-    ScienceIcon,
-    TerrainIcon,
-    AcUnitIcon,
-    WavesIcon,
-    WhatshotIcon,
-    CloudIcon,
-    PublicIcon,
-    ElectricBoltIcon,
-  ];
-
   // Update URL parameters whenever input or filters change
   useEffect(() => {
     const params = {
@@ -120,70 +97,6 @@ const SearchResultsPage = () => {
     setSearchParams(params);
   }, [input, filters, setSearchParams]);
 
-  // Fetch animals data from the backend
-  const fetchAnimals = useCallback(async () => {
-    setLoading(true);
-    try {
-
-      setLoading(true);
-      const trackerTypes = [];
-      const attachmentTypes = [];
-      const enclosureTypes = [];
-      const animalFamily = [];
-
-      console.log(filters);
-  
-      // Build arrays based on selected filters
-      if (filters.vhf) trackerTypes.push("VHF");
-      if (filters.satellite) trackerTypes.push("Satellite");
-      if (filters.lora) trackerTypes.push("LoRa");
-      if (filters.acoustic) trackerTypes.push("Acoustic");
-      if (filters.cell) trackerTypes.push("Cellular / GSM");
-      if (filters.bio) trackerTypes.push("Bio-logger");
-      if (filters.rfid) trackerTypes.push("RFID");
-  
-      if (filters.encapsulated) enclosureTypes.push("Encapsulated");
-      if (filters.potting) enclosureTypes.push("Potting");
-      if (filters.shrink) enclosureTypes.push("Shrink wrap");
-      if (filters.hematic) enclosureTypes.push("Hematic seal");
-  
-      if (filters.bolt) attachmentTypes.push("Bolt");
-      if (filters.harness) attachmentTypes.push("Harness");
-      if (filters.collar) attachmentTypes.push("Collar");
-      if (filters.adhesive) attachmentTypes.push("Adhesive");
-      if (filters.implant) attachmentTypes.push("Implant");
-  
-      if (filters.mammal) animalFamily.push("Mammal");
-      if (filters.reptile) animalFamily.push("Reptile");
-      if (filters.amphibian) animalFamily.push("Amphibians");
-      if (filters.fish) animalFamily.push("Fish");
-      if (filters.bird) animalFamily.push("Bird");
-  
-      // Create query strings
-      const trackerTypeQuery = trackerTypes.join(",");
-      const attachmentTypeQuery = attachmentTypes.join(",");
-      const enclosureTypeQuery = enclosureTypes.join(",");
-      const animalFamilyQuery = animalFamily.join(",");
-
-      const response = await fetch(
-        `https://${window.location.hostname}:5001/api/posts/search?title=${input}&trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
-      );
-      const data = await response.json();
-      setAnimals(Array.isArray(data) ? data : []);
-
-    } catch (error) {
-      console.error("Error fetching filtered data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [input]);
-
-  // function to randomly select icons
-  const getRandomIcons = () => {
-    const shuffledIcons = [...iconList].sort(() => 0.5 - Math.random());
-    return shuffledIcons.slice(0, 3);
-  };
-
   // function to handle checkbox changes
   const handleCheckboxChange = (event) => {
     setFilters({
@@ -193,7 +106,7 @@ const SearchResultsPage = () => {
   };
 
   // Function to handle filter button click
-  const applyFilters = async () => {
+  const applyFilters = useCallback(async () => {
     setLoading(true);
     const trackerTypes = [];
     const attachmentTypes = [];
@@ -244,11 +157,11 @@ const SearchResultsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, filters]);
 
   useEffect(() => {
     applyFilters();
-  }, []);
+  }, [applyFilters]);
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
@@ -585,7 +498,7 @@ const SearchResultsPage = () => {
                       image={animal.postImage}
                       animalType={animal.animalType}
                       trackerType={animal.trackerType}
-                      icons={getRandomIcons()}
+                      enclosureType={animal.enclosureType}
                     />
                   </Grid>
                 ))}

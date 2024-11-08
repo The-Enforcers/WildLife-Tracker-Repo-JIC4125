@@ -38,7 +38,7 @@ function LoginPage() {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ background: '#00000012' }}>
+    <Container maxWidth="xs" sx={{ background: '#0000000a' }}>
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 
-const ImageCard = ({ title, description, image, post_id, animalType, trackerType, icons }) => {
+const ImageCard = ({ title, image, post_id, animalType, trackerType, enclosureType }) => {
   return (
     <Card
       sx={{
@@ -42,13 +42,10 @@ const ImageCard = ({ title, description, image, post_id, animalType, trackerType
           <Typography variant="body2" color="text.secondary">
             <strong>Tracker Type:</strong> {trackerType}
           </Typography>
+          <Typography variant="body2" color="text.secondary">
+            <strong>Enclosure Type:</strong> {enclosureType}
+          </Typography>
 
-          {/* dynamically render icons passed as props */}
-          <Box sx={{ display: 'flex', gap: 4, justifyContent: 'center', alignItems: 'center', marginTop: 2, color: '#212e38d1' }}>
-            {icons && icons.map((Icon, index) => (
-              <Icon key={index} titleAccess={`Icon ${index}`} />
-            ))}
-          </Box>
         </CardContent>
       </a>
     </Card>
