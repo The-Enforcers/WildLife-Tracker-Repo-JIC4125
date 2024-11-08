@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from React Router
-import { UserContext } from "../../context/UserContext";
 
 import { searchPosts } from "../../services/postService"; // Import searchPosts
 import CircularProgress from "@mui/material/CircularProgress"; // Import MUI spinner
@@ -17,10 +16,16 @@ import icon3 from "../../assets/Amphibians.png";
 import icon2 from "../../assets/Reptiles.png";
 import icon5 from "../../assets/Fish.png";
 
-const animalNames = ["Lion", "Tiger", "Elephant", "Giraffe", "Zebra"];
+const animalNames = [
+  "Deer",
+  "Tortoises",
+  "Ducks",
+  "Rabbits",
+  "Sea Turtles",
+  "Frogs",
+];
 
 const Main = () => {
-  const { user, token } = useContext(UserContext);
   const [input, setInput] = useState("");
   // state variables for the typing animation
   const [currentAnimalIndex, setCurrentAnimalIndex] = useState(0);
@@ -32,22 +37,6 @@ const Main = () => {
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
-    vhf: false,
-    satellite: false,
-    lora: false,
-    acoustic: false,
-    cell: false,
-    bio: false,
-    rfid: false,
-    encapsulated: false,
-    potting: false,
-    shrink: false,
-    hematic: false,
-    harness: false,
-    collar: false,
-    adhesive: false,
-    bolt: false,
-    implant: false,
     mammal: false,
     reptile: false,
     amphibian: false,
@@ -56,48 +45,32 @@ const Main = () => {
   });
 
   const searchFunc = useCallback(() => {
-    const trackerTypes = [];
-    const attachmentTypes = [];
-    const enclosureTypes = [];
     const animalFamily = [];
-
-    if (filters.vhf) trackerTypes.push("VHF");
-    if (filters.satellite) trackerTypes.push("Satellite");
-    if (filters.lora) trackerTypes.push("LoRa");
-    if (filters.acoustic) trackerTypes.push("Acoustic");
-    if (filters.cell) trackerTypes.push("Cellular / GSM");
-    if (filters.bio) trackerTypes.push("Bio-logger");
-    if (filters.rfid) trackerTypes.push("RFID");
-
-    if (filters.encapsulated) enclosureTypes.push("Encapsulated");
-    if (filters.potting) enclosureTypes.push("Potting");
-    if (filters.shrink) enclosureTypes.push("Shrink wrap");
-    if (filters.hematic) enclosureTypes.push("Hematic seal");
-
-    if (filters.bolt) attachmentTypes.push("Bolt");
-    if (filters.harness) attachmentTypes.push("Harness");
-    if (filters.collar) attachmentTypes.push("Collar");
-    if (filters.adhesive) attachmentTypes.push("Adhesive");
-    if (filters.implant) attachmentTypes.push("Implant");
-
     if (filters.mammal) animalFamily.push("Mammal");
     if (filters.reptile) animalFamily.push("Reptile");
     if (filters.amphibian) animalFamily.push("Amphibians");
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
 
-    // Construct query string
     const queryParams = new URLSearchParams();
-
-    if (trackerTypes.length > 0) queryParams.append("trackerType", trackerTypes.join(","));
-    if (attachmentTypes.length > 0) queryParams.append("attachmentType", attachmentTypes.join(","));
-    if (enclosureTypes.length > 0) queryParams.append("enclosureType", enclosureTypes.join(","));
-    if (animalFamily.length > 0) queryParams.append("animalType", animalFamily.join(","));
+    if (animalFamily.length > 0)
+      queryParams.append("animalType", animalFamily.join(","));
     if (input) queryParams.append("search", input);
 
     // Navigate to the search results page with query string
     navigate(`/posts?${queryParams.toString()}`);
   }, [filters, input, navigate]);
+
+  const handleAnimalClick = (animal) => {
+    setFilters({
+      mammal: animal === "mammal",
+      reptile: animal === "reptile",
+      amphibian: animal === "amphibian",
+      fish: animal === "fish",
+      bird: animal === "bird",
+    });
+    navigate(`/posts?search=&${animal}=true`);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -202,7 +175,12 @@ const Main = () => {
         </p>
       </div>
 
-      <SearchBox input={input} setInput={setInput} onSearch={searchFunc} setFilters={handleIconSearchFilter}/>
+      <SearchBox
+        input={input}
+        setInput={setInput}
+        onSearch={searchFunc}
+        setFilters={setFilters}
+      />
 
       {/* Display search results */}
       {input && (
@@ -252,32 +230,53 @@ const Main = () => {
       )}
 
       {/* Icon Images with Labels */}
-      {searchResults.length == 0 ? (<div><div className="icon-images">
-        <div className="icon-wrapper">
-          <img src={icon1} alt="Mammal Icon" className="icon-image" onClick={() => handleIconSearchFilter("mammal")}/>
-          <p className="icon-label">Mammals</p>
-        </div>
-        <div className="icon-wrapper">
-          <img src={icon2} alt="Reptiles Icon" className="icon-image" onClick={() => handleIconSearchFilter("reptiles")}/>
-          <p className="icon-label">Reptiles</p>
-        </div>
-        <div className="icon-wrapper">
-          <img src={icon3} alt="Amphibians Icon" className="icon-image" onClick={() => handleIconSearchFilter("amphibian")}/>
-          <p className="icon-label">Amphibians</p>
-        </div>
-        <div className="icon-wrapper">
-          <img src={icon5} alt="Fish Icon" className="icon-image" onClick={() => handleIconSearchFilter("fish")}/>
-          <p className="icon-label">Fish</p>
-        </div>
-        <div className="icon-wrapper">
-          <img src={icon4} alt="Birds Icon" className="icon-image" onClick={() => handleIconSearchFilter("bird")}/>
-          <p className="icon-label">Birds</p>
-        </div>
-      </div>
+      {searchResults.length === 0 ? (
+        <div>
+          <div className="icon-images">
+            <div
+              className="icon-wrapper"
+              onClick={() => handleAnimalClick("mammal")}
+            >
+              <img src={icon1} alt="Mammals Icon" className="icon-image" />
+              <p className="icon-label">Mammals</p>
+            </div>
+            <div
+              className="icon-wrapper"
+              onClick={() => handleAnimalClick("reptile")}
+            >
+              <img src={icon2} alt="Reptiles Icon" className="icon-image" />
+              <p className="icon-label">Reptiles</p>
+            </div>
+            <div
+              className="icon-wrapper"
+              onClick={() => handleAnimalClick("amphibian")}
+            >
+              <img src={icon3} alt="Amphibians Icon" className="icon-image" />
+              <p className="icon-label">Amphibians</p>
+            </div>
+            <div
+              className="icon-wrapper"
+              onClick={() => handleAnimalClick("fish")}
+            >
+              <img src={icon5} alt="Fish Icon" className="icon-image" />
+              <p className="icon-label">Fish</p>
+            </div>
+            <div
+              className="icon-wrapper"
+              onClick={() => handleAnimalClick("bird")}
+            >
+              <img src={icon4} alt="Birds Icon" className="icon-image" />
+              <p className="icon-label">Birds</p>
+            </div>
+          </div>
 
-      <div className="main-bottom">
-        <p className="bottom-info">Developed by Georgia Tech Students</p>
-      </div></div>) : (<br/>)}
+          <div className="main-bottom">
+            <p className="bottom-info">Developed by Georgia Tech Students</p>
+          </div>
+        </div>
+      ) : (
+        <br />
+      )}
     </div>
   );
 };

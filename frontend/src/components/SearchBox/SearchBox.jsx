@@ -1,35 +1,24 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import SearchIcon from "@mui/icons-material/Search"
-import ClearIcon from "@mui/icons-material/Clear"; // Import Clear Icon
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
 
 const SearchBox = ({ input, setInput, onSearch }) => {
   const navigate = useNavigate();
+  const inputRef = useRef(null);
 
   const handlePostClick = () => {
     navigate("/create");
   };
 
-  // State variables for dropdown menus
-  const [animal, setAnimal] = useState("");
-  const [tracker, setTracker] = useState("");
-  const [enclosure, setEnclosure] = useState("");
-  const [attachment, setAttachment] = useState("");
-  const [species, setSpecies] = useState("");
-
-  // State for showing/hiding filters
-  const [showFilters, setShowFilters] = useState(false);
 
   // Function to clear input
   const clearInput = () => {
     setInput("");
   };
-  
-  const inputRef = useRef(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -39,13 +28,17 @@ const SearchBox = ({ input, setInput, onSearch }) => {
     };
 
     const inputElement = inputRef.current;
-    inputElement.addEventListener('keydown', handleKeyDown);
+    if (inputElement) {
+      inputElement.addEventListener('keydown', handleKeyDown);
+    }
 
     // Cleanup the event listener on component unmount
     return () => {
-      inputElement.removeEventListener('keydown', handleKeyDown);
+      if (inputElement) {
+        inputElement.removeEventListener('keydown', handleKeyDown);
+      }
     };
-  }, []);
+  }, [onSearch]);
 
   return (
     <>
@@ -104,75 +97,6 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             />
           </div>
         </div>
-      </div>
-
-      {/* Dropdown Menus with animation */}
-      <div className={`dropdown-menus ${showFilters ? "show" : "hide"}`}>
-        <select
-          className="dropdown-menu"
-          value={animal}
-          onChange={(e) => setAnimal(e.target.value)}
-        >
-          <option value="">Animal</option>
-          <option value="mammal">Mammal</option>
-          <option value="reptile">Reptile</option>
-          <option value="amphibian">Amphibian</option>
-          <option value="fish">Fish</option>
-          <option value="bird">Bird</option>
-        </select>
-
-        <select
-          className="dropdown-menu"
-          value={tracker}
-          onChange={(e) => setTracker(e.target.value)}
-        >
-          <option value="">Tracker</option>
-          <option value="vhf">VHF</option>
-          <option value="gps">GPS</option>
-        </select>
-
-        <select
-          className="dropdown-menu"
-          value={enclosure}
-          onChange={(e) => setEnclosure(e.target.value)}
-        >
-          <option value="">Enclosure</option>
-          <option value="encapsulated">Encapsulated</option>
-          <option value="modular">Modular</option>
-        </select>
-
-        <select
-          className="dropdown-menu"
-          value={attachment}
-          onChange={(e) => setAttachment(e.target.value)}
-        >
-          <option value="">Attachment</option>
-          <option value="harness">Harness</option>
-          <option value="collar">Collar</option>
-          <option value="glueOn">Glue-on</option>
-        </select>
-
-        <select
-          className="dropdown-menu"
-          value={species}
-          onChange={(e) => setSpecies(e.target.value)}
-        >
-          <option value="">Species</option>
-          <option value="mammal">Mammal</option>
-          <option value="reptile">Reptile</option>
-          <option value="amphibian">Amphibian</option>
-          <option value="fish">Fish</option>
-          <option value="bird">Bird</option>
-          
-        </select>
-
-        {/* Apply Button */}
-        <button
-          className="apply-button"
-          onClick={() => console.log("Applied!")}
-        >
-          Apply
-        </button>
       </div>
     </>
   );
