@@ -8,8 +8,8 @@
 
 .main .main-container {
   margin-inline: 15px;
-  overflow-y: auto;
-  height: 95%;
+  overflow-y: hidden;
+  height: 100%;
 }
 
 .main .main-container {

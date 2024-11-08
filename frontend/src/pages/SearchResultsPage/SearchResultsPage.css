@@ -1,20 +1,50 @@
-.filter-group-head {
-    font-size: 20px;
+.filters-and-results-box {
+
+    display: flex;
+    padding: 16px;
+    padding-bottom: 48px;
+
 }
 
 
-.filter-group-head-div-wrapper {
-    margin-bottom: 10px;
+.filters-main-box {
+
+    display: flex;
+    flex-flow: column;
+    flex: 0 1 20%;
+    overflow-y: scroll;
+    max-width: 300px;
+
 }
 
-.filter-group-head-div {
-    border-bottom: 1px solid darkgray;
-    padding-bottom: 10px;
+.filters-box {
+
+    padding-right: 16px;
+    overflow: scroll;
+    flex: 0 1 auto; 
+
 }
 
-.filter-head {
-    text-align: center;
-    width: 100%;
+
+.animal-cards-box {
+
+    display: flex;
+    flex: 0 1 80%;
+    margin-left: 16px;
+    overflow-y: scroll;
+    overflow-x: visible;
+    padding-bottom: 48px;
+
+}
+
+.animal-cards-box-inner {
+
+    overflow-x: visible;
+    margin: 0px auto;
+    max-width: 1500px;
+    padding-bottom: 16px;
+    margin-bottom: 48px;
+
 }
 
 .filter-group {
@@ -36,7 +66,7 @@
 
 .filter-group:last-of-type {
 
-    border-radius: 15px;
+    border-radius: 15px !important;
 
 }
 
@@ -55,6 +85,12 @@
 
     display: flex;
     gap: 10px;
+    padding: 15px;
+    padding-right: 16px;
+    padding-left: 0px;
+    min-height: 80px;
+    margin-bottom: 15px;
+    flex: 0 1 80px;
 
 }
 

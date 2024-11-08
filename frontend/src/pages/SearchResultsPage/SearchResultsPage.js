@@ -271,41 +271,37 @@ const SearchResultsPage = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+    <Box>
       {/* Main content */}
-      <Box sx={{ flexGrow: 1 }}>
-        {/* Breadcrumbs section */}
-        <Breadcrumbs
-          aria-label="breadcrumb"
-          sx={{ marginLeft: 4, marginBlock: 1 }}
-        >
-          <RouterLink
-            to="/"
-            style={{ textDecoration: "none", color: "inherit" }}
+      <Box sx={{ display: "flex", height: "100vh", width: "100%", overflowY: "hidden", flexFlow: "column"}}>
+        {/* Sticky section */}
+        <Box sx={{ flex: "0 0 auto"}}>
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            sx={{ marginLeft: 4, marginBlock: 1}}
           >
-            Home
-          </RouterLink>
-          <Typography color="text.primary">Posts</Typography>
-        </Breadcrumbs>
-
-        <Box sx={{ marginBottom: 2 }}>
-          <SearchBox
-            input={input}
-            setInput={setInput}
-            onSearch={applyFilters}
-          />
-        </Box>
-
-        <Grid container spacing={1}>
-          {/* Filters on the left */}
-          <Grid item xs={12} sm={3} md={2}>
-            <Box
-              sx={{
-                padding: 1,
-                height: "100%",
-                overflowY: "auto",
-              }}
+            <RouterLink
+              to="/"
+              style={{ textDecoration: "none", color: "inherit" }}
             >
+              Home
+            </RouterLink>
+            <Typography color="text.primary">Posts</Typography>
+          </Breadcrumbs>
+
+          <Box sx={{ marginBottom: 2, top: 0}}>
+            <SearchBox
+              input={input}
+              setInput={setInput}
+              onSearch={applyFilters}
+            />
+          </Box>
+        </Box>
+        
+        <div className="filters-and-results-box" style={{height: "100vh", overflowY: "hidden", display: "flex", flex: "1 1 auto"}}>
+          {/* Filters on the left */}
+          <div className="filters-main-box" sx={{height: "100%", overflowY: "hidden", display: "flex", flexBasis: "20%", flexFlow: "column"}}>
+            <div className="filters-box" >
               <Accordion className="filter-group" defaultExpanded="true"
               
                 sx={{
@@ -601,9 +597,10 @@ const SearchResultsPage = () => {
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
-
-              {/* Filters button */}
-              <div className="filters-button-box">
+              
+            </div>
+            {/* Filters button */}
+            <div className="filters-button-box" >
                 <div className="apply-filter-container filter-button-container">
                   {/* Filter Icon */}
                   <div
@@ -629,14 +626,11 @@ const SearchResultsPage = () => {
                   </div>
                 </div>
               </div>
-
-              
-            </Box>
-          </Grid>
+          </div>
 
           {/* Grid with animal cards */}
-          <Grid item xs={12} sm={9} md={10} sx={{ pb: 2}}>
-            <Box sx={{margin: "16px"}}>
+          <div className="animal-cards-box">
+            <div className="animal-cards-box-inner">
               {loading ? (
                 <Box
                   sx={{
@@ -649,9 +643,9 @@ const SearchResultsPage = () => {
                   <CircularProgress />
                 </Box>
               ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={2} sx={{marginBottom: "64px"}}>
                   {animals.map((animal, index) => (
-                    <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                    <Grid item key={index} xs={12} sm={6} md={4} lg={3} spacing={0}>
                       <ImageCard
                         title={animal.title}
                         description={animal.trackerType}
@@ -665,9 +659,9 @@ const SearchResultsPage = () => {
                   ))}
                 </Grid>
               )}
-            </Box>
-          </Grid>
-        </Grid>
+            </div>
+          </div>
+        </div>
       </Box>
     </Box>
   );

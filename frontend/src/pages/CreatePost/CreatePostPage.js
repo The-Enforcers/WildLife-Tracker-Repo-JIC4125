@@ -379,8 +379,9 @@ const CreatePostPage = () => {
     }
   };
 
+  // Note that, to get scrolling to work, you have to set the height to 95% 
   return (
-    <Box sx={{ overflowY: "scroll"}}>
+    <Box sx={{ overflowY: "scroll", height: "95%"}}> 
       {errorOverlay && (
         <div
           style={{
