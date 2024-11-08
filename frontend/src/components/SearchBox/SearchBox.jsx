@@ -68,6 +68,7 @@ const SearchBox = ({ input, setInput, onSearch }) => {
               data-tooltip-id="search"
               data-tooltip-content="search results"
               fontSize="medium"
+              cursor="pointer"
             />
             <Tooltip
               id="filter"

@@ -107,7 +107,7 @@ const PostDetailsPage = () => {
           {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
         </Typography>
       </Breadcrumbs>
-      <div className="main-container">
+      <div className="post-container">
         <div className="post-head">
           <div className="post-meta">
             <p className="post-title"> {post.title} </p>

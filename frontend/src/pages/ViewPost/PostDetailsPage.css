@@ -1,3 +1,10 @@
+.post-container {
+
+  overflow-y: scroll;
+  height: 95%;
+
+}
+
 /* Post Details stuff */
 .button-container {
 margin-inline: 50px;
