@@ -577,6 +577,11 @@ const SearchResultsPage = () => {
                           description={animal.trackerType}
                           post_id={animal._id}
                           image={animal.postImage}
+                          author={animal.author}
+                          authorImage={animal.authorImage}
+                          authorId={animal.authorId}
+                          scientificName={animal.scientificName}
+                          commonnames={animal.commonnames}
                           animalType={animal.animalType}
                           trackerType={animal.trackerType}
                           enclosureType={animal.enclosureType}
