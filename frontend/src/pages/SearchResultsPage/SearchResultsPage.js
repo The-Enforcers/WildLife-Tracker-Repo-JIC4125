@@ -227,7 +227,7 @@ const SearchResultsPage = () => {
               
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Animal Type</Typography>
+                  <Typography>Animal Family</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <FormGroup>

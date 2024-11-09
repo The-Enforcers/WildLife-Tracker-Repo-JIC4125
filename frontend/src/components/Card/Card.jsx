@@ -57,7 +57,7 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
           </Typography>
           <Typography variant="body2" color="text.secondary" className="card-text"
             sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
-            <strong>Animal Type:</strong> {animalType}
+            <strong>Animal Family:</strong> {animalType}
           </Typography>
           <Typography variant="body2" color="text.secondary" className="card-text"
             sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>

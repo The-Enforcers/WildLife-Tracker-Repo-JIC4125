@@ -553,14 +553,14 @@ const CreatePostPage = () => {
                 sx={{ marginBottom: 2 }}
               />
               <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel id="animal-type-label">Animal Type</InputLabel>
+                <InputLabel id="animal-type-label">Animal Family</InputLabel>
                 <Select
                   id="animal-type"
                   name="animal-type"
                   labelId="animal-type-label"
                   value={animalType}
                   onChange={(e) => setAnimalType(e.target.value)}
-                  label="Animal Type"
+                  label="Animal Family"
                   required
                 >
                   <MenuItem value="Mammal">Mammal</MenuItem>
