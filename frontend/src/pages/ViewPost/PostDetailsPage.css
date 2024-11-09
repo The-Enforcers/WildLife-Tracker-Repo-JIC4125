@@ -2,12 +2,24 @@
 
   overflow-y: scroll;
   height: 95%;
+  height: 100%;
+
+}
+
+.post-container-inner {
+
+  height: 95%;
+  width: 50%;
+  margin: 0px auto;
 
 }
 
 /* Post Details stuff */
 .button-container {
-margin-inline: 50px;
+  display: flex; 
+  justify-content: flex-end;
+  margin: 0px auto;
+  width: 80%;
 }
 
 .button-content {
@@ -19,9 +31,8 @@ margin-inline: 50px;
 }
 
 .post-head {
-  width: 100%;
   display: flex;
-  width: 90%;
+  width: 80%;
   margin: 0px auto;
   padding-top: 30px;
 }
@@ -44,9 +55,8 @@ margin-inline: 50px;
 }
 
 .profile-picture {
-  /*flex: 1;*/
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 25px;
   object-fit: cover;
 }
@@ -117,7 +127,7 @@ margin-inline: 50px;
   background-color: rgb(243, 243, 243);
   border-radius: 15px;
   padding: 0px 0px;
-  box-shadow: 0px 0px 10px #f2f2f2;
+  /*box-shadow: 0px 0px 10px #f2f2f2;*/
   width: 95%;
   margin: 30px auto;
   padding-bottom: 5px;
@@ -164,7 +174,7 @@ margin-inline: 50px;
   padding-bottom: 10px;
   border-radius: 15px;
   margin: 0px auto;
-  box-shadow: 0px 5px 10px #d8d8d8;
+  /*box-shadow: 0px 5px 10px #d8d8d8;*/
 }
 
 .tracker-info-header {
@@ -182,15 +192,14 @@ margin-inline: 50px;
 
 .post-picture {
   max-width: 50%;
-  min-width: 40%;
+  display: flex;
+  justify-content: right;
 }
 
 .post-image {
-  max-width: 70%;
-  max-height: 70%;
-  min-width: 70%;
+  max-width: 100%;
   object-fit: cover;
-  aspect-ratio: 1/1;
+  aspect-ratio: 2/1;
 
   /*float: right;*/
   border-radius: 15px;
