@@ -128,7 +128,7 @@ const PostDetailsPage = () => {
                     padding: "8px 16px",
                   }}
                 >
-                  Edit
+                  <span style={{paddingTop: "2px"}}>Edit</span>
                 </Button>
               </Tooltip>
             )}
