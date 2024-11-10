@@ -1,9 +1,11 @@
 .search-container {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
   margin-block: 5px;
   margin-inline: 10px;
+  max-width: 100%;
 }
 
 .search-box {
@@ -166,7 +168,7 @@
 
 @media (max-width: 800px) {
   .search-container {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
   }
 

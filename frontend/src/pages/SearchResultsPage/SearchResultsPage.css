@@ -14,6 +14,7 @@
     flex: 0 1 20%;
     overflow-y: scroll;
     max-width: 300px;
+    min-width: 250px;
 
 }
 
@@ -32,19 +33,29 @@
     flex: 0 1 80%;
     margin-left: 16px;
     overflow-y: scroll;
-    overflow-x: visible;
     padding-bottom: 48px;
+    overflow-x: visible;
 
 }
 
 .animal-cards-box-inner {
 
-    overflow-x: visible;
     margin: 0px auto;
     max-width: 1500px;
-    min-width: 1000px;
+    /*min-width: 1000px*/
     padding-bottom: 16px;
+    padding-left: 8px;
     margin-bottom: 48px;
+    overflow-x: visible;
+    z-index: 10000;
+
+}
+
+@media screen and (max-width: 2000px) {
+
+    .animal-cards-box-inner {
+        max-width: 100%;
+    }
 
 }
 

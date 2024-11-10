@@ -554,7 +554,7 @@ const SearchResultsPage = () => {
                   <CircularProgress />
                 </Box>
               ) : (
-                <Grid container spacing={2} sx={{marginBottom: "64px"}}>
+                <Grid container spacing={2} sx={{ marginBottom: "64px", maxWidth: "100%" }}>
                   {animals.map((animal, index) => {
                     const itemCount = animals.length;
 
@@ -567,16 +567,21 @@ const SearchResultsPage = () => {
                     } else if (itemCount === 3) {
                       gridProps = { xs: 12, sm: 4, md: 4, lg: 4 }; // One-third width for three items
                     } else {
-                      gridProps = { xs: 12, sm: 6, md: 4, lg: 3 }; // Standard layout for four or more items
+                      gridProps = { xs: 12, sm: 12, md: 6, lg: 3 }; // Standard layout for four or more items
                     }
 
                     return (
-                      <Grid item key={index} {...gridProps} spacing={0}>
+                      <Grid item key={index} {...gridProps}>
                         <ImageCard
                           title={animal.title}
                           description={animal.trackerType}
                           post_id={animal._id}
                           image={animal.postImage}
+                          author={animal.author}
+                          authorImage={animal.authorImage}
+                          authorId={animal.authorId}
+                          scientificName={animal.scientificName}
+                          commonnames={animal.commonnames}
                           animalType={animal.animalType}
                           trackerType={animal.trackerType}
                           enclosureType={animal.enclosureType}

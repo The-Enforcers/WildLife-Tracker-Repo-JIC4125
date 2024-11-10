@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
 
-const ImageCard = ({ title, image, post_id, animalType, trackerType, enclosureType }) => {
+const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scientificName, commonNames, animalType, trackerType, enclosureType }) => {
   return (
     <Card
       sx={{
@@ -36,7 +36,11 @@ const ImageCard = ({ title, image, post_id, animalType, trackerType, enclosureTy
           >
             {title}
           </Typography>
-
+          <Typography variant="body2" color="text.secondary">
+            <strong>Scientific name:</strong> {scientificName}
+          </Typography><Typography variant="body2" color="text.secondary">
+            <strong>Common Names:</strong> {commonNames}
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             <strong>Animal Type:</strong> {animalType}
           </Typography>
@@ -46,6 +50,42 @@ const ImageCard = ({ title, image, post_id, animalType, trackerType, enclosureTy
           <Typography variant="body2" color="text.secondary">
             <strong>Enclosure Type:</strong> {enclosureType}
           </Typography>
+
+          <Box className="author-box-outer" 
+            sx={{
+              backgroundColor: "#f0f4f9", 
+              borderRadius: "50px", 
+              marginTop: "15px",
+              // Will add this transition back in when we add profile pages
+              /*transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: 1,
+              },*/
+            }}>
+            <Box className="author-box" sx={{display: "flex", flexDirection: "row", padding: "10px", margin: "auto"}}>
+              <img
+                className="authorImage" 
+                src={authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                alt="Author"
+                style={{width: "50px", borderRadius: "50px"}}
+              />
+              <Typography
+                variant="body1"
+                color="text.primary"
+                sx={{
+                  display: "flex",
+                  alignItems: "center", // Centers content vertically
+                  paddingLeft: "10px",
+                  height: "50px",
+                }}
+              >
+                <span style={{ paddingTop: "3px" }}>
+                  <strong>{author}</strong>
+                </span>
+              </Typography>
+            </Box>
+          </Box>
 
         </CardContent>
       </a>
