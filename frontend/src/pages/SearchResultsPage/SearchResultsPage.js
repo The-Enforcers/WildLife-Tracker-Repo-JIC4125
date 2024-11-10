@@ -541,6 +541,7 @@ const SearchResultsPage = () => {
           {/* Grid with animal cards */}
           <ThemeProvider theme={gridTheme}> {/* Apply custom theme */}
             <div className="animal-cards-box">
+
               <div className="animal-cards-box-inner">
                 {loading ? (
                   <Box
@@ -588,7 +589,7 @@ const SearchResultsPage = () => {
                             authorImage={animal.authorImage}
                             authorId={animal.authorId}
                             scientificName={animal.scientificName}
-                            commonnames={animal.commonnames}
+                            commonName={animal.commonName}
                             animalType={animal.animalType}
                             trackerType={animal.trackerType}
                             enclosureType={animal.enclosureType}

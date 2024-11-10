@@ -49,7 +49,6 @@
 
 .post-meta {
   flex: 1;
-  margin: 0px auto;
   padding-right: 10px;
 }
 
@@ -203,6 +202,7 @@
 .post-picture {
   max-width: 50%;
   display: flex;
+  flex: 1 1 50%;
   justify-content: right;
 }
 

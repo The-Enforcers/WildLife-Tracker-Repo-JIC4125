@@ -194,10 +194,10 @@ const PostDetailsPage = () => {
                   <p className="name-header">Scientific Name</p>
                   <p className="scientific-name">{post.scientificName}</p>
                 </div>
-                {post.commonname && 
+                {post.commonName && 
                 <div className="name-box">
                   <p className="name-header">Common Names</p>
-                  <p className="common-name">{post.commonname}</p>
+                  <p className="common-name">{post.commonName}</p>
                 </div>}
               </div>
             </div>
