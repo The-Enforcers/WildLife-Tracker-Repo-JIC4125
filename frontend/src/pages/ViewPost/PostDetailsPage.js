@@ -210,6 +210,26 @@ const PostDetailsPage = () => {
               />
             </div>
           </div>
+          <div className="data-types">
+            {post.dataTypes.map((dataType, index) => (
+              <span
+                key={index}
+                style={{
+                  backgroundColor: '#f0f4f9', // Light background color for the pill
+                  padding: '5px 15px', // Padding for the pill shape
+                  borderRadius: '20px', // Make it pill-shaped
+                  margin: '5px', // Space between pills
+                  fontSize: '14px', // Adjust font size
+                  color: '#333', // Text color
+                  fontWeight: 'bold', // Text weight
+                  display: 'inline-block', // Keep them on the same line
+                  textTransform: 'capitalize', // Capitalize the first letter of each word
+                }}
+              >
+                {dataType}
+              </span>
+            ))}
+          </div>
           <div className="tracker-info">
             <div className="tracker-info-head">
               <div
