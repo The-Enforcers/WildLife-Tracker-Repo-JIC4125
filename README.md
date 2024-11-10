@@ -4,6 +4,27 @@ This project is designed to serve as a centralized repository for information on
 
 # Release Notes
 
+## Version 0.4.0
+
+### Features
+
+- **Updated UI:** More consistent and flushed out UI site-wide, improved viewability on smaller screens
+  - Branding + favicon + How-to-use guide + Filtering UI
+- **Profile Page Functionality:** Can now logout, see functional (edit & view) stats and profile description boxes, recent posts etc.
+- **Security:** Token Functionality for more secure checks during creating posts and adding images, image upload limits,  & overall data rate limiting
+- **Bookmarks:** You can bookmark posts, and view a list of them in your profile
+- **Like functionality**: You can now like posts, and sort posts by likes.
+
+### Bug Fixes
+
+- Fixed broken linking between pages
+- Fixed non-functioning buttons
+- Made image 'bounds-checking' more resilient against bad actors - was ineffective previously
+
+### Known Issues
+
+- Automatic searching as user types in search bar - probably unscalable / UX-undesirable
+
 ## Version 0.3.0
 
 ### Features
