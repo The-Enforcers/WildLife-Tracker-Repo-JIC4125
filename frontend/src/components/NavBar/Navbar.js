@@ -97,7 +97,7 @@ const Navbar = ({breadcrumbs}) => {
     <div className="nav">
       <p>The Wildlife Movement Institute</p>
       <div className="breadcrumbs-container">
-        <Breadcrumbs aria-label="breadcrumb" sx={{ marginLeft: 4, marginBlock: 1, width: "100%" }} >
+        <Breadcrumbs aria-label="breadcrumb" sx={{ marginBlock: 1, width: "100%" }} >
           {breadcrumbs.map((crumb, index) =>
             index < breadcrumbs.length - 1 ? (
               <Link

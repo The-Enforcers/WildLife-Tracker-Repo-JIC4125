@@ -23,6 +23,7 @@
   justify-content: center; /* Center the breadcrumbs text */
   padding: 0 15px; /* Optional padding */
   padding-top: 10px;
+  margin: 0px;
 }
 
 .user-info {
