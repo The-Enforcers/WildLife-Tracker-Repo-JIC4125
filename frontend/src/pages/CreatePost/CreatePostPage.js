@@ -306,18 +306,11 @@ const CreatePostPage = () => {
       return;
     }
   
-    // Refine the check for missing images (Only mark required if no existing image URL or no new image)
-    const missingImages = [];
-    if (!images.mainImage && !imageFiles.mainImage) missingImages.push("Main Image");
-    if (!images.trackerType && !imageFiles.trackerType) missingImages.push("Tracker Type Image");
-    if (!images.enclosureType && !imageFiles.enclosureType) missingImages.push("Enclosure Type Image");
-    if (!images.attachmentType && !imageFiles.attachmentType) missingImages.push("Attachment Type Image");
-      setError(
-        `All image fields are required. You are missing: ${formattedMissingImages}`
-      );
+    if (!images.mainImage && !imageFiles.mainImage) {
+      setError(`Main image required`);
       return;
     }
-    // update this to only check for main image
+    
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
