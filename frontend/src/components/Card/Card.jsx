@@ -32,22 +32,39 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
           <Typography
             variant="h6"
             component="div"
-            sx={{ fontWeight: 'bold', color: '#333' }}
+            sx={{ 
+              fontWeight: 'bold', 
+              color: '#333', 
+              whiteSpace: "normal", 
+              textOverflow: "ellipsis", 
+              overflow: "hidden", 
+              display: "-webkit-box", 
+              WebkitBoxOrient: "vertical", 
+              WebkitLineClamp: "2",
+              lineHeight: "1.5em",
+              maxHeight: "calc(1.5em * 2)",
+              minHeight: "calc(1.5em * 2)"
+            }}
           >
             {title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
             <strong>Scientific name:</strong> {scientificName}
-          </Typography><Typography variant="body2" color="text.secondary">
+          </Typography><Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
             <strong>Common Names:</strong> {commonNames}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Animal Type:</strong> {animalType}
+          <Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
+            <strong>Animal Family:</strong> {animalType}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
             <strong>Tracker Type:</strong> {trackerType}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
             <strong>Enclosure Type:</strong> {enclosureType}
           </Typography>
 

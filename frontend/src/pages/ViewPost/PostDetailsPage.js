@@ -46,13 +46,14 @@ const PostDetailsPage = () => {
         const data = await getPostById(id);
         setPost(data);
 
-        if (data.trackerImage) {
+        // We used to have the type images automatically open, but decided against that (may readd)
+        /*if (data.trackerImage) {
           setExpandedBox("tracker");
         } else if (data.enclosureImage) {
           setExpandedBox("enclosure");
         } else if (data.attachmentImage) {
           setExpandedBox("attachment");
-        }
+        }*/
 
         // Check if user and bookmarkedPosts exist before accessing bookmarkedPosts
         if (user && user.bookmarkedPosts) {
@@ -94,21 +95,6 @@ const PostDetailsPage = () => {
     <>
       <div className="post-container">
         <div className="post-container-inner">
-              {/* Breadcrumbs section */}
-              <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ marginLeft: 4, marginBlock: 1 }}
-          >
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </Link>
-            <Link to="/posts" style={{ textDecoration: "none", color: "inherit" }}>
-              Posts
-            </Link>
-            <Typography color="text.primary">
-              {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
-            </Typography>
-          </Breadcrumbs>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
               <Tooltip
@@ -142,7 +128,7 @@ const PostDetailsPage = () => {
                     padding: "8px 16px",
                   }}
                 >
-                  Edit
+                  <span style={{paddingTop: "2px"}}>Edit</span>
                 </Button>
               </Tooltip>
             )}

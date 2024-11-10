@@ -470,19 +470,6 @@ const CreatePostPage = () => {
         </>
       )}
 
-      {/* Breadcrumbs and the rest of the page content */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{ marginLeft: 4, marginBlock: 1 }}
-      >
-        <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Home
-        </RouterLink>
-        <Typography color="text.primary">
-          {isEditing ? "Edit Post" : "Create Post"}
-        </Typography>
-      </Breadcrumbs>
-
       <Paper elevation={0} sx={{ px: 4, marginBottom: 3, overflowY: "scoll" }}>
         <Typography variant="h4" gutterBottom>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
@@ -553,14 +540,14 @@ const CreatePostPage = () => {
                 sx={{ marginBottom: 2 }}
               />
               <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel id="animal-type-label">Animal Type</InputLabel>
+                <InputLabel id="animal-type-label">Animal Family</InputLabel>
                 <Select
                   id="animal-type"
                   name="animal-type"
                   labelId="animal-type-label"
                   value={animalType}
                   onChange={(e) => setAnimalType(e.target.value)}
-                  label="Animal Type"
+                  label="Animal Family"
                   required
                 >
                   <MenuItem value="Mammal">Mammal</MenuItem>
