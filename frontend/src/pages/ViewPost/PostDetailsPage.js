@@ -98,7 +98,7 @@ const PostDetailsPage = () => {
           <div className="button-container">
             {user && post && user.displayName === post.author && (
               <Tooltip
-                title="Edit post"
+                title="Edit Animal Profile"
                 placement="top"
                 PopperProps={{
                   modifiers: [
@@ -206,7 +206,7 @@ const PostDetailsPage = () => {
               <img
                 className="post-image"
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                alt="Post"
+                alt="Animal Profile"
               />
             </div>
           </div>

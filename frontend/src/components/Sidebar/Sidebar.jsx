@@ -29,7 +29,7 @@ const Sidebar = () => {
   const tutorialSteps = [
     {
       iconId: "new-post",
-      text: "This is where you can create a new post.",
+      text: "This is where you can create a new animal profile.",
       refIndex: 1,
     },
     {

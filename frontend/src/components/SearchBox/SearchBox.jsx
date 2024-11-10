@@ -50,7 +50,7 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             value={input}
             type="text"
             ref={inputRef}
-            placeholder="Search by species or common name"
+            placeholder="Search by title, author, scientific name, or common name"
           />
 
           {/* Clear Icon: Show only when there's input */}
