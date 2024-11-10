@@ -154,6 +154,18 @@ const Main = () => {
     navigate(`/posts/${postId}`);
   };
 
+  const handleIconSearchFilter = (animalType) => {
+
+    // Construct query string
+    const queryParams = new URLSearchParams();
+
+    if (animalType.length > 0) queryParams.append(animalType, true);
+    if (input) queryParams.append("search", input);
+
+    // Navigate to the search results page with query string
+    navigate(`/posts?${queryParams.toString()}`);
+  };
+
   return (
     <div className="greet-container">
       <div className="greet">

@@ -1,4 +1,5 @@
 .nav {
+  overflow-y: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;

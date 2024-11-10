@@ -1,0 +1,154 @@
+.filters-and-results-box {
+
+    display: flex;
+    padding: 16px;
+    padding-bottom: 48px;
+
+}
+
+
+.filters-main-box {
+
+    display: flex;
+    flex-flow: column;
+    flex: 0 1 20%;
+    overflow-y: scroll;
+    max-width: 300px;
+
+}
+
+.filters-box {
+
+    padding-right: 16px;
+    overflow: scroll;
+    flex: 0 1 auto; 
+
+}
+
+
+.animal-cards-box {
+
+    display: flex;
+    flex: 0 1 80%;
+    margin-left: 16px;
+    overflow-y: scroll;
+    overflow-x: visible;
+    padding-bottom: 48px;
+
+}
+
+.animal-cards-box-inner {
+
+    overflow-x: visible;
+    margin: 0px auto;
+    max-width: 1500px;
+    min-width: 1000px;
+    padding-bottom: 16px;
+    margin-bottom: 48px;
+
+}
+
+.filter-group {
+
+    background-color: #f0f4f9;
+    /*border: 1px solid rgb(210, 209, 209);*/
+    border-radius: 15px;
+    padding: 5px;
+    margin: 0px 0px 10px 0px ;
+    box-shadow: none;
+
+}
+
+.filter-group:first-of-type  {
+
+    border-radius: 15px;
+
+}
+
+.filter-group:last-of-type {
+
+    border-radius: 15px !important;
+
+}
+
+.filter-group::before {
+
+    display: none;
+
+}
+
+.filter-button-container {
+    margin-top: 0px;
+}
+
+
+.filters-button-box {
+
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    padding-right: 16px;
+    padding-left: 0px;
+    min-height: 80px;
+    margin-bottom: 15px;
+    flex: 0 1 80px;
+
+}
+
+.apply-filter-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+
+}
+
+.apply-filter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    background-color: #212e38;
+    border-radius: 50px;
+    padding: 20px;
+    gap: 2px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.apply-filter-icon:hover {
+    background-color: #4d4d4d;
+
+}
+.reset-filter-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.reset-filter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    background-color: #ff3021;
+    border-radius: 50px;
+    padding: 20px;
+    gap: 2px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.reset-filter-icon:hover {
+    background-color: #ff594e;
+}
+
+.post-grid-container {
+
+    padding-top: 16px;
+
+}

@@ -379,8 +379,9 @@ const CreatePostPage = () => {
     }
   };
 
+  // Note that, to get scrolling to work, you have to set the height to 95% 
   return (
-    <>
+    <Box sx={{ overflowY: "scroll", height: "95%"}}> 
       {errorOverlay && (
         <div
           style={{
@@ -482,7 +483,7 @@ const CreatePostPage = () => {
         </Typography>
       </Breadcrumbs>
 
-      <Paper elevation={0} sx={{ px: 4, marginBottom: 3 }}>
+      <Paper elevation={0} sx={{ px: 4, marginBottom: 3, overflowY: "scoll" }}>
         <Typography variant="h4" gutterBottom>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
@@ -770,7 +771,7 @@ const CreatePostPage = () => {
           </Grid>
         </Box>
       </Paper>
-    </>
+    </Box>
   );
 };
 
