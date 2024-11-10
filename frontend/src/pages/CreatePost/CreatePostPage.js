@@ -306,18 +306,11 @@ const CreatePostPage = () => {
       return;
     }
   
-    // Refine the check for missing images (Only mark required if no existing image URL or no new image)
-    const missingImages = [];
-    if (!images.mainImage && !imageFiles.mainImage) missingImages.push("Main Image");
-    if (!images.trackerType && !imageFiles.trackerType) missingImages.push("Tracker Type Image");
-    if (!images.enclosureType && !imageFiles.enclosureType) missingImages.push("Enclosure Type Image");
-    if (!images.attachmentType && !imageFiles.attachmentType) missingImages.push("Attachment Type Image");
-      setError(
-        `All image fields are required. You are missing: ${formattedMissingImages}`
-      );
+    if (!images.mainImage && !imageFiles.mainImage) {
+      setError(`Main image required`);
       return;
     }
-    // update this to only check for main image
+    
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
@@ -531,7 +524,7 @@ const CreatePostPage = () => {
                 fullWidth
                 sx={{ marginBottom: 2 }}
               />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}> // Drop-Down Menu - Animal Type
+              <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel id="animal-type-label">Animal Family</InputLabel>
                 <Select 
                   id="animal-type"
@@ -562,7 +555,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="tracker-type-label">
                       Tracker Type
-                    </InputLabel> // Drop-Down Menu - Tracker Type
+                    </InputLabel>
                     <Select
                       id="tracker-type"
                       name="tracker-type"
@@ -613,7 +606,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="enclosure-type-label">
                       Enclosure Type
-                    </InputLabel> // Drop-Down Menu - Enclosure Type
+                    </InputLabel>
                     <Select
                       id="enclosure-type"
                       name="enclosure-type"
@@ -661,7 +654,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="attachment-type-label">
                       Attachment Type
-                    </InputLabel> // Drop-Down Menu - Tracker Type
+                    </InputLabel>
                     <Select
                       id="attachment-type"
                       name="attachment-type"
@@ -702,7 +695,7 @@ const CreatePostPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom> // Text Box Input - Recommendation
+              <Typography variant="h6" gutterBottom>
                 Data Types:
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
