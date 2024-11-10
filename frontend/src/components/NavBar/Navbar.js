@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { getBookmarkedPosts, unbookmarkPost } from "../../services/postService";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import GoogleIcon from "@mui/icons-material/Google";
 import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemoveOutlined";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import {
   Avatar,
   Box,
@@ -23,7 +24,7 @@ import Logout from "@mui/icons-material/Logout";
 import "./Navbar.css";
 import { useSnackbar } from "../SnackBar/SnackBar";
 
-const Navbar = () => {
+const Navbar = ({breadcrumbs}) => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,7 +95,26 @@ const Navbar = () => {
 
   return (
     <div className="nav">
-      <p>Wildlife Tracker</p>
+      <p>The Wildlife Movement Institute</p>
+      <div className="breadcrumbs-container">
+        <Breadcrumbs aria-label="breadcrumb" sx={{ marginLeft: 4, marginBlock: 1, width: "100%" }} >
+          {breadcrumbs.map((crumb, index) =>
+            index < breadcrumbs.length - 1 ? (
+              <Link
+                key={crumb.path}
+                to={crumb.path}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                {crumb.name}
+              </Link>
+            ) : (
+              <Typography key={crumb.path} color="text.primary">
+                {crumb.name}
+              </Typography>
+            )
+          )}
+        </Breadcrumbs>
+      </div>
       <div className="user-info">
         <Box
           sx={{ display: "flex", alignItems: "center", textAlign: "center" }}

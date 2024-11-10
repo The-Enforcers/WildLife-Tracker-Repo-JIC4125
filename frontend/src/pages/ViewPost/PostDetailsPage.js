@@ -94,21 +94,6 @@ const PostDetailsPage = () => {
     <>
       <div className="post-container">
         <div className="post-container-inner">
-              {/* Breadcrumbs section */}
-              <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ marginLeft: 4, marginBlock: 1 }}
-          >
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              Home
-            </Link>
-            <Link to="/posts" style={{ textDecoration: "none", color: "inherit" }}>
-              Posts
-            </Link>
-            <Typography color="text.primary">
-              {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
-            </Typography>
-          </Breadcrumbs>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
               <Tooltip

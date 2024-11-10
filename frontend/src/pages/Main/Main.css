@@ -1,6 +1,7 @@
 .greet-container {
   max-width: 900px;
   margin: auto;
+  padding-top: 15vh;
 }
 .sub-greet {
   font-size: 2.5rem;

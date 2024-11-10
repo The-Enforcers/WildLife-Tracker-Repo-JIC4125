@@ -470,19 +470,6 @@ const CreatePostPage = () => {
         </>
       )}
 
-      {/* Breadcrumbs and the rest of the page content */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{ marginLeft: 4, marginBlock: 1 }}
-      >
-        <RouterLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Home
-        </RouterLink>
-        <Typography color="text.primary">
-          {isEditing ? "Edit Post" : "Create Post"}
-        </Typography>
-      </Breadcrumbs>
-
       <Paper elevation={0} sx={{ px: 4, marginBottom: 3, overflowY: "scoll" }}>
         <Typography variant="h4" gutterBottom>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}

@@ -1,5 +1,4 @@
 .nav {
-  overflow-y: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -7,6 +6,30 @@
   margin-inline: 15px;
   padding: 6px 0px;
   color: #5f6368;
+  width: 100%;
+  position: relative; /* Make the navbar a positioning context */
+}
+
+.nav p {
+  white-space: nowrap; /* Prevent text from wrapping */
+  margin: 0; /* Remove any default margin */
+}
+
+.breadcrumbs-container {
+  position: absolute;
+  left: 50%; /* Position breadcrumbs at the center */
+  transform: translateX(-50%); /* Offset the element back by 50% of its width */
+  display: flex;
+  justify-content: center; /* Center the breadcrumbs text */
+  padding: 0 15px; /* Optional padding */
+  padding-top: 10px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 25px;
 }
 
 .nav img {
@@ -19,4 +42,3 @@
 .nav img:hover {
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.065);
 }
-

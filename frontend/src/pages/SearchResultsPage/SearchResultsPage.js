@@ -187,19 +187,6 @@ const SearchResultsPage = () => {
       <Box sx={{ display: "flex", height: "100vh", width: "100%", overflowY: "hidden", flexFlow: "column"}}>
         {/* Sticky section */}
         <Box sx={{ flex: "0 0 auto"}}>
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ marginLeft: 4, marginBlock: 1}}
-          >
-            <RouterLink
-              to="/"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              Home
-            </RouterLink>
-            <Typography color="text.primary">Posts</Typography>
-          </Breadcrumbs>
-
           <Box sx={{ marginBottom: 2, top: 0}}>
             <SearchBox
               input={input}
