@@ -495,11 +495,11 @@ const CreatePostPage = () => {
                 image={imageFiles.mainImage}
                 handleImageChange={handleImageChange}
               />
-            </Grid>
+            </Grid> 
 
             <Grid item xs={12} md={6}>
-              <TextField
-                id="post-title"
+              <TextField // Input Box - Post Title
+                id="post-title" 
                 name="post-title"
                 label="Post Title"
                 variant="outlined"
@@ -509,7 +509,7 @@ const CreatePostPage = () => {
                 fullWidth
                 sx={{ marginBottom: 2 }}
               />
-              <TextField
+              <TextField // Input Box - Scientific Name
                 id="scientific-name"
                 name="scientific-name"
                 label="Scientific Name"
@@ -520,7 +520,7 @@ const CreatePostPage = () => {
                 fullWidth
                 sx={{ marginBottom: 2 }}
               />
-              <TextField
+              <TextField // Input Box - Common Name
                 id="common-name"
                 name="common-name"
                 label="Common Name(s)"
@@ -531,9 +531,9 @@ const CreatePostPage = () => {
                 fullWidth
                 sx={{ marginBottom: 2 }}
               />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+              <FormControl fullWidth sx={{ marginBottom: 2 }}> // Drop-Down Menu - Animal Type
                 <InputLabel id="animal-type-label">Animal Family</InputLabel>
-                <Select
+                <Select 
                   id="animal-type"
                   name="animal-type"
                   labelId="animal-type-label"
@@ -549,20 +549,20 @@ const CreatePostPage = () => {
                   <MenuItem value="Bird">Bird</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> 
 
             <Grid item xs={12} md={6}>
-              <Grid
+              <Grid 
                 container
                 alignItems="flex-start"
                 spacing={2}
                 sx={{ mb: 2 }}
-              >
-                <Grid item xs={10}>
+              > 
+                <Grid item xs={10}> 
                   <FormControl fullWidth>
                     <InputLabel id="tracker-type-label">
                       Tracker Type
-                    </InputLabel>
+                    </InputLabel> // Drop-Down Menu - Tracker Type
                     <Select
                       id="tracker-type"
                       name="tracker-type"
@@ -613,7 +613,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="enclosure-type-label">
                       Enclosure Type
-                    </InputLabel>
+                    </InputLabel> // Drop-Down Menu - Enclosure Type
                     <Select
                       id="enclosure-type"
                       name="enclosure-type"
@@ -661,7 +661,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="attachment-type-label">
                       Attachment Type
-                    </InputLabel>
+                    </InputLabel> // Drop-Down Menu - Tracker Type
                     <Select
                       id="attachment-type"
                       name="attachment-type"
@@ -702,7 +702,7 @@ const CreatePostPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom> // Text Box Input - Recommendation
                 Data Types:
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
