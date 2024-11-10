@@ -59,6 +59,8 @@ const SearchResultsPage = () => {
     amphibian: searchParams.get("amphibian") === "true",
     fish: searchParams.get("fish") === "true",
     bird: searchParams.get("bird") === "true",
+    newToOld: searchParams.get("newToOld") !== "false", 
+    oldToNew: searchParams.get("oldToNew") === "true",
   };
   const [filters, setFilters] = useState(initialFilters);
 
@@ -86,6 +88,8 @@ const SearchResultsPage = () => {
       amphibian: false,
       fish: false,
       bird: false,
+      newToOld: true,
+      oldToNew: false,
     });
   };
 
@@ -106,10 +110,20 @@ const SearchResultsPage = () => {
 
   // function to handle checkbox changes
   const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    // logic to ensure only one sort option is selected at a time
+    if (name === "newToOld" || name === "oldToNew") {
+      setFilters({
+        ...filters,
+        newToOld: name === "newToOld" ? checked : false,
+        oldToNew: name === "oldToNew" ? checked : false,
+      });
+    } else {
     setFilters({
       ...filters,
       [event.target.name]: event.target.checked,
     });
+  }
   };
 
   // Function to handle filter button click
@@ -146,6 +160,11 @@ const SearchResultsPage = () => {
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
 
+    // Determine sort order based on filters
+    let sortOrder = "desc"; // Default to 'New to Old'
+    if (filters.oldToNew) {
+      sortOrder = "asc";
+    }
     // Create query strings
     const trackerTypeQuery = trackerTypes.join(",");
     const attachmentTypeQuery = attachmentTypes.join(",");
@@ -168,7 +187,20 @@ const SearchResultsPage = () => {
         `https://${window.location.hostname}:5001/api/posts/search?title=${input}&trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
       );
       const data = await response.json();
-      setAnimals(Array.isArray(data) ? data : []);
+      const posts = Array.isArray(data) ? data : [];
+      console.log(`SORT ORDER:` + sortOrder);
+      const sortedPosts = posts.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+  
+        if (sortOrder === "asc") {
+          return dateA - dateB; // Old to New
+        } else {
+          return dateB - dateA; // New to Old
+        }
+      });
+
+      setAnimals(sortedPosts);
 
     } catch (error) {
       console.error("Error fetching filtered data:", error);
@@ -491,6 +523,44 @@ const SearchResultsPage = () => {
                         />
                       }
                       label="Adhesive"
+                    />
+                  </FormGroup>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion className="filter-group" defaultExpanded="true"
+                sx={{
+                  backgroundColor: "#f0f4f9",
+                  boxShadow: "none",
+                  borderRadius: "15px",
+                  "&:first-of-type": {
+                    borderRadius: "15px"
+                  }
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>Sort By</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.newToOld}
+                          onChange={handleCheckboxChange}
+                          name="newToOld"
+                        />
+                      }
+                      label="Newest"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.oldToNew}
+                          onChange={handleCheckboxChange}
+                          name="oldToNew"
+                        />
+                      }
+                      label="Oldest"
                     />
                   </FormGroup>
                 </AccordionDetails>
