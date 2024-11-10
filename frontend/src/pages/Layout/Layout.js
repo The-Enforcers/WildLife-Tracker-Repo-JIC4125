@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
     const breadcrumbMap = {
       "/": "Home",
       "/posts": "Search",
-      "/create": "Create Post",
+      "/create": "Create Animal Profile",
       "/profile": "Profile",
       "/login": "Login",
     };

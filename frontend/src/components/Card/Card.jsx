@@ -1,11 +1,12 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 
-const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scientificName, commonNames, animalType, trackerType, enclosureType }) => {
+const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scientificName, commonName, animalType, trackerType, enclosureType }) => {
   return (
     <Card
       sx={{
-        maxWidth: 340,
+        width: '100%', // Ensure card takes up all available space in its grid item
+        maxWidth: 340, // You can increase this if you want to give the card a larger maximum width
         margin: "0px auto",
         borderRadius: 9,
         overflow: 'hidden',
@@ -53,7 +54,7 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
             <strong>Scientific name:</strong> {scientificName}
           </Typography><Typography variant="body2" color="text.secondary" className="card-text"
             sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
-            <strong>Common Names:</strong> {commonNames}
+            <strong>Common Names:</strong> {commonName}
           </Typography>
           <Typography variant="body2" color="text.secondary" className="card-text"
             sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>

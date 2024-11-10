@@ -18,7 +18,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import { createTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import "./SearchResultsPage.css";
 // MUI Imports
@@ -27,6 +27,18 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // MUI Icons
 import ImageCard from "../../components/Card/Card";
 import SearchBox from "../../components/SearchBox/SearchBox";
+
+const gridTheme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 900,
+      md: 1300, // Customizing the `md` breakpoint to 1200px (default is 960px)
+      lg: 1600,
+      xl: 1920,
+    },
+  },
+});
 
 const SearchResultsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -597,59 +609,70 @@ const SearchResultsPage = () => {
           </div>
 
           {/* Grid with animal cards */}
-          <div className="animal-cards-box">
-            <div className="animal-cards-box-inner">
-              {loading ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-              ) : (
-                <Grid container spacing={2} sx={{ marginBottom: "64px", maxWidth: "100%" }}>
-                  {animals.map((animal, index) => {
-                    const itemCount = animals.length;
+          <ThemeProvider theme={gridTheme}> {/* Apply custom theme */}
+            <div className="animal-cards-box">
 
-                    // Determine column width based on the number of items
-                    let gridProps;
-                    if (itemCount === 1) {
-                      gridProps = { xs: 12, sm: 12, md: 12, lg: 12 }; // Full width for a single item
-                    } else if (itemCount === 2) {
-                      gridProps = { xs: 12, sm: 6, md: 6, lg: 6 }; // Half width for two items
-                    } else if (itemCount === 3) {
-                      gridProps = { xs: 12, sm: 4, md: 4, lg: 4 }; // One-third width for three items
-                    } else {
-                      gridProps = { xs: 12, sm: 12, md: 6, lg: 3 }; // Standard layout for four or more items
-                    }
+              <div className="animal-cards-box-inner">
+                {loading ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                    }}
+                  >
+                    <CircularProgress />
+                  </Box>
+                ) : (
+                  <Grid 
+                    container 
+                    spacing={2} 
+                    sx={{
+                      marginBottom: "64px", 
+                      maxWidth: "100%",
+                    }}
+                  >
+                    {animals.map((animal, index) => {
+                      const itemCount = animals.length;
+                      let gridProps;
 
-                    return (
-                      <Grid item key={index} {...gridProps}>
-                        <ImageCard
-                          title={animal.title}
-                          description={animal.trackerType}
-                          post_id={animal._id}
-                          image={animal.postImage}
-                          author={animal.author}
-                          authorImage={animal.authorImage}
-                          authorId={animal.authorId}
-                          scientificName={animal.scientificName}
-                          commonnames={animal.commonnames}
-                          animalType={animal.animalType}
-                          trackerType={animal.trackerType}
-                          enclosureType={animal.enclosureType}
-                        />
-                      </Grid>
-                    );
-                  })}
-                </Grid>
-              )}
+                      // Adjust grid properties based on item count
+                      if (itemCount === 1) {
+                        gridProps = { xs: 12, sm: 12, md: 12, lg: 12 }; // Full width for a single item
+                      } else if (itemCount === 2) {
+                        gridProps = { xs: 12, sm: 6, md: 6, lg: 6 }; // Half width for two items
+                      } else if (itemCount === 3) {
+                        gridProps = { xs: 12, sm: 6, md: 4, lg: 4 }; // One-third width for three items
+                      } else {
+                        gridProps = { xs: 12, sm: 6, md: 4, lg: 3 }; // Default layout for four or more items
+                      }
+
+                      return (
+                        <Grid item key={index} {...gridProps} sx={{ display: 'flex'}}>
+                          <ImageCard
+                            title={animal.title}
+                            description={animal.trackerType}
+                            post_id={animal._id}
+                            image={animal.postImage}
+                            author={animal.author}
+                            authorImage={animal.authorImage}
+                            authorId={animal.authorId}
+                            scientificName={animal.scientificName}
+                            commonName={animal.commonName}
+                            animalType={animal.animalType}
+                            trackerType={animal.trackerType}
+                            enclosureType={animal.enclosureType}
+                          />
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+
+                )}
+              </div>
             </div>
-          </div>
+          </ThemeProvider>
         </div>
       </Box>
     </Box>

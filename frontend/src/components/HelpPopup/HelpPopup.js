@@ -18,8 +18,8 @@ const HelpPopup = ({ isOpen, onClose }) => {
         <p>Here's a quick guide on how to use our platform:</p>
         <ul>
           <li>Use the sidebar to navigate between different sections.</li>
-          <li>Click on "New Post" to create a new entry.</li>
-          <li>View all your posts by clicking on "View Posts".</li>
+          <li>Click on "New Animal Profile" to create a new entry.</li>
+          <li>View all your posts by clicking on "View Animal Profiles".</li>
         </ul>
         <p>
           If you need further assistance, don't hesitate to contact our support

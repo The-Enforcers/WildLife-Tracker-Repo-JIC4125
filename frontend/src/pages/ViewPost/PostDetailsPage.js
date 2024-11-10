@@ -98,7 +98,7 @@ const PostDetailsPage = () => {
           <div className="button-container">
             {user && post && user.displayName === post.author && (
               <Tooltip
-                title="Edit post"
+                title="Edit Animal Profile"
                 placement="top"
                 PopperProps={{
                   modifiers: [
@@ -194,10 +194,10 @@ const PostDetailsPage = () => {
                   <p className="name-header">Scientific Name</p>
                   <p className="scientific-name">{post.scientificName}</p>
                 </div>
-                {post.commonname && 
+                {post.commonName && 
                 <div className="name-box">
                   <p className="name-header">Common Names</p>
-                  <p className="common-name">{post.commonname}</p>
+                  <p className="common-name">{post.commonName}</p>
                 </div>}
               </div>
             </div>
@@ -206,9 +206,29 @@ const PostDetailsPage = () => {
               <img
                 className="post-image"
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                alt="Post"
+                alt="Animal Profile"
               />
             </div>
+          </div>
+          <div className="data-types">
+            {post.dataTypes.map((dataType, index) => (
+              <span
+                key={index}
+                style={{
+                  backgroundColor: '#f0f4f9', // Light background color for the pill
+                  padding: '5px 15px', // Padding for the pill shape
+                  borderRadius: '20px', // Make it pill-shaped
+                  margin: '5px', // Space between pills
+                  fontSize: '14px', // Adjust font size
+                  color: '#333', // Text color
+                  fontWeight: 'bold', // Text weight
+                  display: 'inline-block', // Keep them on the same line
+                  textTransform: 'capitalize', // Capitalize the first letter of each word
+                }}
+              >
+                {dataType}
+              </span>
+            ))}
           </div>
           <div className="tracker-info">
             <div className="tracker-info-head">

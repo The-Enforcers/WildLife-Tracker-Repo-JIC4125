@@ -15,6 +15,16 @@
 
 }
 
+
+@media (max-width: 1500px) {
+
+  .post-container-inner {
+    width: 90%;
+    padding-top: 25px;
+  }
+
+}
+
 /* Post Details stuff */
 .button-container {
   display: flex; 
@@ -33,6 +43,7 @@
 
 .post-head {
   display: flex;
+  gap: 50px;
   width: 80%;
   margin: 0px auto;
   padding-top: 30px;
@@ -40,7 +51,6 @@
 
 .post-meta {
   flex: 1;
-  margin: 0px auto;
   padding-right: 10px;
 }
 
@@ -89,6 +99,17 @@
   font-size: 20px;
 }
 
+.data-types {
+
+  padding-top: 25px;
+  width: 80%;
+  margin: 0px auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+}
+
 .expand-icon {
   display: flex;
   padding-top: 10px;
@@ -125,7 +146,7 @@
 
 .tracker-info {
   display: block;
-  background-color: rgb(243, 243, 243);
+  background-color: #f0f4f9;
   border-radius: 15px;
   padding: 0px 0px;
   /*box-shadow: 0px 0px 10px #f2f2f2;*/
@@ -136,7 +157,7 @@
 
 .tracker-info-head {
   display: flex;
-  background-color: rgb(243, 243, 243);
+  background-color: #f0f4f9;
   border-radius: 15px;
   width: 95%;
   margin: 0px auto;
@@ -167,7 +188,7 @@
 }
 
 .tracker-info-box-selected {
-  background-color: rgb(227, 226, 226);
+  background-color: #dde3ea;
   flex: 1;
   float: bottom;
   max-width: 33%;
@@ -194,6 +215,7 @@
 .post-picture {
   max-width: 50%;
   display: flex;
+  flex: 1 1 50%;
   justify-content: right;
 }
 

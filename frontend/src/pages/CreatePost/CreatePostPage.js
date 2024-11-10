@@ -33,6 +33,8 @@ import {
 } from "../../services/postService";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
+import "./CreatePostPage.css"
+
 // Constants for image uploads
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"];
@@ -50,8 +52,22 @@ const dataTypeOptions = [
 // Component for main image upload
 const MainImageUploadArea = ({ type, image, handleImageChange }) => (
   <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <Box sx={{ position: "relative", width: "100%", maxWidth: 200 }}>
-      {image && (
+    <Box
+      sx={{
+        position: "relative",
+        width: image ? "100%" : 75,
+        height: image ? "auto" : 75,
+        maxWidth: 200,
+        maxHeight: 200,
+        border: image ? "none" : "2px dashed #ccc",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}
+    >
+      {image ? (
         <img
           src={image instanceof File ? URL.createObjectURL(image) : image}
           alt="Uploaded Preview"
@@ -62,6 +78,8 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
             borderRadius: "10px",
           }}
         />
+      ) : (
+        <UploadIcon sx={{ fontSize: 30, color: "#ccc" }} />
       )}
       <IconButton
         color="primary"
@@ -77,6 +95,7 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
           "&:hover": {
             backgroundColor: "#c0c0c0",
           },
+          boxShadow: "0px 0px 5px darkgray"
         }}
       >
         <input
@@ -90,6 +109,8 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
     </Box>
   </Box>
 );
+
+
 
 // Component for additional image uploads (tracker, enclosure, attachment)
 const ImageUploadArea = ({ type, image, handleImageChange }) => (
@@ -455,8 +476,8 @@ const CreatePostPage = () => {
         </>
       )}
 
-      <Paper elevation={0} sx={{ px: 4, marginBottom: 3, overflowY: "scoll" }}>
-        <Typography variant="h4" gutterBottom>
+      <Paper elevation={0} className="paper-form" sx={{ px: 4, marginBottom: 3, overflowY: "scoll", width: "50%", paddingTop: "50px", margin: "0px auto"}}>
+        <Typography variant="h4" gutterBottom sx={{width: "100%", textAlign: "center"}}>
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
         {lastUpdatedDate && (
@@ -480,7 +501,7 @@ const CreatePostPage = () => {
             {error}
           </Typography>
         )}
-        <Box component="form" onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={handleSubmit} sx={{paddingTop: "50px"}}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <MainImageUploadArea
@@ -551,7 +572,7 @@ const CreatePostPage = () => {
                 spacing={2}
                 sx={{ mb: 2 }}
               > 
-                <Grid item xs={10}> 
+                <Grid item xs={10}>
                   <FormControl fullWidth>
                     <InputLabel id="tracker-type-label">
                       Tracker Type

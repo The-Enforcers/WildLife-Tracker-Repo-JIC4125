@@ -115,15 +115,12 @@ function build_search_terms(req) {
   var search_requirements = {};
 
   if (title) {
-    search_requirements.title = new RegExp(title, "i");
-  }
-
-  if (scientificName) {
-    search_requirements.scientificName = new RegExp(scientificName, "i");
-  }
-
-  if (commonName) {
-    search_requirements.commonName = new RegExp(commonName, "i");
+    search_requirements.$or = [
+      {title: new RegExp(title, "i")},
+      {scientificName: new RegExp(title, "i")},
+      {commonName: new RegExp(title, "i")},
+      {author: new RegExp(title, "i")}
+    ];
   }
 
   if (animalType) {
