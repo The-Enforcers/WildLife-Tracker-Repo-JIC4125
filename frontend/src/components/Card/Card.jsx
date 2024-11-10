@@ -5,7 +5,8 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
   return (
     <Card
       sx={{
-        maxWidth: 340,
+        width: '100%', // Ensure card takes up all available space in its grid item
+        maxWidth: 340, // You can increase this if you want to give the card a larger maximum width
         margin: "0px auto",
         borderRadius: 9,
         overflow: 'hidden',
