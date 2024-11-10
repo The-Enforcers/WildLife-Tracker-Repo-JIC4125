@@ -92,68 +92,23 @@ const PostDetailsPage = () => {
 
   return (
     <>
-      {/* Breadcrumbs section */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{ marginLeft: 4, marginBlock: 1 }}
-      >
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Home
-        </Link>
-        <Link to="/posts" style={{ textDecoration: "none", color: "inherit" }}>
-          Posts
-        </Link>
-        <Typography color="text.primary">
-          {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
-        </Typography>
-      </Breadcrumbs>
       <div className="post-container">
-        <div className="post-head">
-          <div className="post-meta">
-            <p className="post-title"> {post.title} </p>
-            <div className="animal-names">
-              <div className="name-box">
-                <p className="name-header">Scientific Name</p>
-                <p className="scientific-name">{post.scientificName}</p>
-              </div>
-              <div className="name-box">
-                <p className="name-header">Species</p>
-                <p className="common-name">{post.animalType}</p>
-              </div>
-              <div className="name-box">
-                <p className="name-header">Tracker Type</p>
-                <p className="common-name">{post.trackerType}</p>
-              </div>
-              <div className="post-author">
-                <img
-                  className="profile-picture"
-                  src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
-                  alt="Author"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
-                  }}
-                />
-
-                <p className="author-name"> {post.author}</p>
-              </div>
-              {post.lastUpdated && (
-                <Typography variant="body2" color="textSecondary">
-                  Last updated:{" "}
-                  {new Date(post.lastUpdated).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}{" "}
-                  at{" "}
-                  {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Typography>
-              )}
-            </div>
-          </div>
+        <div className="post-container-inner">
+              {/* Breadcrumbs section */}
+              <Breadcrumbs
+            aria-label="breadcrumb"
+            sx={{ marginLeft: 4, marginBlock: 1 }}
+          >
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              Home
+            </Link>
+            <Link to="/posts" style={{ textDecoration: "none", color: "inherit" }}>
+              Posts
+            </Link>
+            <Typography color="text.primary">
+              {shortenedTitle} {post.title.split(" ").length > 3 ? "..." : ""}
+            </Typography>
+          </Breadcrumbs>
           <div className="button-container">
             {user && post && user.displayName === post.author && (
               <Tooltip
@@ -217,123 +172,171 @@ const PostDetailsPage = () => {
               </IconButton>
             )}
           </div>
+          <div className="post-head">
+            <div className="post-meta">
+              <p className="post-title"> {post.title} </p>
+              <div className="post-author">
+                  <img
+                    className="profile-picture"
+                    src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                    alt="Author"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
+                    }}
+                  />
 
-          <div className="post-picture">
-            <img
-              className="post-image"
-              src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-              alt="Post"
-            />
+                  <p className="author-name"> {post.author}</p>
+                </div>
+                {post.lastUpdated && (
+                  <Typography variant="body2" color="textSecondary">
+                    Last updated:{" "}
+                    {new Date(post.lastUpdated).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}{" "}
+                    at{" "}
+                    {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Typography>
+                )}
+              <div className="animal-names">
+                <div className="name-box">
+                  <p className="name-header">Scientific Name</p>
+                  <p className="scientific-name">{post.scientificName}</p>
+                </div>
+                {post.commonname && 
+                <div className="name-box">
+                  <p className="name-header">Common Names</p>
+                  <p className="common-name">{post.commonname}</p>
+                </div>}
+              </div>
+            </div>
+            
+            <div className="post-picture">
+              <img
+                className="post-image"
+                src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
+                alt="Post"
+              />
+            </div>
           </div>
-        </div>
-        <div className="tracker-info">
-          <div className="tracker-info-head">
-            <div
-              className={`tracker-info-box-${
-                expandedBox === "tracker" ? "selected" : ""
-              }`}
-              onClick={() => post.trackerImage && handleBoxClick("tracker")}
-              style={{ cursor: post.trackerImage ? "pointer" : "default" }}
-            >
-              <p className="tracker-info-actual">{post.trackerType}</p>
-              <p className="tracker-info-header">Tracker</p>
+          <div className="tracker-info">
+            <div className="tracker-info-head">
               <div
-                className={`expand-icon ${
-                  !post.trackerImage ? "no-image" : ""
+                className={`tracker-info-box-${
+                  expandedBox === "tracker" ? "selected" : ""
                 }`}
+                onClick={() => post.trackerImage && handleBoxClick("tracker")}
+                style={{ cursor: post.trackerImage ? "pointer" : "default" }}
               >
-                {expandedBox === "tracker" ? <p>hide</p> : <p>show</p>}
-                {expandedBox === "tracker" ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
+                <p className="tracker-info-actual">{post.trackerType}</p>
+                <p className="tracker-info-header">Tracker</p>
+                <div
+                  className={`expand-icon ${
+                    !post.trackerImage ? "no-image" : ""
+                  }`}
+                >
+                  {expandedBox === "tracker" ? <p>hide</p> : <p>show</p>}
+                  {expandedBox === "tracker" ? (
+                    <ExpandLessIcon />
+                  ) : (
+                    <ExpandMoreIcon />
+                  )}
+                </div>
+              </div>
+
+              <div
+                className={`tracker-info-box-${
+                  expandedBox === "enclosure" ? "selected" : ""
+                }`}
+                onClick={() => post.enclosureImage && handleBoxClick("enclosure")}
+                style={{ cursor: post.enclosureImage ? "pointer" : "default" }}
+              >
+                <p className="tracker-info-actual">{post.enclosureType}</p>
+                <p className="tracker-info-header">Enclosure</p>
+                <div
+                  className={`expand-icon ${
+                    !post.enclosureImage ? "no-image" : ""
+                  }`}
+                >
+                  {expandedBox === "enclosure" ? <p>hide</p> : <p>show</p>}
+                  {expandedBox === "enclosure" ? (
+                    <ExpandLessIcon />
+                  ) : (
+                    <ExpandMoreIcon />
+                  )}
+                </div>
+              </div>
+
+              <div
+                className={`tracker-info-box-${
+                  expandedBox === "attachment" ? "selected" : ""
+                }`}
+                onClick={() =>
+                  post.attachmentImage && handleBoxClick("attachment")
+                }
+                style={{ cursor: post.attachmentImage ? "pointer" : "default" }}
+              >
+                <p className="tracker-info-actual">{post.attachmentType}</p>
+                <p className="tracker-info-header">Attachment</p>
+                <div
+                  className={`expand-icon ${
+                    !post.attachmentImage ? "no-image" : ""
+                  }`}
+                >
+                  {expandedBox === "attachment" ? <p>hide</p> : <p>show</p>}
+                  {expandedBox === "attachment" ? (
+                    <ExpandLessIcon />
+                  ) : (
+                    <ExpandMoreIcon />
+                  )}
+                </div>
               </div>
             </div>
 
             <div
-              className={`tracker-info-box-${
-                expandedBox === "enclosure" ? "selected" : ""
+              className={`expanded-images-container ${
+                expandedBox ? "expanded" : ""
               }`}
-              onClick={() => post.enclosureImage && handleBoxClick("enclosure")}
-              style={{ cursor: post.enclosureImage ? "pointer" : "default" }}
             >
-              <p className="tracker-info-actual">{post.enclosureType}</p>
-              <p className="tracker-info-header">Enclosure</p>
-              <div
-                className={`expand-icon ${
-                  !post.enclosureImage ? "no-image" : ""
-                }`}
-              >
-                {expandedBox === "enclosure" ? <p>hide</p> : <p>show</p>}
-                {expandedBox === "enclosure" ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
-              </div>
-            </div>
-
-            <div
-              className={`tracker-info-box-${
-                expandedBox === "attachment" ? "selected" : ""
-              }`}
-              onClick={() =>
-                post.attachmentImage && handleBoxClick("attachment")
-              }
-              style={{ cursor: post.attachmentImage ? "pointer" : "default" }}
-            >
-              <p className="tracker-info-actual">{post.attachmentType}</p>
-              <p className="tracker-info-header">Attachment</p>
-              <div
-                className={`expand-icon ${
-                  !post.attachmentImage ? "no-image" : ""
-                }`}
-              >
-                {expandedBox === "attachment" ? <p>hide</p> : <p>show</p>}
-                {expandedBox === "attachment" ? (
-                  <ExpandLessIcon />
-                ) : (
-                  <ExpandMoreIcon />
-                )}
-              </div>
+              {expandedBox === "tracker" && post.trackerImage && (
+                <img
+                  src={`https://${window.location.hostname}:5001/api/posts/image/${post.trackerImage}`}
+                  alt="Tracker"
+                  style={styles.expandedImage}
+                />
+              )}
+              {expandedBox === "enclosure" && post.enclosureImage && (
+                <img
+                  src={`https://${window.location.hostname}:5001/api/posts/image/${post.enclosureImage}`}
+                  alt="Enclosure"
+                  style={styles.expandedImage}
+                />
+              )}
+              {expandedBox === "attachment" && post.attachmentImage && (
+                <img
+                  src={`https://${window.location.hostname}:5001/api/posts/image/${post.attachmentImage}`}
+                  alt="Attachment"
+                  style={styles.expandedImage}
+                />
+              )}
             </div>
           </div>
 
           <div
-            className={`expanded-images-container ${
-              expandedBox ? "expanded" : ""
-            }`}
+            style={{width: "80%", margin: "0px auto", paddingBottom: "200px"}}
           >
-            {expandedBox === "tracker" && post.trackerImage && (
-              <img
-                src={`https://${window.location.hostname}:5001/api/posts/image/${post.trackerImage}`}
-                alt="Tracker"
-                style={styles.expandedImage}
-              />
-            )}
-            {expandedBox === "enclosure" && post.enclosureImage && (
-              <img
-                src={`https://${window.location.hostname}:5001/api/posts/image/${post.enclosureImage}`}
-                alt="Enclosure"
-                style={styles.expandedImage}
-              />
-            )}
-            {expandedBox === "attachment" && post.attachmentImage && (
-              <img
-                src={`https://${window.location.hostname}:5001/api/posts/image/${post.attachmentImage}`}
-                alt="Attachment"
-                style={styles.expandedImage}
-              />
-            )}
+            <ReactQuill
+              value={post.recommendations || ""}
+              readOnly={true}
+              theme="bubble"
+            />
           </div>
         </div>
-
-        <ReactQuill
-          value={post.recommendations || ""}
-          readOnly={true}
-          theme="bubble"
-        />
       </div>
     </>
   );
@@ -392,8 +395,8 @@ const styles = {
   expandedImage: {
     display: "block",
     margin: "10px auto",
-    width: "80%",
-    maxWidth: "600px",
+    maxHeight: "25vh",
+    width: "auto",
     height: "auto",
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
