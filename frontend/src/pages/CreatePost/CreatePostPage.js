@@ -524,7 +524,7 @@ const CreatePostPage = () => {
                 fullWidth
                 sx={{ marginBottom: 2 }}
               />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}> // Drop-Down Menu - Animal Type
+              <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel id="animal-type-label">Animal Family</InputLabel>
                 <Select 
                   id="animal-type"
@@ -555,7 +555,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="tracker-type-label">
                       Tracker Type
-                    </InputLabel> // Drop-Down Menu - Tracker Type
+                    </InputLabel>
                     <Select
                       id="tracker-type"
                       name="tracker-type"
@@ -606,7 +606,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="enclosure-type-label">
                       Enclosure Type
-                    </InputLabel> // Drop-Down Menu - Enclosure Type
+                    </InputLabel>
                     <Select
                       id="enclosure-type"
                       name="enclosure-type"
@@ -654,7 +654,7 @@ const CreatePostPage = () => {
                   <FormControl fullWidth>
                     <InputLabel id="attachment-type-label">
                       Attachment Type
-                    </InputLabel> // Drop-Down Menu - Tracker Type
+                    </InputLabel>
                     <Select
                       id="attachment-type"
                       name="attachment-type"
@@ -695,7 +695,7 @@ const CreatePostPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom> // Text Box Input - Recommendation
+              <Typography variant="h6" gutterBottom>
                 Data Types:
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
