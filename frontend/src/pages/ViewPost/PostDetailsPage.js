@@ -46,13 +46,14 @@ const PostDetailsPage = () => {
         const data = await getPostById(id);
         setPost(data);
 
-        if (data.trackerImage) {
+        // We used to have the type images automatically open, but decided against that (may readd)
+        /*if (data.trackerImage) {
           setExpandedBox("tracker");
         } else if (data.enclosureImage) {
           setExpandedBox("enclosure");
         } else if (data.attachmentImage) {
           setExpandedBox("attachment");
-        }
+        }*/
 
         // Check if user and bookmarkedPosts exist before accessing bookmarkedPosts
         if (user && user.bookmarkedPosts) {
