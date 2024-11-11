@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Box,
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
   Grid,
-  Breadcrumbs,
   CircularProgress
 } from "@mui/material";
 
@@ -217,6 +215,7 @@ const SearchResultsPage = () => {
     }
   }, [input, filters]);
   
+
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   getPostById,
   bookmarkPost,
@@ -18,7 +18,6 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import {
-  Breadcrumbs,
   Button,
   Typography,
   IconButton,

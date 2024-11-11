@@ -1,5 +1,5 @@
 // src/components/Layout/Layout.js
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Navbar from "../../components/NavBar/Navbar";
