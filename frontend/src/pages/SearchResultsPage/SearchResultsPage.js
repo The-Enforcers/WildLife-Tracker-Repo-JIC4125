@@ -213,7 +213,7 @@ const SearchResultsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [input, filters]);
+  }, [input, filters, setSearchParams]);
   
 
   useEffect(() => {
