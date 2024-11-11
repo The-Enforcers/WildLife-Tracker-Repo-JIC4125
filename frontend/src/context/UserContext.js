@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")) || null);
-  const [token, setToken] = useState(() => localStorage.getItem("authToken") || null);
+  const [user, setUser] = useState(
+    () => JSON.parse(localStorage.getItem("user")) || null
+  );
+  const [token, setToken] = useState(
+    () => localStorage.getItem("authToken") || null
+  );
   const [loading, setLoading] = useState(true);
   const showSnackbar = useSnackbar();
   const navigate = useNavigate();
@@ -21,7 +25,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       const storedToken = localStorage.getItem("authToken");
-      
+
       if (!storedToken) {
         console.log("Token is not present. Calling fetchUser.");
         setLoading(false);
@@ -34,20 +38,17 @@ export const UserProvider = ({ children }) => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${storedToken}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           credentials: "include",
         });
 
-        // Log response status and headers for debugging
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers));
 
         // Check if response has content
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const userData = await response.json();
-          
+
           if (response.ok && userData && userData.googleId && userData.email) {
             setUser(userData);
             localStorage.setItem("user", JSON.stringify(userData));
@@ -66,8 +67,9 @@ export const UserProvider = ({ children }) => {
             }
           }
         } else {
-          console.log('Response was not JSON:', await response.text());
-          if (response.status !== 204) { // Ignore empty success responses
+          console.log("Response was not JSON:", await response.text());
+          if (response.status !== 204) {
+            // Ignore empty success responses
             setUser(null);
             showSnackbar("Unable to verify authentication", "error");
           }
@@ -84,6 +86,7 @@ export const UserProvider = ({ children }) => {
     };
 
     fetchUser();
+    // eslint-disable-next-line
   }, [token, showSnackbar]);
 
   const logoutUser = async () => {
@@ -99,14 +102,14 @@ export const UserProvider = ({ children }) => {
       localStorage.removeItem("user");
       localStorage.removeItem("authToken");
       sessionStorage.removeItem("hasSeenWelcome");
-      
+
       if (response.ok) {
         showSnackbar("Logged out successfully!", "info");
       } else {
         console.error("Logout failed on server");
         showSnackbar("Logged out locally", "warning");
       }
-      
+
       navigate("/");
     } catch (error) {
       console.error("Error during logout:", error);
@@ -122,14 +125,16 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      setUser, 
-      token, 
-      setToken: updateToken,
-      logoutUser, 
-      loading 
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        setUser,
+        token,
+        setToken: updateToken,
+        logoutUser,
+        loading,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

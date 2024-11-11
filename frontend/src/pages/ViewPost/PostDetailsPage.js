@@ -65,16 +65,13 @@ const PostDetailsPage = () => {
     const checkLikeStatus = async () => {
         if (user && post) {
             try {
-                console.log("Checking like status for post:", id);
                 const response = await fetch(`https://${window.location.hostname}:5001/api/posts/${id}/hasLiked`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log("Response status:", response.status);
                 const data = await response.json();
-                console.log("Like status response:", data);
                 setIsLiked(data.hasLiked);
             } catch (error) {
                 console.error("Failed to check like status", error);
