@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   getPostById,
   bookmarkPost,
@@ -16,7 +16,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import {
-  Breadcrumbs,
   Button,
   Typography,
   IconButton,
@@ -88,8 +87,6 @@ const PostDetailsPage = () => {
 
   if (error) return <div style={styles.error}>{error}</div>;
   if (!post) return <div style={styles.loading}>Loading...</div>;
-
-  const shortenedTitle = post.title.split(" ").slice(0, 3).join(" ");
 
   return (
     <>

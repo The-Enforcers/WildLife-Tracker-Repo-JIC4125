@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link as RouterLink, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Box,
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Button,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
   Grid,
-  Breadcrumbs,
   CircularProgress
 } from "@mui/material";
 
@@ -145,7 +143,7 @@ const SearchResultsPage = () => {
     const attachmentTypes = [];
     const enclosureTypes = [];
     const animalFamily = [];
-
+  
     // Build arrays based on selected filters
     if (filters.vhf) trackerTypes.push("VHF");
     if (filters.satellite) trackerTypes.push("Satellite");
@@ -154,35 +152,34 @@ const SearchResultsPage = () => {
     if (filters.cell) trackerTypes.push("Cellular / GSM");
     if (filters.bio) trackerTypes.push("Bio-logger");
     if (filters.rfid) trackerTypes.push("RFID");
-
+  
     if (filters.encapsulated) enclosureTypes.push("Encapsulated");
     if (filters.potting) enclosureTypes.push("Potting");
     if (filters.shrink) enclosureTypes.push("Shrink wrap");
     if (filters.hematic) enclosureTypes.push("Hematic seal");
-
+  
     if (filters.bolt) attachmentTypes.push("Bolt");
     if (filters.harness) attachmentTypes.push("Harness");
     if (filters.collar) attachmentTypes.push("Collar");
     if (filters.adhesive) attachmentTypes.push("Adhesive");
     if (filters.implant) attachmentTypes.push("Implant");
-
+  
     if (filters.mammal) animalFamily.push("Mammal");
     if (filters.reptile) animalFamily.push("Reptile");
     if (filters.amphibian) animalFamily.push("Amphibians");
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
-
-    // Determine sort order based on filters
-    let sortOrder = "desc"; // Default to 'New to Old'
+  
+    let sortOrder = "desc";
     if (filters.oldToNew) {
       sortOrder = "asc";
     }
-    // Create query strings
+  
     const trackerTypeQuery = trackerTypes.join(",");
     const attachmentTypeQuery = attachmentTypes.join(",");
     const enclosureTypeQuery = enclosureTypes.join(",");
     const animalFamilyQuery = animalFamily.join(",");
-
+  
     const params = {
       search: input,
       ...Object.keys(filters)
@@ -193,33 +190,28 @@ const SearchResultsPage = () => {
         }, {}),
     };
     setSearchParams(params);
-
+  
     try {
       const response = await fetch(
         `https://${window.location.hostname}:5001/api/posts/search?title=${input}&trackerType=${trackerTypeQuery}&attachmentType=${attachmentTypeQuery}&enclosureType=${enclosureTypeQuery}&animalType=${animalFamilyQuery}`
       );
       const data = await response.json();
       const posts = Array.isArray(data) ? data : [];
-      console.log(`SORT ORDER:` + sortOrder);
       const sortedPosts = posts.sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
   
-        if (sortOrder === "asc") {
-          return dateA - dateB; // Old to New
-        } else {
-          return dateB - dateA; // New to Old
-        }
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
       });
-
+  
       setAnimals(sortedPosts);
-
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     } finally {
       setLoading(false);
     }
-  }, [input, filters]);
+  }, [input, filters, setSearchParams]);
+  
 
   useEffect(() => {
     applyFilters();
@@ -244,7 +236,7 @@ const SearchResultsPage = () => {
           {/* Filters on the left */}
           <div className="filters-main-box" sx={{height: "100%", overflowY: "hidden", display: "flex", flexBasis: "20%", flexFlow: "column"}}>
             <div className="filters-box" >
-              <Accordion className="filter-group" defaultExpanded="true"
+              <Accordion className="filter-group" defaultExpanded={true}
               
                 sx={{
                     
@@ -316,7 +308,7 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded="true"
+              <Accordion className="filter-group" defaultExpanded={true}
               
               sx={{
                   
@@ -407,7 +399,7 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group"  defaultExpanded="true"
+              <Accordion className="filter-group"  defaultExpanded={true}
               
               sx={{
                   
@@ -468,7 +460,7 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded="true"
+              <Accordion className="filter-group" defaultExpanded={true}
               
               sx={{
                   
@@ -539,7 +531,7 @@ const SearchResultsPage = () => {
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
-              <Accordion className="filter-group" defaultExpanded="true"
+              <Accordion className="filter-group" defaultExpanded={true}
                 sx={{
                   backgroundColor: "#f0f4f9",
                   boxShadow: "none",
