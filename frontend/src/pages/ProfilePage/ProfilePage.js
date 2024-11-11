@@ -83,6 +83,7 @@ export default function ProfilePage() {
   const { user } = useContext(UserContext);
   const [authorPosts, setAuthorPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalLikes, setTotalLikes] = useState(0);
 
   // State for bio and occupation editing
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -125,18 +126,25 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const fetchAuthorPosts = async () => {
+    const fetchData = async () => {
       if (user && user.googleId) {
+        setLoading(true);
         try {
-          const authorPosts = await getPostsByAuthor(user.googleId);
-          setAuthorPosts(authorPosts);
+          // Fetch posts and likes in parallel
+          const [postsResponse, likesResponse] = await Promise.all([
+            getPostsByAuthor(user.googleId),
+            fetch(`https://${window.location.hostname}:5001/api/posts/author/${user.googleId}/likes`)
+          ]);
+          
+          const posts = await postsResponse;
+          const likesData = await likesResponse.json();
+          
+          setAuthorPosts(posts);
+          setTotalLikes(likesData.totalLikes);
         } catch (error) {
-          if (error.response && error.response.status === 404) {
-            // No posts found, set to an empty array
+          console.error("Error fetching data:", error);
+          if (error.response?.status === 404) {
             setAuthorPosts([]);
-          } else {
-            // Log any other errors
-            console.error("Error fetching author posts:", error);
           }
         } finally {
           setLoading(false);
@@ -144,7 +152,7 @@ export default function ProfilePage() {
       }
     };
 
-    fetchAuthorPosts();
+    fetchData();
   }, [user]);
 
   return (
@@ -228,7 +236,7 @@ export default function ProfilePage() {
                 )}
               </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
                 <DateRange fontSize="small" sx={{ mr: 1 }} />
                 <Typography variant="body2">
                   Member since:{" "}
@@ -271,9 +279,11 @@ export default function ProfilePage() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <StatsCard>
-                      <Typography variant="h4">0</Typography>
+                      <Typography variant="h4">
+                        {loading ? "..." : totalLikes}
+                      </Typography>
                       <Typography variant="subtitle1" color="textSecondary">
-                        Likes
+                        Total Likes Received
                       </Typography>
                     </StatsCard>
                   </Grid>
@@ -361,47 +371,55 @@ export default function ProfilePage() {
                   <Typography>Loading...</Typography>
                 ) : (
                   <Box sx={{ maxHeight: 300, overflow: "auto" }}>
-                    {" "}
-                    {/* Set height and enable scrolling */}
                     <List>
-                      {authorPosts.map((post) => (
-                        <ListItem
-                          key={post._id}
-                          component={Link}
-                          to={`/posts/${post._id}`}
-                          style={{ textDecoration: "none", color: "inherit" }}
-                        >
-                          <ListItemAvatar>
-                            <Avatar
-                              src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                              alt={post.title}
+                      {authorPosts
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .map((post) => (
+                          <ListItem
+                            key={post._id}
+                            component={Link}
+                            to={`/posts/${post._id}`}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <ListItemAvatar>
+                              <Avatar
+                                src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
+                                alt={post.title}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={post.title}
+                              secondary={
+                                <>
+                                  <Typography
+                                    component="span"
+                                    variant="body2"
+                                    color="textSecondary"
+                                  >
+                                    {post.commonName}
+                                  </Typography>
+                                  <Typography
+                                    component="span"
+                                    variant="caption"
+                                    color="textSecondary"
+                                  >
+                                    {` • ${new Date(post.date).toLocaleDateString()}`}
+                                  </Typography>
+                                  <Typography
+                                    component="span"
+                                    variant="caption"
+                                    color="textSecondary"
+                                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                                  >
+                                    {` • `}
+                                    <Favorite sx={{ fontSize: 14 }} />
+                                    {` ${post.likeCount || 0}`}
+                                  </Typography>
+                                </>
+                              }
                             />
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={post.title}
-                            secondary={
-                              <>
-                                <Typography
-                                  component="span"
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {post.commonName}
-                                </Typography>
-                                <Typography
-                                  component="span"
-                                  variant="caption"
-                                  color="textSecondary"
-                                >
-                                  {` • ${new Date(
-                                    post.date
-                                  ).toLocaleDateString()}`}
-                                </Typography>
-                              </>
-                            }
-                          />
-                        </ListItem>
-                      ))}
+                          </ListItem>
+                        ))}
                     </List>
                   </Box>
                 )}

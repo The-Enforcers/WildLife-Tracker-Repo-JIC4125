@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// All images are of filenames
 const PostSchema = new mongoose.Schema({
   postImage: {
     type: String,
@@ -70,10 +69,17 @@ const PostSchema = new mongoose.Schema({
     default: Date.now,
   },
   lastUpdated: {
-    type: Date, 
+    type: Date,
     default: null,
   },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  likeCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = mongoose.model("Post", PostSchema);
-

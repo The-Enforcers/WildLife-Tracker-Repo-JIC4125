@@ -195,4 +195,112 @@ exports.updatePost = async (req, res) => {
 };
 
 
+exports.hasUserLikedPost = async (req, res) => {
+    try {
+        console.log("hasUserLikedPost called");
+        const { postId } = req.params;
+        console.log("PostId:", postId);
+        
+        // Get userId from decoded token's id field
+        const userId = req.userId;  // This matches what your auth middleware provides
+        console.log("UserId:", userId);
+
+        const post = await Post.findById(postId);
+        console.log("Found post:", post);
+        
+        if (!post) {
+            console.log("Post not found");
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        console.log("Post likes array:", post.likes);
+        const hasLiked = post.likes.map(id => id.toString()).includes(userId.toString());
+        console.log("Has liked:", hasLiked);
+        
+        res.json({ hasLiked });
+    } catch (err) {
+        console.error("Error in hasUserLikedPost:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.likePost = async (req, res) => {
+    try {
+        console.log("likePost called");
+        const { postId } = req.params;
+        console.log("PostId:", postId);
+        
+        // Get userId from decoded token's id field
+        const userId = req.userId;  // This matches what your auth middleware provides
+        console.log("UserId:", userId);
+
+        const post = await Post.findById(postId);
+        console.log("Found post:", post);
+
+        if (!post) {
+            console.log("Post not found");
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Check if user already liked the post
+        console.log("Current likes:", post.likes);
+        const alreadyLiked = post.likes.map(id => id.toString()).includes(userId.toString());
+        console.log("Already liked:", alreadyLiked);
+
+        if (alreadyLiked) {
+            return res.status(400).json({ message: "Post already liked by user" });
+        }
+
+        // Add like to post
+        post.likes.push(userId);
+        post.likeCount = post.likes.length;
+        await post.save();
+        console.log("Updated post:", post);
+
+        res.json({ message: "Post liked successfully", likeCount: post.likeCount });
+    } catch (err) {
+        console.error("Error in likePost:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.unlikePost = async (req, res) => {
+    try {
+        const { postId } = req.params;
+        const userId = req.userId;  // This matches what your auth middleware provides
+
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Remove like from post
+        post.likes = post.likes.filter(id => id.toString() !== userId.toString());
+        post.likeCount = post.likes.length;
+        await post.save();
+
+        res.json({ message: "Post unliked successfully", likeCount: post.likeCount });
+    } catch (err) {
+        console.error("Error in unlikePost:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+  
+exports.getUserPostsLikes = async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      const posts = await Post.find({ authorId: userId });
+      const totalLikes = posts.reduce((sum, post) => sum + post.likeCount, 0);
+      
+      res.json({ 
+        totalLikes,
+        postsCount: posts.length,
+        averageLikes: posts.length > 0 ? totalLikes / posts.length : 0
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+};
+  
 

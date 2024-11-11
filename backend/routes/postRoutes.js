@@ -22,5 +22,9 @@ router.put("/:id", postController.updatePost);
 router.post("/image", verifyToken, upload.single("image"), imageController.uploadImage);  // Protect image upload route
 router.get("/image/:filename", imageController.getImage);
 router.get("/author/:authorId", postController.getPostsByAuthorId);
+router.post("/:postId/like", verifyToken, postController.likePost);
+router.delete("/:postId/like", verifyToken, postController.unlikePost);
+router.get("/:postId/hasLiked", verifyToken, postController.hasUserLikedPost);
+router.get("/author/:userId/likes", postController.getUserPostsLikes);
 
 module.exports = router;

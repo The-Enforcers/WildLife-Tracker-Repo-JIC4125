@@ -71,6 +71,7 @@ const SearchResultsPage = () => {
     bird: searchParams.get("bird") === "true",
     newToOld: searchParams.get("newToOld") !== "false", 
     oldToNew: searchParams.get("oldToNew") === "true",
+    mostLiked: searchParams.get("mostLiked") === "true",
   };
   const [filters, setFilters] = useState(initialFilters);
 
@@ -100,6 +101,7 @@ const SearchResultsPage = () => {
       bird: false,
       newToOld: true,
       oldToNew: false,
+      mostLiked: false,
     });
   };
 
@@ -121,19 +123,19 @@ const SearchResultsPage = () => {
   // function to handle checkbox changes
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    // logic to ensure only one sort option is selected at a time
-    if (name === "newToOld" || name === "oldToNew") {
+    if (name === "newToOld" || name === "oldToNew" || name === "mostLiked") {
       setFilters({
         ...filters,
         newToOld: name === "newToOld" ? checked : false,
         oldToNew: name === "oldToNew" ? checked : false,
+        mostLiked: name === "mostLiked" ? checked : false,
       });
     } else {
-    setFilters({
-      ...filters,
-      [event.target.name]: event.target.checked,
-    });
-  }
+      setFilters({
+        ...filters,
+        [event.target.name]: event.target.checked,
+      });
+    }
   };
 
   // Function to handle filter button click
@@ -170,11 +172,7 @@ const SearchResultsPage = () => {
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
   
-    let sortOrder = "desc";
-    if (filters.oldToNew) {
-      sortOrder = "asc";
-    }
-  
+    // Create query strings
     const trackerTypeQuery = trackerTypes.join(",");
     const attachmentTypeQuery = attachmentTypes.join(",");
     const enclosureTypeQuery = enclosureTypes.join(",");
@@ -197,12 +195,17 @@ const SearchResultsPage = () => {
       );
       const data = await response.json();
       const posts = Array.isArray(data) ? data : [];
-      const sortedPosts = posts.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-  
-        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-      });
+      
+      // Apply sorting based on selected filter
+      let sortedPosts;
+      if (filters.mostLiked) {
+        sortedPosts = [...posts].sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
+      } else if (filters.oldToNew) {
+        sortedPosts = [...posts].sort((a, b) => new Date(a.date) - new Date(b.date));
+      } else {
+        // Default to newest first
+        sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+      }
   
       setAnimals(sortedPosts);
     } catch (error) {
@@ -210,7 +213,7 @@ const SearchResultsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [input, filters, setSearchParams]);
+  }, [input, filters]);
   
 
   useEffect(() => {
@@ -541,34 +544,44 @@ const SearchResultsPage = () => {
                   }
                 }}
               >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Sort By</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={filters.newToOld}
-                          onChange={handleCheckboxChange}
-                          name="newToOld"
-                        />
-                      }
-                      label="Newest"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={filters.oldToNew}
-                          onChange={handleCheckboxChange}
-                          name="oldToNew"
-                        />
-                      }
-                      label="Oldest"
-                    />
-                  </FormGroup>
-                </AccordionDetails>
-              </Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>Sort By</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filters.newToOld}
+                        onChange={handleCheckboxChange}
+                        name="newToOld"
+                      />
+                    }
+                    label="Newest"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filters.oldToNew}
+                        onChange={handleCheckboxChange}
+                        name="oldToNew"
+                      />
+                    }
+                    label="Oldest"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={filters.mostLiked}
+                        onChange={handleCheckboxChange}
+                        name="mostLiked"
+                      />
+                    }
+                    label="Most Liked"
+                  />
+                </FormGroup>
+              </AccordionDetails>
+            </Accordion>
               
             </div>
             {/* Filters button */}
@@ -655,6 +668,7 @@ const SearchResultsPage = () => {
                             animalType={animal.animalType}
                             trackerType={animal.trackerType}
                             enclosureType={animal.enclosureType}
+                            likeCount={animal.likeCount || 0}
                           />
                         </Grid>
                       );

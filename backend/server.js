@@ -116,7 +116,6 @@ app.get("/auth/google/callback",
   }
 );
 
-
 // Logout route
 app.get("/auth/logout", (req, res) => {
   req.logout(err => {
@@ -128,17 +127,32 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
-app.get("/api/user", verifyToken, (req, res) => {
-  
-  if (req.isAuthenticated()) {
-  
-    res.json(req.user);
-  } else {
-    res.status(204).end();
+app.get("/api/user", verifyToken, async (req, res) => {
+  try {
+    // Get user from database using the ID from the token
+    const user = await User.findById(req.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user data
+    res.json({
+      _id: user._id,
+      googleId: user.googleId,
+      displayName: user.displayName,
+      email: user.email,
+      picture: user.picture,
+      bio: user.bio,
+      occupation: user.occupation,
+      bookmarkedPosts: user.bookmarkedPosts,
+      createdAt: user.createdAt
+    });
+  } catch (error) {
+    console.error("Error in /api/user route:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-// MongoDB connection and HTTPS server setup remains the same
 
 // Connect to MongoDB
 mongoose
@@ -170,8 +184,6 @@ mongoose
 
 // Global error handler
 app.use((err, req, res, next) => {
-
   console.error("Unhandled error:", err);
-  res.status(500).send('An unexpected error occurred');
-
+  res.status(500).json({ message: 'An unexpected error occurred' });
 });
