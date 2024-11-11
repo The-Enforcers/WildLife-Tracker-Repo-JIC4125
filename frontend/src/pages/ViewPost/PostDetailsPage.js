@@ -313,7 +313,7 @@ const PostDetailsPage = () => {
           <div className="tracker-info">
             <div className="tracker-info-head">
               <div
-                className={expandedBox === "tracker" ? "tracker-info-box-selected" : "tracker-info-box"}
+                className={`tracker-info-box-${expandedBox === "tracker" ? "selected" : ""}`}
                 onClick={() => post.trackerImage && handleBoxClick("tracker")}
                 style={{ cursor: post.trackerImage ? "pointer" : "default" }}
               >
