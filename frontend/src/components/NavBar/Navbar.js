@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { getBookmarkedPosts, unbookmarkPost } from "../../services/postService";
@@ -24,16 +24,23 @@ import Logout from "@mui/icons-material/Logout";
 import "./Navbar.css";
 import { useSnackbar } from "../SnackBar/SnackBar";
 
-const Navbar = ({breadcrumbs}) => {
+const Navbar = ({ breadcrumbs }) => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [bookmarkAnchorEl, setBookmarkAnchorEl] = useState(null);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const [profilePicError, setProfilePicError] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 900);
   const open = Boolean(anchorEl);
   const bookmarkOpen = Boolean(bookmarkAnchorEl);
   const showSnackbar = useSnackbar();
+
+  useEffect(() => {
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 900);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogout = async () => {
     await logoutUser();
@@ -95,9 +102,11 @@ const Navbar = ({breadcrumbs}) => {
 
   return (
     <div className="nav">
-      <p>The Wildlife Movement Institute</p>
+      <p>{isSmallScreen ? "Wildlife Institute" : "The Wildlife Movement Institute"}</p>
+      {/* empty div used to replace space on smaller screens */}
+      <div></div>
       <div className="breadcrumbs-container">
-        <Breadcrumbs aria-label="breadcrumb" sx={{ marginBlock: 1, width: "100%" }} >
+        <Breadcrumbs aria-label="breadcrumb" sx={{ marginBlock: 1, width: "100%" }}>
           {breadcrumbs.map((crumb, index) =>
             index < breadcrumbs.length - 1 ? (
               <Link
@@ -203,16 +212,16 @@ const Navbar = ({breadcrumbs}) => {
           {bookmarkedPosts.length > 0 ? (
             bookmarkedPosts.map((post) => (
               <MenuItem
-              key={post._id}
-              onClick={() => {
-                handleBookmarkClose();  
-                navigate(`/posts/${post._id}`);  
-              }}
-            >
+                key={post._id}
+                onClick={() => {
+                  handleBookmarkClose();
+                  navigate(`/posts/${post._id}`);
+                }}
+              >
                 <Avatar
                   src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
                   alt={post.animalType}
-                  sx={{ width: 32, height: 32, marginRight: 1}}
+                  sx={{ width: 32, height: 32, marginRight: 1 }}
                 />
                 <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
                   <Typography variant="body2">
@@ -229,7 +238,7 @@ const Navbar = ({breadcrumbs}) => {
                     handleRemoveBookmark(post._id);
                   }}
                 >
-                  <BookmarkRemoveIcon fontSize="small" sx={{ color:"black"}}/>
+                  <BookmarkRemoveIcon fontSize="small" sx={{ color: "black" }} />
                 </IconButton>
               </MenuItem>
             ))

@@ -237,33 +237,6 @@ const PostDetailsPage = () => {
           <div className="post-head">
             <div className="post-meta">
               <p className="post-title"> {post.title} </p>
-              <div className="post-author">
-                <img
-                  className="profile-picture"
-                  src={post.authorImage || "https://via.placeholder.com/150"}
-                  alt="Author"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/150";
-                  }}
-                />
-                <p className="author-name"> {post.author}</p>
-              </div>
-              {post.lastUpdated && (
-                <Typography variant="body2" color="textSecondary">
-                  Last updated:{" "}
-                  {new Date(post.lastUpdated).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}{" "}
-                  at{" "}
-                  {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Typography>
-              )}
               <div className="animal-names">
                 <div className="name-box">
                   <p className="name-header">Scientific Name</p>
@@ -274,7 +247,40 @@ const PostDetailsPage = () => {
                   <p className="name-header">Common Names</p>
                   <p className="common-name">{post.commonName}</p>
                 </div>}
+                {post.animalType && 
+                <div className="name-box">
+                  <p className="name-header">Animal Type</p>
+                  <p className="common-name">{post.animalType}</p>
+                </div>}
               </div>
+              <div className="post-author">
+                  <img
+                    className="profile-picture"
+                    src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                    alt="Author"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
+                    }}
+                  />
+
+                  <p className="author-name"> {post.author}</p>
+                </div>
+                {post.lastUpdated && (
+                  <Typography variant="body2" color="textSecondary">
+                    Last updated:{" "}
+                    {new Date(post.lastUpdated).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}{" "}
+                    at{" "}
+                    {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Typography>
+                )}
             </div>
             
             <div className="post-picture">
