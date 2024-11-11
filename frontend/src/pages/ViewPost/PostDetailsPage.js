@@ -158,6 +158,22 @@ const PostDetailsPage = () => {
           <div className="post-head">
             <div className="post-meta">
               <p className="post-title"> {post.title} </p>
+              <div className="animal-names">
+                <div className="name-box">
+                  <p className="name-header">Scientific Name</p>
+                  <p className="scientific-name">{post.scientificName}</p>
+                </div>
+                {post.commonName && 
+                <div className="name-box">
+                  <p className="name-header">Common Names</p>
+                  <p className="common-name">{post.commonName}</p>
+                </div>}
+                {post.animalType && 
+                <div className="name-box">
+                  <p className="name-header">Animal Type</p>
+                  <p className="common-name">{post.animalType}</p>
+                </div>}
+              </div>
               <div className="post-author">
                   <img
                     className="profile-picture"
@@ -186,17 +202,6 @@ const PostDetailsPage = () => {
                     })}
                   </Typography>
                 )}
-              <div className="animal-names">
-                <div className="name-box">
-                  <p className="name-header">Scientific Name</p>
-                  <p className="scientific-name">{post.scientificName}</p>
-                </div>
-                {post.commonName && 
-                <div className="name-box">
-                  <p className="name-header">Common Names</p>
-                  <p className="common-name">{post.commonName}</p>
-                </div>}
-              </div>
             </div>
             
             <div className="post-picture">
