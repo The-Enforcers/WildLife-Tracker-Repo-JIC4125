@@ -121,11 +121,11 @@ const PostDetailsPage = () => {
         setLikeCount(data.likeCount);
         showSnackbar(isLiked ? "Post unliked" : "Post liked", isLiked ? "error" : "success");
       } else {
-        showSnackbar("Failed to update like status", "error");
+        showSnackbar("Failed to update like status: invalid response", "error");
       }
     } catch (error) {
       console.error("Failed to toggle like", error);
-      showSnackbar("Failed to update like status", "error");
+      showSnackbar("Failed to update like status: an unexpected error occurred", "error");
     }
   };
 
@@ -263,7 +263,9 @@ const PostDetailsPage = () => {
                       e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
                     }}
                   />
-
+                      // Need to update case for when attached "image" is a video file for embed
+                      // Video Embed will likely work with same embed as image embed
+                      // but may need some small modifications to ensure proper playback
                   <p className="author-name"> {post.author}</p>
                 </div>
                 {post.lastUpdated && (
