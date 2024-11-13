@@ -89,23 +89,19 @@ const clipboardMatchers = [
     return new Delta().insert({ iframe: iframeHtml });
   }]
 ];
-// Update the icons to add a separate video icon
-Icons.video = `<svg viewBox="0 0 18 18">
-  <polygon class="ql-stroke" points="5 3 15 9 5 15 5 3"></polygon>
-</svg>`;
 
+// Quill configuration
 export const quillModules = {
   toolbar: {
     container: [
       [{ header: [1, 2, 3, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'iframe', 'video'], // Add 'video' for YouTube/Vimeo URL embedding
+      ['link', 'iframe'],
       ['clean']
     ],
     handlers: {
       iframe: function() {
-        // Original iframe embedding handler
         const embedCode = prompt('Paste the embed code (iframe):');
         if (embedCode) {
           try {
@@ -135,35 +131,6 @@ export const quillModules = {
             );
           }
         }
-      },
-      video: function() {
-        // New handler for YouTube/Vimeo URL embedding
-        const videoUrl = prompt('Enter the YouTube or Vimeo video URL:');
-        if (videoUrl) {
-          try {
-            let embedUrl;
-            if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
-              // Parse YouTube URL
-              const videoId = videoUrl.split('v=')[1] || videoUrl.split('youtu.be/')[1];
-              if (!videoId) throw new Error('Invalid YouTube URL');
-              embedUrl = `https://www.youtube.com/embed/${videoId.split('&')[0]}`;
-            } else if (videoUrl.includes('vimeo.com')) {
-              // Parse Vimeo URL
-              const videoId = videoUrl.split('vimeo.com/')[1];
-              if (!videoId) throw new Error('Invalid Vimeo URL');
-              embedUrl = `https://player.vimeo.com/video/${videoId}`;
-            } else {
-              throw new Error('URL is not from a supported domain');
-            }
-
-            const iframeHtml = `<iframe src="${embedUrl}" width="560" height="315" frameborder="0" allowfullscreen></iframe>`;
-            const range = this.quill.getSelection(true);
-            this.quill.insertEmbed(range.index, 'iframe', iframeHtml, Quill.sources.USER);
-            this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
-          } catch (error) {
-            alert(error.message || "Invalid URL. Please enter a valid YouTube or Vimeo URL.");
-          }
-        }
       }
     }
   },
@@ -176,14 +143,12 @@ export const quillModules = {
   }
 };
 
-// Add 'video' to the formats list
 export const quillFormats = [
   'header',
   'bold', 'italic', 'underline', 'strike',
   'list', 'bullet',
   'link',
-  'iframe',
-  'video' // New video format for embedding by URL
+  'iframe'
 ];
 
 export const quillStyles = `
