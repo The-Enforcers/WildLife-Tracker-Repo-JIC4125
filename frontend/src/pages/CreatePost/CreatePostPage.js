@@ -19,6 +19,7 @@ import {
 // react quill for rich text editor
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
+import { quillModules, quillFormats } from './QuillConfig';
 
 // MUI Icons
 import { Edit as EditIcon } from "@mui/icons-material";
@@ -739,6 +740,8 @@ const CreatePostPage = () => {
                 value={recommendations}
                 onChange={handleEditorChange}
                 theme="snow"
+                modules={quillModules}
+                formats={quillFormats}
                 style={{ height: "300px" }}
               />
             </Grid>
