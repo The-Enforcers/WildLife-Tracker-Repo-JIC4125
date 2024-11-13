@@ -164,7 +164,7 @@ const Sidebar = () => {
           >
             <AddIcon />
             <Tooltip id="new-post" place="bottom" />
-            {extended && <p>New Post</p>}
+            {extended && <p>New Animal Profile</p>}
           </div>
 
           <div
@@ -174,7 +174,7 @@ const Sidebar = () => {
           >
             <SearchIcon />
             <Tooltip id="search-posts" place="bottom" />
-            {extended && <p>Search Posts</p>}
+            {extended && <p>Search Animal Profiles</p>}
           </div>
         </div>
         <div className="bottom">

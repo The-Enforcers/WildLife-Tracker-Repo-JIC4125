@@ -74,7 +74,7 @@ function LoginPage() {
         </Button>
 
         <Typography variant="body2" color="textSecondary">
-          An account is needed to create posts.
+          An account is needed to create animal profiles.
         </Typography>
 
         <div className="main-bottom">

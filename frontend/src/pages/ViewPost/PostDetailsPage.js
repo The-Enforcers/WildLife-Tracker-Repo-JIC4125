@@ -54,7 +54,7 @@ const PostDetailsPage = () => {
           setIsBookmarked(user.bookmarkedPosts.includes(id));
         }
       } catch (error) {
-        setError("Failed to fetch post data.");
+        setError("Failed to fetch animal profile data.");
         console.error("Failed to fetch post", error);
       }
     };
@@ -102,7 +102,7 @@ const PostDetailsPage = () => {
 
   const handleLike = async () => {
     if (!user) {
-      showSnackbar("Please log in to like posts", "error");
+      showSnackbar("Please log in to like animal profiles", "error");
       return;
     }
   
@@ -119,7 +119,7 @@ const PostDetailsPage = () => {
       if (response.ok) {
         setIsLiked(!isLiked);
         setLikeCount(data.likeCount);
-        showSnackbar(isLiked ? "Post unliked" : "Post liked", isLiked ? "error" : "success");
+        showSnackbar(isLiked ? "Animal profile unliked" : "Animal profile liked", isLiked ? "error" : "success");
       } else {
         showSnackbar("Failed to update like status: invalid response", "error");
       }
@@ -178,7 +178,7 @@ const PostDetailsPage = () => {
               <>
                 <IconButton
                   onClick={handleBookmark}
-                  aria-label="bookmark post"
+                  aria-label="bookmark animal profile"
                   sx={{
                     backgroundColor: "#212e38",
                     color: "white",
@@ -200,7 +200,7 @@ const PostDetailsPage = () => {
 
                 <IconButton
                   onClick={handleLike}
-                  aria-label="like post"
+                  aria-label="like animal profile"
                   sx={{
                     backgroundColor: "#212e38",
                     color: "white",
@@ -249,7 +249,7 @@ const PostDetailsPage = () => {
                 </div>}
                 {post.animalType && 
                 <div className="name-box">
-                  <p className="name-header">Animal Type</p>
+                  <p className="name-header">Animal Family</p>
                   <p className="common-name">{post.animalType}</p>
                 </div>}
               </div>
