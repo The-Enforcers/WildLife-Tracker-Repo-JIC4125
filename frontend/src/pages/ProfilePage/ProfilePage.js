@@ -259,7 +259,7 @@ export default function ProfilePage() {
                 >
                   <Tab label="About" icon={<Pets />} iconPosition="start" />
                   <Tab
-                    label="Recent Posts"
+                    label="Recent Animal Profiles"
                     icon={<CameraAlt />}
                     iconPosition="start"
                   />
@@ -273,7 +273,7 @@ export default function ProfilePage() {
                         {loading ? "..." : authorPosts.length}
                       </Typography>
                       <Typography variant="subtitle1" color="textSecondary">
-                        Total Posts
+                        Total Animal Profiles
                       </Typography>
                     </StatsCard>
                   </Grid>
