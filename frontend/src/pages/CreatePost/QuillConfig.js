@@ -90,10 +90,7 @@ function getEmbedUrl(videoUrl) {
     const videoId = videoUrl.split('v=')[1] || videoUrl.split('youtu.be/')[1];
     if (!videoId) throw new Error('Invalid YouTube URL');
     return `https://www.youtube.com/embed/${videoId.split('&')[0]}`;
-    const videoId = videoUrl.split('vimeo.com/')[1];
-    if (!videoId) throw new Error('Invalid Vimeo URL');
-    return `https://player.vimeo.com/video/${videoId}`;
-  }
+  } 
   throw new Error('URL is not from a supported domain');
 }
 
