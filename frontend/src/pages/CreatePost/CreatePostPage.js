@@ -739,9 +739,9 @@ const CreatePostPage = () => {
               <ReactQuill
                 value={recommendations}
                 onChange={handleEditorChange}
-                theme="snow"
-                modules={quillModules}
                 formats={quillFormats}
+                modules={quillModules}
+                theme="snow"
                 style={{ height: "300px" }}
               />
             </Grid>
