@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import {
@@ -51,52 +51,22 @@ const dataTypeOptions = [
 
 // Component for main image upload
 const MainImageUploadArea = ({ type, image, handleImageChange }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <Box
-      sx={{
-        position: "relative",
-        width: image ? "100%" : 75,
-        height: image ? "auto" : 75,
-        maxWidth: 200,
-        maxHeight: 200,
-        border: image ? "none" : "2px dashed #ccc",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
+  <Box className="main-image-upload-area">
+    <Box className="image-upload-container">
       {image ? (
         <img
           src={image instanceof File ? URL.createObjectURL(image) : image}
           alt="Uploaded Preview"
-          style={{
-            maxHeight: 200,
-            maxWidth: "100%",
-            objectFit: "contain",
-            borderRadius: "10px",
-          }}
+          className="uploaded-preview-image"
         />
       ) : (
-        <UploadIcon sx={{ fontSize: 30, color: "#ccc" }} />
+        <UploadIcon className="upload-icon" />
       )}
       <IconButton
         color="primary"
         aria-label="upload picture"
         component="label"
-        sx={{
-          position: "absolute",
-          bottom: 10,
-          right: 10,
-          backgroundColor: "#e0e0e0",
-          width: 50,
-          height: 50,
-          "&:hover": {
-            backgroundColor: "#c0c0c0",
-          },
-          boxShadow: "0px 0px 5px darkgray"
-        }}
+        className="upload-button"
       >
         <input
           hidden
@@ -104,29 +74,19 @@ const MainImageUploadArea = ({ type, image, handleImageChange }) => (
           type="file"
           onChange={(e) => handleImageChange(type, e)}
         />
-        <UploadIcon sx={{ fontSize: 30 }} />
+        <UploadIcon />
       </IconButton>
     </Box>
   </Box>
 );
 
-
-
-// Component for additional image uploads (tracker, enclosure, attachment)
+// Component for additional image uploads
 const ImageUploadArea = ({ type, image, handleImageChange }) => (
   <Grid item xs={2} container alignItems="center" justifyContent="flex-end">
     <IconButton
       color="primary"
       component="label"
-      sx={{
-        padding: 0,
-        border: "1px solid rgba(0, 0, 0, 0.23)",
-        borderRadius: "4px",
-        width: "56px",
-        height: "56px",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      className="additional-image-upload"
     >
       <input
         hidden
@@ -139,38 +99,16 @@ const ImageUploadArea = ({ type, image, handleImageChange }) => (
           <img
             src={image instanceof File ? URL.createObjectURL(image) : image}
             alt={`${type} Images`}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            className="additional-image-preview"
           />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(0,0,0,0)",
-            }}
-          >
-            <EditIcon sx={{ fontSize: 24 }} />
+          <div className="edit-overlay">
+            <EditIcon />
           </div>
         </>
       ) : (
         <>
-          <UploadIcon sx={{ width: 20, height: 20 }} />
-          <Typography
-            variant="caption"
-            align="center"
-            sx={{
-              fontSize: "10px",
-              position: "absolute",
-              bottom: 4,
-              left: 0,
-              right: 0,
-            }}
-          >
+          <UploadIcon />
+          <Typography variant="caption" className="upload-caption">
             Image
           </Typography>
         </>
@@ -201,6 +139,8 @@ const CreatePostPage = () => {
   const [lastUpdatedDate, setLastUpdatedDate] = useState(null);
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
+  const [editorHeight, setEditorHeight] = useState(600);
+  const [isResizing, setIsResizing] = useState(false);
 
   const [images, setImages] = useState({
     mainImage: null,
@@ -215,9 +155,41 @@ const CreatePostPage = () => {
     enclosureType: null,
     attachmentType: null,
   });
+
+  const handleResizeStart = useCallback((e) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const handleResizeEnd = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const handleResize = useCallback((e) => {
+    if (isResizing) {
+      const editorContainer = document.querySelector('.resizable-editor');
+      if (editorContainer) {
+        const containerRect = editorContainer.getBoundingClientRect();
+        const newHeight = Math.max(200, e.clientY - containerRect.top);
+        setEditorHeight(newHeight);
+      }
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResize);
+      document.addEventListener('mouseup', handleResizeEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [isResizing, handleResize, handleResizeEnd]);
+
   useEffect(() => {
     if (!loading && !user) {
-      // Show popup if no user is logged in and loading is complete
       setShowPopup(true);
     }
   }, [loading, user]);
@@ -267,7 +239,7 @@ const CreatePostPage = () => {
   }, [id]);
 
   const handleClosePopup = () => {
-    window.location.href = "https://localhost:5001/auth/google"; // Redirect to Google OAuth
+    window.location.href = "https://localhost:5001/auth/google";
   };
 
   const handleImageChange = (field, e) => {
@@ -277,9 +249,7 @@ const CreatePostPage = () => {
 
       if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
         setError(
-          `Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(
-            ", "
-          )}`
+          `Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(", ")}`
         );
         setErrorOverlay(true);
         return;
@@ -287,9 +257,7 @@ const CreatePostPage = () => {
 
       if (file.size > MAX_FILE_SIZE) {
         setError(
-          `File size too large. Maximum size is ${
-            MAX_FILE_SIZE / (1024 * 1024)
-          }MB.`
+          `File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
         );
         setErrorOverlay(true);
         return;
@@ -338,7 +306,6 @@ const CreatePostPage = () => {
           const filename = await uploadImage(image);
           return { [key]: filename };
         }
-        // Use existing image if no new file uploaded
         if (typeof imageFiles[key] === "string") {
           return { [key]: imageFiles[key].split("/").pop() };
         }
@@ -385,37 +352,12 @@ const CreatePostPage = () => {
     }
   };
 
-  // Note that, to get scrolling to work, you have to set the height to 95% 
   return (
-    <Box sx={{ overflowY: "scroll", height: "90%"}}> 
+    <Box className="page-container">
       {errorOverlay && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              maxWidth: "80%",
-              textAlign: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
-              style={{ marginBottom: "20px", color: "red" }}
-            >
+        <div className="error-overlay">
+          <div className="error-popup">
+            <Typography variant="h6" className="error-message">
               {error}
             </Typography>
             <Button
@@ -430,38 +372,10 @@ const CreatePostPage = () => {
         </div>
       )}
 
-      {/* Show the login popup if no user */}
       {showPopup && (
         <>
-          {/* Blocking overlay to prevent background interaction */}
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-              zIndex: 999,
-              pointerEvents: "all",
-            }}
-          />
-
-          {/* Login popup */}
-          <div
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "#fff",
-              padding: "20px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-              zIndex: 1000,
-              borderRadius: "8px",
-              textAlign: "center",
-            }}
-          >
+          <div className="popup-overlay" />
+          <div className="login-popup">
             <Typography variant="h6" gutterBottom>
               You must be logged in to create a post.
             </Typography>
@@ -476,10 +390,11 @@ const CreatePostPage = () => {
         </>
       )}
 
-      <Paper elevation={0} className="paper-form" sx={{ px: 4, marginBottom: 3, overflowY: "scoll", width: "50%", paddingTop: "50px", margin: "0px auto"}}>
-        <Typography variant="h4" gutterBottom sx={{width: "100%", textAlign: "center"}}>
+      <Paper elevation={0} className="paper-form">
+        <Typography variant="h4" gutterBottom className="form-title">
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
+        
         {lastUpdatedDate && (
           <Typography variant="body2" color="textSecondary">
             Edited:{" "}
@@ -497,11 +412,12 @@ const CreatePostPage = () => {
         )}
 
         {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
+          <Typography color="error" className="error-text">
             {error}
           </Typography>
         )}
-        <Box component="form" onSubmit={handleSubmit} sx={{paddingTop: "50px"}}>
+
+        <Box component="form" onSubmit={handleSubmit} className="form-container">
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <MainImageUploadArea
@@ -509,11 +425,11 @@ const CreatePostPage = () => {
                 image={imageFiles.mainImage}
                 handleImageChange={handleImageChange}
               />
-            </Grid> 
+            </Grid>
 
             <Grid item xs={12} md={6}>
-              <TextField // Input Box - Post Title
-                id="post-title" 
+              <TextField
+                id="post-title"
                 name="post-title"
                 label="Post Title"
                 variant="outlined"
@@ -521,9 +437,9 @@ const CreatePostPage = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <TextField // Input Box - Scientific Name
+              <TextField
                 id="scientific-name"
                 name="scientific-name"
                 label="Scientific Name"
@@ -532,9 +448,9 @@ const CreatePostPage = () => {
                 onChange={(e) => setScientificName(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <TextField // Input Box - Common Name
+              <TextField
                 id="common-name"
                 name="common-name"
                 label="Common Name(s)"
@@ -543,11 +459,11 @@ const CreatePostPage = () => {
                 onChange={(e) => setCommonName(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+              <FormControl fullWidth className="form-control">
                 <InputLabel id="animal-type-label">Animal Family</InputLabel>
-                <Select 
+                <Select
                   id="animal-type"
                   name="animal-type"
                   labelId="animal-type-label"
@@ -563,20 +479,13 @@ const CreatePostPage = () => {
                   <MenuItem value="Bird">Bird</MenuItem>
                 </Select>
               </FormControl>
-            </Grid> 
+            </Grid>
 
             <Grid item xs={12} md={6}>
-              <Grid 
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              > 
+              <Grid container alignItems="flex-start" spacing={2} className="input-group">
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel id="tracker-type-label">
-                      Tracker Type
-                    </InputLabel>
+                    <InputLabel id="tracker-type-label">Tracker Type</InputLabel>
                     <Select
                       id="tracker-type"
                       name="tracker-type"
@@ -613,21 +522,14 @@ const CreatePostPage = () => {
                   onChange={(e) => setCustomTrackerType(e.target.value)}
                   required
                   fullWidth
-                  sx={{ mb: 2 }}
+                  className="text-field"
                 />
               )}
 
-              <Grid
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              >
+              <Grid container alignItems="flex-start" spacing={2} className="input-group">
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel id="enclosure-type-label">
-                      Enclosure Type
-                    </InputLabel>
+                    <InputLabel id="enclosure-type-label">Enclosure Type</InputLabel>
                     <Select
                       id="enclosure-type"
                       name="enclosure-type"
@@ -661,21 +563,14 @@ const CreatePostPage = () => {
                   onChange={(e) => setCustomEnclosureType(e.target.value)}
                   required
                   fullWidth
-                  sx={{ mb: 2 }}
+                  className="text-field"
                 />
               )}
 
-              <Grid
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              >
+              <Grid container alignItems="flex-start" spacing={2} className="input-group">
                 <Grid item xs={10}>
                   <FormControl fullWidth>
-                    <InputLabel id="attachment-type-label">
-                      Attachment Type
-                    </InputLabel>
+                    <InputLabel id="attachment-type-label">Attachment Type</InputLabel>
                     <Select
                       id="attachment-type"
                       name="attachment-type"
@@ -710,7 +605,7 @@ const CreatePostPage = () => {
                   onChange={(e) => setCustomAttachmentType(e.target.value)}
                   required
                   fullWidth
-                  sx={{ mb: 2 }}
+                  className="text-field"
                 />
               )}
             </Grid>
@@ -719,31 +614,38 @@ const CreatePostPage = () => {
               <Typography variant="h6" gutterBottom>
                 Data Types:
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box className="data-types-container">
                 {dataTypeOptions.map((option) => (
                   <Chip
                     key={option}
                     label={option}
                     onClick={() => handleDataTypeToggle(option)}
                     color={dataTypes.includes(option) ? "primary" : "default"}
-                    sx={{ marginBottom: 1 }}
+                    className="data-type-chip"
                   />
                 ))}
               </Box>
             </Grid>
 
-            <Grid item xs={12} sx={{ padding: 3, marginBottom: 3 }}>
+            <Grid item xs={12} className="recommendations-section">
               <Typography variant="h6" gutterBottom>
                 Recommendations:
               </Typography>
-              <ReactQuill
-                value={recommendations}
-                onChange={handleEditorChange}
-                theme="snow"
-                modules={quillModules}
-                formats={quillFormats}
-                style={{ height: "300px" }}
-              />
+              <div className="resizable-editor" style={{ height: editorHeight }}>
+                <ReactQuill
+                  value={recommendations}
+                  onChange={handleEditorChange}
+                  theme="snow"
+                  modules={quillModules}
+                  formats={quillFormats}
+                  style={{ height: editorHeight - 42 }}
+                />
+                <div 
+                  className="resize-handle"
+                  onMouseDown={handleResizeStart}
+                  title="Drag to resize"
+                />
+              </div>
             </Grid>
 
             <Grid item xs={12}>
@@ -751,14 +653,7 @@ const CreatePostPage = () => {
                 variant="contained"
                 color="primary"
                 type="submit"
-                sx={{
-                  borderRadius: "20px",
-                  padding: "10px 20px",
-                  backgroundColor: "#212e38",
-                  "&:hover": {
-                    backgroundColor: "#303f9f",
-                  },
-                }}
+                className="submit-button"
               >
                 {isEditing ? "Update" : "Submit"}
               </Button>
