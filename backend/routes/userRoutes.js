@@ -1,11 +1,25 @@
-// backend/routes/postRoutes.js
+// routes/userRoutes.js
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
+const verifyToken = require("../middleware/authMiddleware");
 
-router.put("/:userId/profile", userController.updateUserProfile);
-router.post("/:userId/:id/bookmark", userController.bookmarkPost);
-router.delete("/:userId/:id/bookmark", userController.unbookmarkPost);
-router.get("/:userId/bookmarked", userController.getBookmarkedPosts);
+// Routes requiring authentication
+router.put("/:userId/profile", verifyToken, userController.updateUserProfile);
+router.post(
+  "/:userId/:postId/bookmark",
+  verifyToken,
+  userController.bookmarkPost
+);
+router.delete(
+  "/:userId/:postId/bookmark",
+  verifyToken,
+  userController.unbookmarkPost
+);
+router.get(
+  "/:userId/bookmarked",
+  verifyToken,
+  userController.getBookmarkedPosts
+);
 
 module.exports = router;

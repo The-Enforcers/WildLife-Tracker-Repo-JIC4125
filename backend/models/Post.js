@@ -1,13 +1,14 @@
+// models/Post.js
 const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema({
   postImage: {
     type: String,
-    required: true
+    required: true,
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   scientificName: {
     type: String,
@@ -19,7 +20,7 @@ const PostSchema = new mongoose.Schema({
   },
   animalType: {
     type: String,
-    required: true
+        required: true,
   },
   trackerType: {
     type: String,
@@ -27,18 +28,18 @@ const PostSchema = new mongoose.Schema({
   },
   trackerImage: {
     type: String,
-    required: false
   },
-  dataTypes: [{
-    type: String,
-  }],
+  dataTypes: [
+    {
+      type: String,
+    },
+  ],
   enclosureType: {
     type: String,
     required: true,
   },
   enclosureImage: {
     type: String,
-    required: false
   },
   attachmentType: {
     type: String,
@@ -46,7 +47,6 @@ const PostSchema = new mongoose.Schema({
   },
   attachmentImage: {
     type: String,
-    required: false
   },
   recommendations: {
     type: String,
@@ -57,12 +57,12 @@ const PostSchema = new mongoose.Schema({
     required: true,
   },
   authorId: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   authorImage: {
     type: String,
-    required: false,
   },
   date: {
     type: Date,
@@ -72,14 +72,16 @@ const PostSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   likeCount: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Post", PostSchema);

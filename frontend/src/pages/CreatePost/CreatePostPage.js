@@ -1,3 +1,4 @@
+// CreatePostPage.js
 import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
@@ -14,9 +15,14 @@ import {
   Paper,
   Chip,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 
-// react quill for rich text editor
+// React Quill for rich text editor
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
 import { quillModules, quillFormats } from './QuillConfig';
@@ -24,16 +30,19 @@ import { quillModules, quillFormats } from './QuillConfig';
 // MUI Icons
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import {
   createPost,
   getPostById,
   updatePost,
   uploadImage,
-  deleteImage
+  deleteImage,
+  deletePost,
 } from "../../services/postService";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
-import "./CreatePostPage.css"
+import "./CreatePostPage.css";
 
 // Constants for image uploads
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -178,7 +187,7 @@ const CreatePostPage = () => {
   const showSnackbar = useSnackbar();
   const [editorHeight, setEditorHeight] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
-  
+
   const editorContainerRef = useRef(null);
   const pageContainerRef = useRef(null);
   const quillRef = useRef(null);
@@ -194,6 +203,36 @@ const CreatePostPage = () => {
     enclosureType: null,
     attachmentType: null,
   });
+
+  // State for delete confirmation dialog
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+  // Handle deletion of the post
+  const handleDeleteClick = () => {
+    console.log("Delete button clicked. Opening confirmation dialog.");
+    setOpenConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    console.log("Confirm delete clicked. Initiating delete process.");
+    try {
+      console.log("Deleting post with ID:", id);
+      await deletePost(id);
+      showSnackbar("Post deleted successfully", "success");
+      navigate("/posts");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      showSnackbar(error.message || "Error deleting post", "error");
+    } finally {
+      console.log("Closing confirmation dialog.");
+      setOpenConfirmDialog(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    console.log("Cancel delete clicked. Closing confirmation dialog.");
+    setOpenConfirmDialog(false);
+  };
 
   const handleResizeStart = useCallback(
     (e) => {
@@ -215,22 +254,22 @@ const CreatePostPage = () => {
         const deltaY = e.clientY - startY;
         const adjustedDeltaY = deltaY * sensitivity;
         const newHeight = Math.max(200, startHeight + adjustedDeltaY);
-  
+
         setEditorHeight(newHeight);
-  
+
         // Scroll logic adjusted to keep the entire submit button in view
         const submitButton = submitButtonRef.current;
         const pageContainer = pageContainerRef.current;
         if (submitButton && pageContainer) {
           const padding = 20; // Adjust as needed
-  
+
           // Calculate the bottom position of the submit button relative to the page container
           const submitButtonOffsetTop =
             submitButton.offsetTop + submitButton.offsetHeight + padding;
-  
+
           // The current visible area bottom
           const visibleAreaBottom = pageContainer.scrollTop + pageContainer.clientHeight;
-  
+
           // If the submit button's bottom is below the visible area, scroll down
           if (submitButtonOffsetTop > visibleAreaBottom) {
             const scrollAmount = submitButtonOffsetTop - visibleAreaBottom;
@@ -241,7 +280,6 @@ const CreatePostPage = () => {
     },
     [isResizing, startY, startHeight, sensitivity]
   );
-  
 
   useEffect(() => {
     if (isResizing) {
@@ -341,51 +379,51 @@ const CreatePostPage = () => {
 
   const handleImageDelete = async (imageType) => {
     try {
-        console.log('Delete initiated for:', imageType);
+      console.log('Delete initiated for:', imageType);
 
-        if (isEditing) {
-            const fieldMapping = {
-                trackerType: 'trackerImage',
-                enclosureType: 'enclosureImage',
-                attachmentType: 'attachmentImage'
-            };
+      if (isEditing) {
+        const fieldMapping = {
+          trackerType: 'trackerImage',
+          enclosureType: 'enclosureImage',
+          attachmentType: 'attachmentImage'
+        };
 
-            const imageField = fieldMapping[imageType];
-            if (!imageField) {
-                throw new Error('Invalid image type for deletion');
-            }
-
-            // Update state immediately for UI feedback
-            setImages(prevImages => ({
-                ...prevImages,
-                [imageType]: null
-            }));
-
-            // Call backend
-            const updatedPost = await deleteImage(id, imageField);
-            showSnackbar("Image deleted successfully", "success");
-
-            // Update all image states based on the returned post data
-            setImages(prevImages => ({
-                mainImage: updatedPost.postImage ? 
-                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.postImage}` : null,
-                trackerType: updatedPost.trackerImage ? 
-                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.trackerImage}` : null,
-                enclosureType: updatedPost.enclosureImage ? 
-                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.enclosureImage}` : null,
-                attachmentType: updatedPost.attachmentImage ? 
-                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.attachmentImage}` : null
-            }));
-        } else {
-            // For new posts, just update state
-            setImages(prevImages => ({
-                ...prevImages,
-                [imageType]: null
-            }));
+        const imageField = fieldMapping[imageType];
+        if (!imageField) {
+          throw new Error('Invalid image type for deletion');
         }
+
+        // Update state immediately for UI feedback
+        setImages(prevImages => ({
+          ...prevImages,
+          [imageType]: null
+        }));
+
+        // Call backend
+        const updatedPost = await deleteImage(id, imageField);
+        showSnackbar("Image deleted successfully", "success");
+
+        // Update all image states based on the returned post data
+        setImages({
+          mainImage: updatedPost.postImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.postImage}` : null,
+          trackerType: updatedPost.trackerImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.trackerImage}` : null,
+          enclosureType: updatedPost.enclosureImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.enclosureImage}` : null,
+          attachmentType: updatedPost.attachmentImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.attachmentImage}` : null
+        });
+      } else {
+        // For new posts, just update state
+        setImages(prevImages => ({
+          ...prevImages,
+          [imageType]: null
+        }));
+      }
     } catch (error) {
-        console.error("Error deleting image:", error);
-        showSnackbar(error.message || "Failed to delete image", "error");
+      console.error("Error deleting image:", error);
+      showSnackbar(error.message || "Failed to delete image", "error");
     }
   };
 
@@ -408,12 +446,12 @@ const CreatePostPage = () => {
       setError("All fields are required.");
       return;
     }
-  
+
     if (!images.mainImage) {
       setError(`Main image required`);
       return;
     }
-    
+
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
@@ -443,10 +481,10 @@ const CreatePostPage = () => {
         enclosureType: enclosureType === "custom" ? customEnclosureType : enclosureType,
         enclosureImage: imageFilenames.enclosureType,
         attachmentType: attachmentType === "custom" ? customAttachmentType : attachmentType,
-        attachmentImage: imageFilenames.attachmentType, // Corrected key
+        attachmentImage: imageFilenames.attachmentType,
         recommendations,
         author: user.displayName,
-        authorId: user.googleId,
+        // authorId: user.googleId, // Removed as backend handles it
         authorImage: user.picture,
         lastUpdated: new Date().toISOString(),
       };
@@ -506,10 +544,22 @@ const CreatePostPage = () => {
       )}
 
       <Paper elevation={0} className="paper-form">
+        {isEditing && (
+          <Button
+          variant="contained"
+          color="error" // This will style the button in red
+          className="delete-post-button"
+          onClick={handleDeleteClick}
+          startIcon={<DeleteIcon />}
+        >
+          Delete
+        </Button>
+        )}
+
         <Typography variant="h4" gutterBottom className="form-title">
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
-        
+
         {lastUpdatedDate && (
           <Typography variant="body2" color="textSecondary">
             Edited:{" "}
@@ -786,6 +836,29 @@ const CreatePostPage = () => {
           </Grid>
         </Box>
       </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openConfirmDialog}
+        onClose={handleCancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this post? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary" type="button">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary" type="button" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

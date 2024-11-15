@@ -6,12 +6,20 @@
 }
 
 .paper-form {
+    position: relative;
     padding: 0 2rem;
     margin-bottom: 3rem;
     width: 50%;
     padding-top: 50px;
     margin: 0 auto;
 }
+
+.delete-post-button {
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 10 !important;
+  }
 
 @media(max-width: 1500px) {
     .paper-form {
