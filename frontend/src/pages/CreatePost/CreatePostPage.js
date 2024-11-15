@@ -7,13 +7,13 @@ import {
   TextField,
   Typography,
   Grid,
-  IconButton,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Paper,
   Chip,
+  IconButton,
 } from "@mui/material";
 
 // react quill for rich text editor
@@ -22,7 +22,6 @@ import "react-quill/dist/quill.snow.css";
 import { quillModules, quillFormats } from './QuillConfig';
 
 // MUI Icons
-import { Edit as EditIcon } from "@mui/icons-material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -49,71 +48,105 @@ const dataTypeOptions = [
   "Pressure (air or water)",
 ];
 
-// Component for main image upload
-const MainImageUploadArea = ({ type, image, handleImageChange }) => (
-  <Box className="main-image-upload-area">
-    <Box className="image-upload-container">
-      {image ? (
-        <img
-          src={image instanceof File ? URL.createObjectURL(image) : image}
-          alt="Uploaded Preview"
-          className="uploaded-preview-image"
-        />
-      ) : (
-        <UploadIcon className="upload-icon" />
-      )}
-      <IconButton
-        color="primary"
-        aria-label="upload picture"
-        component="label"
-        className="upload-button"
-      >
-        <input
-          hidden
-          accept="image/*"
-          type="file"
-          onChange={(e) => handleImageChange(type, e)}
-        />
-        <UploadIcon />
-      </IconButton>
-    </Box>
-  </Box>
-);
+// Component for the top image upload area
+const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) => {
+  const imageTypes = [
+    { type: 'mainImage', label: 'Main Image', required: true },
+    { type: 'trackerType', label: 'Tracker Image', required: false },
+    { type: 'enclosureType', label: 'Enclosure Image', required: false },
+    { type: 'attachmentType', label: 'Attachment Image', required: false },
+  ];
 
-// Component for additional image uploads
-const ImageUploadArea = ({ type, image, handleImageChange }) => (
-  <Grid item xs={2} container alignItems="center" justifyContent="flex-end">
-    <IconButton
-      color="primary"
+  // Filter out images that haven't been uploaded yet (except for Main Image)
+  const uploadedImages = imageTypes.filter(imgType => {
+    if (imgType.type === 'mainImage') {
+      return true;
+    }
+    return images[imgType.type];
+  });
+
+  return (
+    <Grid container spacing={2} justifyContent="center" className="top-image-upload-area">
+      {uploadedImages.map((imgType, index) => (
+        <Grid item xs={12} sm={3} key={index}>
+          <Box
+            className={`image-upload-box ${
+              images[imgType.type] ? 'uploaded' : 'not-uploaded'
+            } ${imgType.required ? 'required' : 'optional'}`}
+          >
+            <input
+              hidden
+              accept="image/*"
+              type="file"
+              id={`upload-${imgType.type}`}
+              onChange={(e) => handleImageChange(imgType.type, e)}
+            />
+            <label htmlFor={`upload-${imgType.type}`}>
+              <Box className="upload-box-content">
+                {images[imgType.type] ? (
+                  <>
+                    <img
+                      src={
+                        images[imgType.type] instanceof File
+                          ? URL.createObjectURL(images[imgType.type])
+                          : images[imgType.type]
+                      }
+                      alt={imgType.label}
+                      className="uploaded-image"
+                    />
+                    {/* Overlay with icon */}
+                    <Box className="overlay-circle">
+                      <UploadIcon className="overlay-icon" />
+                    </Box>
+                  </>
+                ) : (
+                  <UploadIcon className="upload-icon" />
+                )}
+                <Typography
+                  variant="subtitle1"
+                  className="upload-label"
+                >
+                  {imgType.label}{' '}
+                  {imgType.required && (
+                    <span className="required-indicator">*</span>
+                  )}
+                </Typography>
+              </Box>
+            </label>
+            {/* 'X' button to delete the image box }
+            {imgType.type !== 'mainImage' && (
+              <IconButton
+                className="delete-icon-button"
+                onClick={() => handleImageDelete(imgType.type)}
+                size="small"
+              >
+                <CloseIcon className="delete-icon" />
+              </IconButton>
+            )*/}
+          </Box>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+// Component for image upload button (used for tracker, enclosure, attachment)
+const ImageUploadButton = ({ type, image, handleImageChange, label }) => (
+  <Grid item xs={3} container alignItems="center" justifyContent="flex-end" className="image-upload-button-container">
+    <Button
+      variant="outlined"
       component="label"
-      className="additional-image-upload"
+      className={`image-upload-button ${image ? 'uploaded' : 'not-uploaded'}`} // Apply 'uploaded' class conditionally
+      startIcon={<UploadIcon />}
     >
+      {label}
       <input
         hidden
         accept="image/*"
         type="file"
         onChange={(e) => handleImageChange(type, e)}
       />
-      {image ? (
-        <>
-          <img
-            src={image instanceof File ? URL.createObjectURL(image) : image}
-            alt={`${type} Images`}
-            className="additional-image-preview"
-          />
-          <div className="edit-overlay">
-            <EditIcon />
-          </div>
-        </>
-      ) : (
-        <>
-          <UploadIcon />
-          <Typography variant="caption" className="upload-caption">
-            Image
-          </Typography>
-        </>
-      )}
-    </IconButton>
+    </Button>
   </Grid>
 );
 
@@ -152,13 +185,6 @@ const CreatePostPage = () => {
   const sensitivity = 1; // Adjust this value as needed
 
   const [images, setImages] = useState({
-    mainImage: null,
-    trackerType: null,
-    enclosureType: null,
-    attachmentType: null,
-  });
-
-  const [imageFiles, setImageFiles] = useState({
     mainImage: null,
     trackerType: null,
     enclosureType: null,
@@ -212,7 +238,6 @@ const CreatePostPage = () => {
     [isResizing, startY, startHeight, sensitivity]
   );
   
-  
 
   useEffect(() => {
     if (isResizing) {
@@ -247,26 +272,29 @@ const CreatePostPage = () => {
           setEnclosureType(postData.enclosureType);
           setAttachmentType(postData.attachmentType);
           setRecommendations(postData.recommendations);
-          setImageFiles({
-            mainImage: postData.postImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.postImage}`
-              : null,
-            trackerType: postData.trackerImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.trackerImage}`
-              : null,
-            enclosureType: postData.enclosureImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.enclosureImage}`
-              : null,
-            attachmentType: postData.attachmentImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.attachmentImage}`
-              : null,
-          });
+
+          // Build the image URLs
+          const mainImageUrl = postData.postImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.postImage}`
+            : null;
+          const trackerImageUrl = postData.trackerImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.trackerImage}`
+            : null;
+          const enclosureImageUrl = postData.enclosureImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.enclosureImage}`
+            : null;
+          const attachmentImageUrl = postData.attachmentImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.attachmentImage}`
+            : null;
+
+          // Set images state with URLs
           setImages({
-            mainImage: null,
-            trackerType: null,
-            enclosureType: null,
-            attachmentType: null,
+            mainImage: mainImageUrl,
+            trackerType: trackerImageUrl,
+            enclosureType: enclosureImageUrl,
+            attachmentType: attachmentImageUrl,
           });
+
           setLastUpdatedDate(postData.lastUpdated);
         } catch (error) {
           console.error("Error fetching post for editing:", error);
@@ -305,12 +333,14 @@ const CreatePostPage = () => {
         ...prevImages,
         [field]: file,
       }));
-
-      setImageFiles((prevImages) => ({
-        ...prevImages,
-        [field]: URL.createObjectURL(file),
-      }));
     }
+  };
+
+  const handleImageDelete = (field) => {
+    setImages((prevImages) => ({
+      ...prevImages,
+      [field]: null,
+    }));
   };
 
   const handleEditorChange = (text) => {
@@ -333,7 +363,7 @@ const CreatePostPage = () => {
       return;
     }
   
-    if (!images.mainImage && !imageFiles.mainImage) {
+    if (!images.mainImage) {
       setError(`Main image required`);
       return;
     }
@@ -344,8 +374,11 @@ const CreatePostPage = () => {
           const filename = await uploadImage(image);
           return { [key]: filename };
         }
-        if (typeof imageFiles[key] === "string") {
-          return { [key]: imageFiles[key].split("/").pop() };
+        if (typeof image === "string") {
+          // Extract the filename from the URL
+          const parts = image.split("/");
+          const filename = parts[parts.length - 1];
+          return { [key]: filename };
         }
         return { [key]: null };
       });
@@ -366,7 +399,7 @@ const CreatePostPage = () => {
         enclosureImage: imageFilenames.enclosureType,
         attachmentType:
           attachmentType === "custom" ? customAttachmentType : attachmentType,
-        attachmentImage: imageFilenames.attachmentType,
+        attachmentImage: imageFilenames.attachmentImage,
         recommendations,
         author: user.displayName,
         authorId: user.googleId,
@@ -456,16 +489,14 @@ const CreatePostPage = () => {
         )}
 
         <Box component="form" onSubmit={handleSubmit} className="form-container">
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <MainImageUploadArea
-                type="mainImage"
-                image={imageFiles.mainImage}
-                handleImageChange={handleImageChange}
-              />
-            </Grid>
+          <TopImageUploadArea
+            images={images}
+            handleImageChange={handleImageChange}
+            handleImageDelete={handleImageDelete}
+          />
 
-            <Grid item xs={12} md={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} className="left-column">
               <TextField
                 id="post-title"
                 name="post-title"
@@ -520,8 +551,9 @@ const CreatePostPage = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Grid container alignItems="flex-start" spacing={2} className="input-group">
-                <Grid item xs={10}>
+              {/* Tracker Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
                     <InputLabel id="tracker-type-label">Tracker Type</InputLabel>
                     <Select
@@ -543,29 +575,31 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {trackerType === "custom" && (
+                    <TextField
+                      id="custom-tracker-type"
+                      name="custom-tracker-type"
+                      label="Custom Tracker Type"
+                      variant="outlined"
+                      value={customTrackerType}
+                      onChange={(e) => setCustomTrackerType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="trackerType"
-                  image={imageFiles.trackerType}
+                  image={images.trackerType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {trackerType === "custom" && (
-                <TextField
-                  id="custom-tracker-type"
-                  name="custom-tracker-type"
-                  label="Custom Tracker Type"
-                  variant="outlined"
-                  value={customTrackerType}
-                  onChange={(e) => setCustomTrackerType(e.target.value)}
-                  required
-                  fullWidth
-                  className="text-field"
-                />
-              )}
 
-              <Grid container alignItems="flex-start" spacing={2} className="input-group">
-                <Grid item xs={10}>
+              {/* Enclosure Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
                     <InputLabel id="enclosure-type-label">Enclosure Type</InputLabel>
                     <Select
@@ -584,29 +618,31 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {enclosureType === "custom" && (
+                    <TextField
+                      id="custom-enclosure-type"
+                      name="custom-enclosure-type"
+                      label="Custom Enclosure Type"
+                      variant="outlined"
+                      value={customEnclosureType}
+                      onChange={(e) => setCustomEnclosureType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="enclosureType"
-                  image={imageFiles.enclosureType}
+                  image={images.enclosureType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {enclosureType === "custom" && (
-                <TextField
-                  id="custom-enclosure-type"
-                  name="custom-enclosure-type"
-                  label="Custom Enclosure Type"
-                  variant="outlined"
-                  value={customEnclosureType}
-                  onChange={(e) => setCustomEnclosureType(e.target.value)}
-                  required
-                  fullWidth
-                  className="text-field"
-                />
-              )}
 
-              <Grid container alignItems="flex-start" spacing={2} className="input-group">
-                <Grid item xs={10}>
+              {/* Attachment Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
                     <InputLabel id="attachment-type-label">Attachment Type</InputLabel>
                     <Select
@@ -626,26 +662,27 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {attachmentType === "custom" && (
+                    <TextField
+                      id="custom-attachment-type"
+                      name="custom-attachment-type"
+                      label="Custom Attachment Type"
+                      variant="outlined"
+                      value={customAttachmentType}
+                      onChange={(e) => setCustomAttachmentType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="attachmentType"
-                  image={imageFiles.attachmentType}
+                  image={images.attachmentType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {attachmentType === "custom" && (
-                <TextField
-                  id="custom-attachment-type"
-                  name="custom-attachment-type"
-                  label="Custom Attachment Type"
-                  variant="outlined"
-                  value={customAttachmentType}
-                  onChange={(e) => setCustomAttachmentType(e.target.value)}
-                  required
-                  fullWidth
-                  className="text-field"
-                />
-              )}
             </Grid>
 
             <Grid item xs={12}>
