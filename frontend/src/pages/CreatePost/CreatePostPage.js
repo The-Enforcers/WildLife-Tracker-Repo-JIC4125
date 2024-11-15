@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import {
@@ -141,6 +141,15 @@ const CreatePostPage = () => {
   const showSnackbar = useSnackbar();
   const [editorHeight, setEditorHeight] = useState(600);
   const [isResizing, setIsResizing] = useState(false);
+  
+  const editorContainerRef = useRef(null);
+  const pageContainerRef = useRef(null);
+  const quillRef = useRef(null);
+  const submitButtonRef = useRef(null);
+
+  const [startY, setStartY] = useState(0);
+  const [startHeight, setStartHeight] = useState(0);
+  const sensitivity = 1; // Adjust this value as needed
 
   const [images, setImages] = useState({
     mainImage: null,
@@ -156,25 +165,54 @@ const CreatePostPage = () => {
     attachmentType: null,
   });
 
-  const handleResizeStart = useCallback((e) => {
-    e.preventDefault();
-    setIsResizing(true);
-  }, []);
+  const handleResizeStart = useCallback(
+    (e) => {
+      e.preventDefault();
+      setIsResizing(true);
+      setStartY(e.clientY);
+      setStartHeight(editorHeight);
+    },
+    [editorHeight]
+  );
 
   const handleResizeEnd = useCallback(() => {
     setIsResizing(false);
   }, []);
 
-  const handleResize = useCallback((e) => {
-    if (isResizing) {
-      const editorContainer = document.querySelector('.resizable-editor');
-      if (editorContainer) {
-        const containerRect = editorContainer.getBoundingClientRect();
-        const newHeight = Math.max(200, e.clientY - containerRect.top);
+  const handleResize = useCallback(
+    (e) => {
+      if (isResizing) {
+        const deltaY = e.clientY - startY;
+        const adjustedDeltaY = deltaY * sensitivity;
+        const newHeight = Math.max(200, startHeight + adjustedDeltaY);
+  
         setEditorHeight(newHeight);
+  
+        // Scroll logic adjusted to keep the entire submit button in view
+        const submitButton = submitButtonRef.current;
+        const pageContainer = pageContainerRef.current;
+        if (submitButton && pageContainer) {
+          const padding = 20; // Adjust as needed
+  
+          // Calculate the bottom position of the submit button relative to the page container
+          const submitButtonOffsetTop =
+            submitButton.offsetTop + submitButton.offsetHeight + padding;
+  
+          // The current visible area bottom
+          const visibleAreaBottom = pageContainer.scrollTop + pageContainer.clientHeight;
+  
+          // If the submit button's bottom is below the visible area, scroll down
+          if (submitButtonOffsetTop > visibleAreaBottom) {
+            const scrollAmount = submitButtonOffsetTop - visibleAreaBottom;
+            pageContainer.scrollTop += scrollAmount;
+          }
+        }
       }
-    }
-  }, [isResizing]);
+    },
+    [isResizing, startY, startHeight, sensitivity]
+  );
+  
+  
 
   useEffect(() => {
     if (isResizing) {
@@ -353,7 +391,7 @@ const CreatePostPage = () => {
   };
 
   return (
-    <Box className="page-container">
+    <Box className="page-container" ref={pageContainerRef}>
       {errorOverlay && (
         <div className="error-overlay">
           <div className="error-popup">
@@ -631,8 +669,14 @@ const CreatePostPage = () => {
               <Typography variant="h6" gutterBottom>
                 Recommendations:
               </Typography>
-              <div className="resizable-editor" style={{ height: editorHeight }}>
+              <div
+                className="resizable-editor"
+                style={{ height: editorHeight }}
+                ref={editorContainerRef}
+              >
+                {isResizing && <div className="editor-overlay" />}
                 <ReactQuill
+                  ref={quillRef}
                   value={recommendations}
                   onChange={handleEditorChange}
                   theme="snow"
@@ -640,7 +684,7 @@ const CreatePostPage = () => {
                   formats={quillFormats}
                   style={{ height: editorHeight - 42 }}
                 />
-                <div 
+                <div
                   className="resize-handle"
                   onMouseDown={handleResizeStart}
                   title="Drag to resize"
@@ -648,7 +692,7 @@ const CreatePostPage = () => {
               </div>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} className="submit-button-container" ref={submitButtonRef}>
               <Button
                 variant="contained"
                 color="primary"

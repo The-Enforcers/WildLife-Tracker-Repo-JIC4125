@@ -1,7 +1,8 @@
 /* Page Layout */
 .page-container {
     overflow-y: scroll;
-    height: 90%;
+    height: 100%;
+    padding-bottom: 5rem;
 }
 
 .paper-form {
@@ -147,25 +148,64 @@
     position: relative;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-bottom: 2rem;
-}
-
-.resize-handle {
+    margin-bottom: 0rem;
+    overflow: visible;
+  }  
+  
+  .resizable-editor .ql-container {
+    height: 100%; 
+  }
+  
+  .resizable-editor .ql-editor {
+    height: 100%; 
+    overflow: auto; 
+  }
+  
+  .resize-handle {
     position: absolute;
-    bottom: -10px;
+    bottom: -20px;  
     left: 50%;
     transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
+    width: 60px;   
+    height: 6px;    
     background-color: #ddd;
     cursor: ns-resize;
-    border-radius: 2px;
+    border-radius: 3px;
     transition: background-color 0.2s ease;
+    z-index: 20;
+}
+
+.resize-handle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    width: 12px;  
+    height: 12px; 
+    border: solid #ddd;
+    border-width: 0 3px 3px 0; 
+    transform: translate(-50%, 0) rotate(45deg);
+    transition: border-color 0.2s ease;
 }
 
 .resize-handle:hover {
     background-color: #bbb;
 }
+
+.resize-handle:hover::after {
+    border-color: #bbb;
+}
+
+  .editor-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    z-index: 10;
+    cursor: ns-resize;
+    background: transparent;
+  }
 
 /* Error Overlay */
 .error-overlay {
@@ -228,6 +268,10 @@
 
 .submit-button:hover {
     background-color: #303f9f;
+}
+
+.submit-button-container {
+    margin-bottom: 20px;
 }
 
 /* Error Text */
