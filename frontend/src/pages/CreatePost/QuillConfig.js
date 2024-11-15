@@ -53,6 +53,11 @@ const ALLOWED_DOMAINS = [
   'youtube-nocookie.com',
   'vimeo.com',
   'maps.google.com',
+  'google.com',
+  'openstreetmap.com',
+  'github.com',
+  'datawrapper.de',
+  'figshare.com'
 ];
 
 // Custom keyboard bindings
