@@ -176,10 +176,10 @@ exports.updatePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Preserve existing image fields if not provided in the update
+    // Preserve existing image fields only if they are undefined in the update
     ["postImage", "trackerImage", "enclosureImage", "attachmentImage"].forEach(
       (field) => {
-        if (!updateData[field]) {
+        if (updateData[field] === undefined) {
           updateData[field] = existingPost[field];
         }
       }
@@ -193,6 +193,7 @@ exports.updatePost = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
 
 
 exports.hasUserLikedPost = async (req, res) => {

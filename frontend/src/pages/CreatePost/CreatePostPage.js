@@ -29,6 +29,7 @@ import {
   getPostById,
   updatePost,
   uploadImage,
+  deleteImage
 } from "../../services/postService";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
@@ -58,7 +59,7 @@ const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) =>
   ];
 
   // Filter out images that haven't been uploaded yet (except for Main Image)
-  const uploadedImages = imageTypes.filter(imgType => {
+  const displayedImages = imageTypes.filter(imgType => {
     if (imgType.type === 'mainImage') {
       return true;
     }
@@ -67,14 +68,28 @@ const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) =>
 
   return (
     <Grid container spacing={2} justifyContent="center" className="top-image-upload-area">
-      {uploadedImages.map((imgType, index) => (
+      {displayedImages.map((imgType, index) => (
         <Grid item xs={12} sm={3} key={index}>
           <Box
             className={`image-upload-box ${
               images[imgType.type] ? 'uploaded' : 'not-uploaded'
             } ${imgType.required ? 'required' : 'optional'}`}
           >
+            {!imgType.required && images[imgType.type] && (
+              <IconButton
+                className="delete-image-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleImageDelete(imgType.type);
+                }}
+                size="small"
+              >
+                <CloseIcon className="delete-icon" />
+              </IconButton>
+            )}
             <input
+              key={images[imgType.type] ? images[imgType.type].name || images[imgType.type] : ''}
               hidden
               accept="image/*"
               type="file"
@@ -94,7 +109,6 @@ const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) =>
                       alt={imgType.label}
                       className="uploaded-image"
                     />
-                    {/* Overlay with icon */}
                     <Box className="overlay-circle">
                       <UploadIcon className="overlay-icon" />
                     </Box>
@@ -113,16 +127,6 @@ const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) =>
                 </Typography>
               </Box>
             </label>
-            {/* 'X' button to delete the image box }
-            {imgType.type !== 'mainImage' && (
-              <IconButton
-                className="delete-icon-button"
-                onClick={() => handleImageDelete(imgType.type)}
-                size="small"
-              >
-                <CloseIcon className="delete-icon" />
-              </IconButton>
-            )*/}
           </Box>
         </Grid>
       ))}
@@ -314,17 +318,13 @@ const CreatePostPage = () => {
       const fileExtension = file.name.split(".").pop().toLowerCase();
 
       if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-        setError(
-          `Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(", ")}`
-        );
+        setError(`Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(", ")}`);
         setErrorOverlay(true);
         return;
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        setError(
-          `File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
-        );
+        setError(`File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`);
         setErrorOverlay(true);
         return;
       }
@@ -333,14 +333,60 @@ const CreatePostPage = () => {
         ...prevImages,
         [field]: file,
       }));
+
+      // Reset the input value to allow re-uploading the same file
+      e.target.value = '';
     }
   };
 
-  const handleImageDelete = (field) => {
-    setImages((prevImages) => ({
-      ...prevImages,
-      [field]: null,
-    }));
+  const handleImageDelete = async (imageType) => {
+    try {
+        console.log('Delete initiated for:', imageType);
+
+        if (isEditing) {
+            const fieldMapping = {
+                trackerType: 'trackerImage',
+                enclosureType: 'enclosureImage',
+                attachmentType: 'attachmentImage'
+            };
+
+            const imageField = fieldMapping[imageType];
+            if (!imageField) {
+                throw new Error('Invalid image type for deletion');
+            }
+
+            // Update state immediately for UI feedback
+            setImages(prevImages => ({
+                ...prevImages,
+                [imageType]: null
+            }));
+
+            // Call backend
+            const updatedPost = await deleteImage(id, imageField);
+            showSnackbar("Image deleted successfully", "success");
+
+            // Update all image states based on the returned post data
+            setImages(prevImages => ({
+                mainImage: updatedPost.postImage ? 
+                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.postImage}` : null,
+                trackerType: updatedPost.trackerImage ? 
+                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.trackerImage}` : null,
+                enclosureType: updatedPost.enclosureImage ? 
+                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.enclosureImage}` : null,
+                attachmentType: updatedPost.attachmentImage ? 
+                    `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.attachmentImage}` : null
+            }));
+        } else {
+            // For new posts, just update state
+            setImages(prevImages => ({
+                ...prevImages,
+                [imageType]: null
+            }));
+        }
+    } catch (error) {
+        console.error("Error deleting image:", error);
+        showSnackbar(error.message || "Failed to delete image", "error");
+    }
   };
 
   const handleEditorChange = (text) => {
@@ -394,12 +440,10 @@ const CreatePostPage = () => {
         trackerType: trackerType === "custom" ? customTrackerType : trackerType,
         trackerImage: imageFilenames.trackerType,
         dataTypes,
-        enclosureType:
-          enclosureType === "custom" ? customEnclosureType : enclosureType,
+        enclosureType: enclosureType === "custom" ? customEnclosureType : enclosureType,
         enclosureImage: imageFilenames.enclosureType,
-        attachmentType:
-          attachmentType === "custom" ? customAttachmentType : attachmentType,
-        attachmentImage: imageFilenames.attachmentImage,
+        attachmentType: attachmentType === "custom" ? customAttachmentType : attachmentType,
+        attachmentImage: imageFilenames.attachmentType, // Corrected key
         recommendations,
         author: user.displayName,
         authorId: user.googleId,

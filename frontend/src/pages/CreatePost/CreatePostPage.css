@@ -59,24 +59,25 @@
 }
 
 /* 'X' Button on Image Upload Boxes */
-.delete-icon-button {
-    position: absolute;
+.delete-image-button {
+    position: absolute !important;
     top: 8px !important;
     right: 8px !important;
-    background-color: rgba(255, 255, 255, 0.8); 
-    z-index: 10;
-    padding: 4px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    z-index: 20 !important;
+    padding: 4px !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
 }
 
-.delete-icon-button:hover {
-    background-color: rgba(255, 255, 255, 1);
+.delete-image-button:hover {
+    background-color: rgba(255, 255, 255, 1) !important;
+    transform: scale(1.1);
 }
 
 .delete-icon {
-    font-size: 18px;
-    color: #ff0000;
+    font-size: 18px !important;
+    color: #ff0000 !important;
 }
 
 
@@ -85,6 +86,16 @@
     margin-bottom: 2rem;
     display: flex;
     justify-content: center;
+}
+
+.image-upload-box.optional {
+    border-style: dashed;
+    border-width: 2px;
+}
+
+/* Ensure the delete button stays on top */
+.image-upload-box .MuiIconButton-root {
+    z-index: 30;
 }
 
 .image-upload-box {
@@ -155,6 +166,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
 }
 
 .overlay-icon {

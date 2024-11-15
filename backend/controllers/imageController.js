@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const gridfsStream = require('gridfs-stream');
 const { GridFSBucket } = require('mongodb');
 const path = require('path');
+const Post = require('../models/Post');
 
 // Image storage
 let gfs;
@@ -83,3 +84,55 @@ exports.uploadImage = async (req, res) => {
         res.status(500).send('Error uploading file.');
     });
 };
+
+exports.deletePostImage = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { imageField } = req.body;
+      
+      // Fetch the existing post
+      const post = await Post.findById(id);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+  
+      // Only allow deletion of optional images
+      if (imageField === 'postImage') {
+        return res.status(400).json({ message: "Cannot delete required main image" });
+      }
+  
+      // Verify the image field exists
+      if (!['trackerImage', 'enclosureImage', 'attachmentImage'].includes(imageField)) {
+        return res.status(400).json({ message: "Invalid image field" });
+      }
+  
+      const filename = post[imageField];
+      if (filename) {
+        // Find and delete the file from GridFS
+        const file = await gfs.files.findOne({ filename });
+        if (file) {
+          await new Promise((resolve, reject) => {
+            gridFSBucket.delete(file._id, (err) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
+        }
+      }
+  
+      // Update the post to remove the image reference
+      const updateData = {
+        [imageField]: null,
+        lastUpdated: new Date()
+      };
+  
+      const updatedPost = await Post.findByIdAndUpdate(id, updateData, {
+        new: true
+      });
+  
+      res.json(updatedPost);
+    } catch (err) {
+      console.error('Error in deletePostImage:', err);
+      res.status(500).json({ message: err.message });
+    }
+  };

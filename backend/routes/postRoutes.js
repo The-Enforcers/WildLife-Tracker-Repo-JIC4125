@@ -26,5 +26,6 @@ router.post("/:postId/like", verifyToken, postController.likePost);
 router.delete("/:postId/like", verifyToken, postController.unlikePost);
 router.get("/:postId/hasLiked", verifyToken, postController.hasUserLikedPost);
 router.get("/author/:userId/likes", postController.getUserPostsLikes);
+router.delete("/:id/image", verifyToken, imageController.deletePostImage);
 
 module.exports = router;

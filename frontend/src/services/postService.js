@@ -153,3 +153,30 @@ export const updateUserProfile = async (userId, bio, occupation) => {
     throw error;
   }
 };
+
+export const deleteImage = async (postId, imageField) => {
+  const token = getAuthToken();
+  console.log('DeleteImage called with:', { postId, imageField });
+  
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      data: { imageField }
+    };
+    console.log('Making delete request with config:', config);
+
+    const response = await axios.delete(`${API_URL}/posts/${postId}/image`, config);
+    console.log('Delete response:', response);
+    return response.data;
+  } catch (error) {
+    console.error("Full error object:", error);
+    if (error.response) {
+      console.error("Response error data:", error.response.data);
+      console.error("Response error status:", error.response.status);
+      throw new Error(error.response.data.message || 'Failed to delete image');
+    }
+    throw new Error('Network error while deleting image');
+  }
+};
