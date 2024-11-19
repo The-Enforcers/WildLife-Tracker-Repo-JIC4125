@@ -19,7 +19,7 @@
     top: 16px !important;
     right: 16px !important;
     z-index: 10 !important;
-  }
+}
 
 @media(max-width: 1500px) {
     .paper-form {
@@ -69,25 +69,31 @@
 /* 'X' Button on Image Upload Boxes */
 .delete-image-button {
     position: absolute !important;
-    top: 8px !important;
-    right: 8px !important;
+    top: -8px !important;
+    right: -8px !important;
     background-color: rgba(255, 255, 255, 0.9) !important;
     z-index: 20 !important;
     padding: 4px !important;
     border-radius: 50% !important;
     transition: all 0.2s ease !important;
+    border: 1px solid #ccc !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
 }
 
 .delete-image-button:hover {
-    background-color: rgba(255, 255, 255, 1) !important;
-    transform: scale(1.1);
+    background-color: #ff0000 !important;
+    border-color: #ff0000 !important;
 }
 
 .delete-icon {
     font-size: 18px !important;
     color: #ff0000 !important;
+    transition: color 0.2s ease !important;
 }
 
+.delete-image-button:hover .delete-icon {
+    color: #ffffff !important;
+}
 
 /* Top Image Upload Area */
 .top-image-upload-area {
@@ -107,16 +113,20 @@
 }
 
 .image-upload-box {
-    border: 2px dashed #ccc; /* Grey outline */
+    border: 2px dashed #ccc;
     border-radius: 10px;
     padding: 1rem;
     text-align: center;
     cursor: pointer;
     position: relative;
-    transition: border-color 0.3s, background-color 0.3s;
     width: 100%;
-    aspect-ratio: 1 / 1; /* Makes the box square */
-    background-color: #f0f0f0; /* Light grey background */
+    aspect-ratio: 1 / 1;
+    background-color: #f0f0f0;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.image-upload-box:hover:not(:has(.delete-image-button:hover)) {
+    background-color: #e3e3e3;
 }
 
 .image-upload-box.not-uploaded {
@@ -124,11 +134,15 @@
 }
 
 .image-upload-box.uploaded {
-    border-color: #ccc; /* Grey border after upload */
+    border-color: #ccc;
 }
 
 .image-upload-box.required {
     border-color: #ccc;
+}
+
+.image-upload-box label {
+    cursor: pointer;
 }
 
 .upload-box-content {
@@ -148,14 +162,14 @@
 
 .upload-icon {
     font-size: 50px;
-    color: #ccc;
+    color: #9e9e9e;
     margin-bottom: 0.5rem;
 }
 
 .upload-label {
     font-weight: bold;
     color: #000000;
-    font-size: 20px !important; /* Larger text */
+    font-size: 20px !important;
 }
 
 .required-indicator {
@@ -167,7 +181,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -178,28 +192,28 @@
 }
 
 .overlay-icon {
-    color: #aaa; /* Light grey */
+    color: #aaa;
     font-size: 32px;
 }
 
 /* Image Upload Button */
 .image-upload-button-container {
-    margin-left: -8px; /* Adjust margin to reduce space between button and text entry */
+    margin-left: -8px;
 }
 
 .image-upload-button {
-    border: 1px solid #1976d2; /* Default blue border */
+    border: 1px solid #1976d2;
     border-radius: 4px;
-    height: 56px; /* Match text field height */
-    color: #1976d2; /* Blue text */
+    height: 56px;
+    color: #1976d2;
     text-transform: none;
     width: 100%;
     transition: border-color 0.3s, color 0.3s;
 }
 
 .image-upload-button.uploaded {
-    border-color: #ccc; /* Change to grey border when an image is uploaded */
-    color: #333; /* Optional: change text color to a darker grey */
+    border-color: #ccc;
+    color: #333;
 }
 
 /* Data Types Section */
@@ -225,18 +239,18 @@
     border-radius: 4px;
     margin-bottom: 0rem;
     overflow: visible;
-  }  
-  
-  .resizable-editor .ql-container {
+}  
+
+.resizable-editor .ql-container {
     height: 100%; 
-  }
-  
-  .resizable-editor .ql-editor {
+}
+
+.resizable-editor .ql-editor {
     height: 100%; 
     overflow: auto; 
-  }
-  
-  .resize-handle {
+}
+
+.resize-handle {
     position: absolute;
     bottom: -20px;  
     left: 50%;
@@ -271,7 +285,7 @@
     border-color: #bbb;
 }
 
-  .editor-overlay {
+.editor-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -280,7 +294,7 @@
     z-index: 10;
     cursor: ns-resize;
     background: transparent;
-  }
+}
 
 /* Error Overlay */
 .error-overlay {
@@ -353,4 +367,3 @@
 .error-text {
     margin-bottom: 1rem;
 }
-
