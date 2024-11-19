@@ -10,8 +10,10 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, creat
         margin: "0px auto",
         borderRadius: 9,
         overflow: 'hidden',
-        boxShadow: 3,
+        boxShadow: 0,
+        border: "1px solid lightgray",
         cursor: 'pointer',
+        backgroundColor: '#efefef',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         '&:hover': {
           transform: 'scale(1.05)',
@@ -98,7 +100,7 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, creat
 
           <Box className="author-box-outer"
             sx={{
-              backgroundColor: "#f0f4f9",
+              backgroundColor: "#d5d5d5",
               borderRadius: "50px",
               marginTop: "15px",
             }}>

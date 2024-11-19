@@ -205,7 +205,7 @@ return (
         <div className="filters-and-results-box" style={{height: "100vh", overflowY: "hidden", display: "flex", flex: "1 1 auto"}}>
           <div className="filters-main-box" sx={{height: "100%", overflowY: "hidden", display: "flex", flexBasis: "20%", flexFlow: "column"}}>
             <div className="filters-box" >
-              <Accordion className="filter-group" defaultExpanded={false}
+              <Accordion className="filter-group" defaultExpanded={true}
                 sx={{
                   backgroundColor: "#f0f4f9", 
                   boxShadow: "none",
@@ -650,7 +650,7 @@ return (
                     size="large"
                     showFirstButton
                     showLastButton
-                    sx={{backgroundColor: "#f0f4f9", padding: "10px", borderRadius: "25px", boxShadow: "0px 0px 10px 0px lightgray"}}
+                    sx={{backgroundColor: "#f0f4f9", padding: "10px", borderRadius: "25px", border: "1px solid lightgray" }}
                   />
                 </Box>
               )}
