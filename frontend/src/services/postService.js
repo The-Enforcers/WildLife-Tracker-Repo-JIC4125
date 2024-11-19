@@ -92,11 +92,63 @@ export const updatePost = async (id, postData) => {
 };
 
 // Search posts
-export const searchPosts = async (searchParameters) => {
+export const searchPosts = async ({
+  page = 1,
+  limit = 12,
+  search = '',
+  filters = {},
+  sort = 'newToOld'
+}) => {
   try {
-    const response = await axios.get(`${API_URL}/posts/search`, {
-      params: { title: searchParameters },
+    // Convert filters object to query parameters
+    const trackerTypes = [];
+    const attachmentTypes = [];
+    const enclosureTypes = [];
+    const animalFamily = [];
+  
+    // Build arrays based on selected filters
+    if (filters.vhf) trackerTypes.push("VHF");
+    if (filters.satellite) trackerTypes.push("Satellite");
+    if (filters.lora) trackerTypes.push("LoRa");
+    if (filters.acoustic) trackerTypes.push("Acoustic");
+    if (filters.cell) trackerTypes.push("Cellular / GSM");
+    if (filters.bio) trackerTypes.push("Bio-logger");
+    if (filters.rfid) trackerTypes.push("RFID");
+  
+    if (filters.encapsulated) enclosureTypes.push("Encapsulated");
+    if (filters.potting) enclosureTypes.push("Potting");
+    if (filters.shrink) enclosureTypes.push("Shrink wrap");
+    if (filters.hematic) enclosureTypes.push("Hematic seal");
+  
+    if (filters.bolt) attachmentTypes.push("Bolt");
+    if (filters.harness) attachmentTypes.push("Harness");
+    if (filters.collar) attachmentTypes.push("Collar");
+    if (filters.adhesive) attachmentTypes.push("Adhesive");
+    if (filters.implant) attachmentTypes.push("Implant");
+  
+    if (filters.mammal) animalFamily.push("Mammal");
+    if (filters.reptile) animalFamily.push("Reptile");
+    if (filters.amphibian) animalFamily.push("Amphibians");
+    if (filters.fish) animalFamily.push("Fish");
+    if (filters.bird) animalFamily.push("Bird");
+
+    // Determine sort parameter
+    let sortParam = 'newToOld';
+    if (filters.oldToNew) sortParam = 'oldToNew';
+    if (filters.mostLiked) sortParam = 'mostLiked';
+
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      title: search,
+      sort: sortParam,
+      trackerType: trackerTypes.join(','),
+      attachmentType: attachmentTypes.join(','),
+      enclosureType: enclosureTypes.join(','),
+      animalType: animalFamily.join(',')
     });
+
+    const response = await axios.get(`${API_URL}/posts/search?${params}`);
     return response.data;
   } catch (error) {
     console.error("Error searching posts:", error);
