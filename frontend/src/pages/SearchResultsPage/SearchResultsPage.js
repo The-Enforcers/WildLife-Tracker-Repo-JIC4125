@@ -565,7 +565,6 @@ return (
               </div>
             </div>
           </div>
-
           <ThemeProvider theme={gridTheme}>
             <div className="animal-cards-box">
               <div className="animal-cards-box-inner">
@@ -614,6 +613,7 @@ return (
                               author={animal.author}
                               authorImage={animal.authorImage}
                               authorId={animal.authorId}
+                              lastUpdated={animal.lastUpdated}
                               scientificName={animal.scientificName}
                               commonName={animal.commonName}
                               animalType={animal.animalType}
@@ -626,31 +626,35 @@ return (
                       })}
                     </Grid>
 
-                    {pagination.totalPages > 1 && (
-                      <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        padding: '20px 0',
-                        position: 'sticky',
-                        bottom: 0,
-                        backgroundColor: 'white',
-                        borderTop: '1px solid #eee',
-                        zIndex: 1
-                      }}>
-                        <Pagination 
-                          count={pagination.totalPages}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                          color="primary"
-                          size="large"
-                          showFirstButton
-                          showLastButton
-                        />
-                      </Box>
-                    )}
+                    
                   </>
                 )}
+                {(
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  padding: '10px 0',
+                  position: "sticky",
+                  bottom: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0)',
+                  zIndex: 1,
+                  flex: "1 0 80px",
+                  paddingBottom: "50px",
+                }}>
+                  <Pagination 
+                    count={pagination.totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                    sx={{backgroundColor: "#f0f4f9", padding: "10px", borderRadius: "25px", boxShadow: "0px 0px 10px 2px lightgray"}}
+                  />
+                </Box>
+              )}
               </div>
+              
             </div>
           </ThemeProvider>
         </div>
