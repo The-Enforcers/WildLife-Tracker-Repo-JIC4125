@@ -10,9 +10,9 @@ const getAuthToken = () => {
 };
 
 // Get all posts
-export const getPosts = async () => {
+export const getPosts = async (page = 1, limit = 12) => {
   try {
-    const response = await axios.get(`${API_URL}/posts`);
+    const response = await axios.get(`${API_URL}/posts?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching all posts:", error);
@@ -96,8 +96,7 @@ export const searchPosts = async ({
   page = 1,
   limit = 12,
   search = '',
-  filters = {},
-  sort = 'newToOld'
+  filters = {}
 }) => {
   try {
     // Convert filters object to query parameters

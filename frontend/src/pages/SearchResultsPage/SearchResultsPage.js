@@ -13,6 +13,7 @@ import {
   CircularProgress,
   Pagination
 } from "@mui/material";
+import debounce from 'lodash/debounce';
 
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -43,11 +44,11 @@ const SearchResultsPage = () => {
   // Get initial values from URL query params (or defaults)
   const initialInput = searchParams.get("search") || "";
   const initialPage = parseInt(searchParams.get("page")) || 1;
-  
+  const [isLoadingDelayed, setIsLoadingDelayed] = useState(false);
   const [input, setInput] = useState(initialInput);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [animals, setAnimals] = useState([]);
-  const [loading, setLoading] = useState(false);
+  //const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: initialPage,
     totalPages: 1,
@@ -83,7 +84,6 @@ const SearchResultsPage = () => {
   };
   const [filters, setFilters] = useState(initialFilters);
 
-  // Clear all filters and reset pagination
   const clearFilters = () => {
     setCurrentPage(1);
     setFilters({
@@ -114,77 +114,81 @@ const SearchResultsPage = () => {
     });
   };
 
-  // Handle checkbox changes
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
     if (name === "newToOld" || name === "oldToNew" || name === "mostLiked") {
-      setFilters({
-        ...filters,
+      setFilters(prev => ({
+        ...prev,
         newToOld: name === "newToOld" ? checked : false,
         oldToNew: name === "oldToNew" ? checked : false,
         mostLiked: name === "mostLiked" ? checked : false,
-      });
+      }));
     } else {
-      setFilters({
-        ...filters,
-        [event.target.name]: event.target.checked,
-      });
+      setFilters(prev => ({
+        ...prev,
+        [name]: checked,
+      }));
     }
   };
 
-  // Handle page change
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
-    // Update URL with new page number
-    setSearchParams({
-      ...Object.fromEntries(searchParams),
-      page: value.toString()
-    });
   };
 
-  // Apply filters and fetch data
-  const applyFilters = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await searchPosts({
-        page: currentPage,
-        limit: 12,
-        search: input,
-        filters
-      });
-      
-      setAnimals(response.posts);
-      setPagination(response.pagination);
-      
-      // Update URL parameters
-      const params = {
-        search: input,
-        page: currentPage.toString(),
-        ...Object.keys(filters)
-          .filter((key) => filters[key])
-          .reduce((acc, key) => {
-            acc[key] = "true";
-            return acc;
-          }, {})
-      };
-      setSearchParams(params);
-    } catch (error) {
-      console.error("Error fetching filtered data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [input, filters, currentPage, setSearchParams]);
+  // Debounced applyFilters function
+  const debouncedApplyFilters = useCallback(
+    debounce(async () => {
+      // Start a timer for showing loading state
+      const loadingTimer = setTimeout(() => {
+        setIsLoadingDelayed(true);
+      }, 500); // Only show loading if the request takes more than 500ms
+
+      try {
+        const response = await searchPosts({
+          page: currentPage,
+          limit: 12,
+          search: input,
+          filters: filters
+        });
+        
+        setAnimals(response.posts);
+        setPagination(response.pagination);
+        
+        // Update URL parameters
+        const params = {
+          search: input,
+          page: currentPage.toString(),
+          ...Object.keys(filters)
+            .filter((key) => filters[key])
+            .reduce((acc, key) => {
+              acc[key] = "true";
+              return acc;
+            }, {})
+        };
+        setSearchParams(params);
+      } catch (error) {
+        console.error("Error fetching filtered data:", error);
+      } finally {
+        clearTimeout(loadingTimer);
+        setIsLoadingDelayed(false);
+      }
+    }, 300),
+    [input, filters, currentPage, setSearchParams]
+  );
 
   useEffect(() => {
-    applyFilters();
-  }, [applyFilters]);
+    debouncedApplyFilters();
+    
+    // Cleanup function
+    return () => {
+      debouncedApplyFilters.cancel();
+    };
+  }, [debouncedApplyFilters]);
 
-  return (
+return (
     <Box>
-      {/* Main content */}
       <Box sx={{ display: "flex", height: "100vh", width: "100%", overflowY: "hidden", flexFlow: "column"}}>
-        {/* Sticky section */}
         <Box sx={{ flex: "0 0 auto"}}>
           <Box sx={{ marginBottom: 2, top: 0}}>
             <SearchBox
@@ -192,20 +196,17 @@ const SearchResultsPage = () => {
               setInput={setInput}
               onSearch={() => {
                 setCurrentPage(1);
-                applyFilters();
+                debouncedApplyFilters();
               }}
             />
           </Box>
         </Box>
         
         <div className="filters-and-results-box" style={{height: "100vh", overflowY: "hidden", display: "flex", flex: "1 1 auto"}}>
-          {/* Filters on the left */}
           <div className="filters-main-box" sx={{height: "100%", overflowY: "hidden", display: "flex", flexBasis: "20%", flexFlow: "column"}}>
             <div className="filters-box" >
               <Accordion className="filter-group" defaultExpanded={true}
-              
                 sx={{
-                    
                   backgroundColor: "#f0f4f9", 
                   boxShadow: "none",
                   borderRadius: "15px",
@@ -213,7 +214,6 @@ const SearchResultsPage = () => {
                     borderRadius: "15px"
                   }
                 }}
-              
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Animal Family</Typography>
@@ -275,9 +275,7 @@ const SearchResultsPage = () => {
               </Accordion>
 
               <Accordion className="filter-group" defaultExpanded={true}
-              
               sx={{
-                  
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
                 borderRadius: "15px",
@@ -365,10 +363,8 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group"  defaultExpanded={true}
-              
+              <Accordion className="filter-group" defaultExpanded={true}
               sx={{
-                  
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
                 borderRadius: "15px",
@@ -427,9 +423,7 @@ const SearchResultsPage = () => {
               </Accordion>
 
               <Accordion className="filter-group" defaultExpanded={true}
-              
               sx={{
-                  
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
                 borderRadius: "15px",
@@ -437,7 +431,6 @@ const SearchResultsPage = () => {
                   borderRadius: "15px"
                 }
               }}
-              
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Attachment Type</Typography>
@@ -507,80 +500,76 @@ const SearchResultsPage = () => {
                   }
                 }}
               >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>Sort By</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={filters.newToOld}
-                        onChange={handleCheckboxChange}
-                        name="newToOld"
-                      />
-                    }
-                    label="Newest"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={filters.oldToNew}
-                        onChange={handleCheckboxChange}
-                        name="oldToNew"
-                      />
-                    }
-                    label="Oldest"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={filters.mostLiked}
-                        onChange={handleCheckboxChange}
-                        name="mostLiked"
-                      />
-                    }
-                    label="Most Liked"
-                  />
-                </FormGroup>
-              </AccordionDetails>
-            </Accordion>
-              
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>Sort By</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.newToOld}
+                          onChange={handleCheckboxChange}
+                          name="newToOld"
+                        />
+                      }
+                      label="Newest"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.oldToNew}
+                          onChange={handleCheckboxChange}
+                          name="oldToNew"
+                        />
+                      }
+                      label="Oldest"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={filters.mostLiked}
+                          onChange={handleCheckboxChange}
+                          name="mostLiked"
+                        />
+                      }
+                      label="Most Liked"
+                    />
+                  </FormGroup>
+                </AccordionDetails>
+              </Accordion>
             </div>
-            {/* Filters button */}
-            <div className="filters-button-box" >
-                <div className="apply-filter-container filter-button-container">
-                  {/* Filter Icon */}
-                  <div
-                    className="apply-filter-icon"
-                    onClick={applyFilters}
-                    data-tooltip-id="apply-filter"
-                    data-tooltip-content="Apply Filters"
-                  >
-                    <SearchIcon fontSize="medium" />
-                    <div>Apply </div>
-                  </div>
-                </div>
-                <div className="reset-filter-container filter-button-container">
-                  {/* Reset Icon */}
-                  <div
-                    className="reset-filter-icon "
-                    onClick={clearFilters}
-                    data-tooltip-id="reset-filter"
-                    data-tooltip-content="Reset"
-                  >
-                    <CancelIcon fontSize="medium" />
-                    <div>Clear</div>
-                  </div>
+
+            <div className="filters-button-box">
+              <div className="apply-filter-container filter-button-container">
+                <div
+                  className="apply-filter-icon"
+                  onClick={debouncedApplyFilters}
+                  data-tooltip-id="apply-filter"
+                  data-tooltip-content="Apply Filters"
+                >
+                  <SearchIcon fontSize="medium" />
+                  <div>Apply </div>
                 </div>
               </div>
+              <div className="reset-filter-container filter-button-container">
+                <div
+                  className="reset-filter-icon"
+                  onClick={clearFilters}
+                  data-tooltip-id="reset-filter"
+                  data-tooltip-content="Reset"
+                >
+                  <CancelIcon fontSize="medium" />
+                  <div>Clear</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Grid with animal cards */}
-          <ThemeProvider theme={gridTheme}> {/* Apply custom theme */}
+          <ThemeProvider theme={gridTheme}>
             <div className="animal-cards-box">
               <div className="animal-cards-box-inner">
-                {loading ? (
+                {isLoadingDelayed ? (
                   <Box
                     sx={{
                       display: "flex",
@@ -597,7 +586,7 @@ const SearchResultsPage = () => {
                       container 
                       spacing={2} 
                       sx={{
-                        marginBottom: pagination.totalPages > 1 ? "24px" : "64px", 
+                        marginBottom: pagination.totalPages > 1 ? "24px" : "64px",
                         maxWidth: "100%",
                       }}
                     >
@@ -605,15 +594,14 @@ const SearchResultsPage = () => {
                         const itemCount = animals.length;
                         let gridProps;
 
-                        // Adjust grid properties based on item count
                         if (itemCount === 1) {
-                          gridProps = { xs: 12, sm: 12, md: 12, lg: 12 }; // Full width for a single item
+                          gridProps = { xs: 12, sm: 12, md: 12, lg: 12 };
                         } else if (itemCount === 2) {
-                          gridProps = { xs: 12, sm: 6, md: 6, lg: 6 }; // Half width for two items
+                          gridProps = { xs: 12, sm: 6, md: 6, lg: 6 };
                         } else if (itemCount === 3) {
-                          gridProps = { xs: 12, sm: 6, md: 4, lg: 4 }; // One-third width for three items
+                          gridProps = { xs: 12, sm: 6, md: 4, lg: 4 };
                         } else {
-                          gridProps = { xs: 12, sm: 6, md: 4, lg: 3 }; // Default layout for four or more items
+                          gridProps = { xs: 12, sm: 6, md: 4, lg: 3 };
                         }
 
                         return (
@@ -638,7 +626,6 @@ const SearchResultsPage = () => {
                       })}
                     </Grid>
 
-                    {/* Pagination controls */}
                     {pagination.totalPages > 1 && (
                       <Box sx={{
                         display: 'flex',
