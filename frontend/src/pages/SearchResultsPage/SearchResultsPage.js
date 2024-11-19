@@ -142,7 +142,7 @@ const SearchResultsPage = () => {
       // Start a timer for showing loading state
       const loadingTimer = setTimeout(() => {
         setIsLoadingDelayed(true);
-      }, 500); // Only show loading if the request takes more than 500ms
+      }, 200); // Only show loading if the request takes more than 500ms
 
       try {
         const response = await searchPosts({
