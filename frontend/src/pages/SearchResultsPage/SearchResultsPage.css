@@ -33,21 +33,21 @@
     flex: 0 1 80%;
     margin-left: 16px;
     overflow-y: scroll;
-    padding-bottom: 48px;
+    padding-bottom: 0px;
     overflow-x: visible;
 
 }
 
 .animal-cards-box-inner {
-
     margin: 0px auto;
     max-width: 1500px;
-    /*min-width: 1000px*/
-    padding-bottom: 16px;
+    padding-bottom: 0;
     padding-left: 8px;
-    margin-bottom: 48px;
     overflow-x: visible;
-}
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
 
 @media screen and (max-width: 2000px) {
 

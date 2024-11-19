@@ -4,10 +4,31 @@ const User = require("../models/User");
 const { getGfs, getGridFSBucket } = require("../utils/gridFs");
 const mongoose = require('mongoose');
 
+
+// updated for pagination
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
-    res.json(posts);
+    const { page, limit, skip } = getPaginationParams(req.query);
+    
+    const posts = await Post.find()
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await Post.countDocuments();
+
+    res.status(200).json({
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalPosts: total,
+        postsPerPage: limit,
+        hasNextPage: skip + limit < total,
+        hasPreviousPage: page > 1
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -92,9 +113,17 @@ exports.createPost = async (req, res) => {
   }
 };
 
-function build_search_terms(req) {
-  console.log(req.query);
+//added for pagination
+const getPaginationParams = (query) => {
+  const page = Math.max(1, parseInt(query.page) || 1);
+  const limit = Math.max(1, Math.min(parseInt(query.limit) || 12, 50)); // Default 12, max 50
+  const skip = (page - 1) * limit;
+  return { page, limit, skip };
+};
 
+
+
+function build_search_terms(query) {
   const {
     title,
     scientificName,
@@ -105,9 +134,10 @@ function build_search_terms(req) {
     enclosureType,
     attachmentType,
     recommendations,
-  } = req.query;
+    sort
+  } = query;
 
-  var search_requirements = {};
+  const search_requirements = {};
 
   if (title) {
     search_requirements.$or = [
@@ -131,7 +161,7 @@ function build_search_terms(req) {
   }
 
   if (enclosureType) {
-    search_requirements.enclosureType = new RegExp(enclosureType, "i");
+    search_requirements.enclosureType = { $in: enclosureType.split(",") };
   }
 
   if (attachmentType) {
@@ -142,23 +172,66 @@ function build_search_terms(req) {
     search_requirements.recommendations = new RegExp(recommendations, "i");
   }
 
-  console.log(search_requirements);
   return search_requirements;
 }
 
-exports.searchPosts = async (req, res) => {
-  var search_requirements = build_search_terms(req);
+function buildSortObject(sortQuery) {
+  if (!sortQuery) return { date: -1 }; // Default sort by date desc
 
+  switch (sortQuery) {
+    case 'oldToNew':
+      return { date: 1 };
+    case 'mostLiked':
+      return { likeCount: -1, date: -1 };
+    case 'newToOld':
+    default:
+      return { date: -1 };
+  }
+}
+
+exports.searchPosts = async (req, res) => {
   try {
-    const posts = await Post.find(search_requirements);
-    if (!posts) {
-      return res.status(404).json({ message: "Error" });
-    }
-    res.status(201).json(posts);
+    // Get pagination parameters
+    const { page, limit, skip } = getPaginationParams(req.query);
+    
+    // Build search query
+    const searchQuery = build_search_terms(req.query);
+    
+    // Build sort object
+    const sortObject = buildSortObject(req.query.sort);
+
+    // Execute main query with pagination
+    const posts = await Post.find(searchQuery)
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limit)
+      .lean(); // Use lean() for better performance
+
+    // Get total count for pagination
+    const total = await Post.countDocuments(searchQuery);
+
+    // Send paginated response
+    res.status(200).json({
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalPosts: total,
+        postsPerPage: limit,
+        hasNextPage: skip + limit < total,
+        hasPreviousPage: page > 1
+      }
+    });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Search posts error:', err);
+    res.status(500).json({ 
+      message: "Error searching posts",
+      error: err.message 
+    });
   }
 };
+
+
 
 exports.updatePost = async (req, res) => {
   try {
