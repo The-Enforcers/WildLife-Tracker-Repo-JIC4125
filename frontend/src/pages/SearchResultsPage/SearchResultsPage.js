@@ -205,7 +205,7 @@ return (
         <div className="filters-and-results-box" style={{height: "100vh", overflowY: "hidden", display: "flex", flex: "1 1 auto"}}>
           <div className="filters-main-box" sx={{height: "100%", overflowY: "hidden", display: "flex", flexBasis: "20%", flexFlow: "column"}}>
             <div className="filters-box" >
-              <Accordion className="filter-group" defaultExpanded={true}
+              <Accordion className="filter-group" defaultExpanded={false}
                 sx={{
                   backgroundColor: "#f0f4f9", 
                   boxShadow: "none",
@@ -274,7 +274,7 @@ return (
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={true}
+              <Accordion className="filter-group" defaultExpanded={false}
               sx={{
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
@@ -363,7 +363,7 @@ return (
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={true}
+              <Accordion className="filter-group" defaultExpanded={false}
               sx={{
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
@@ -422,7 +422,7 @@ return (
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={true}
+              <Accordion className="filter-group" defaultExpanded={false}
               sx={{
                 backgroundColor: "#f0f4f9", 
                 boxShadow: "none",
@@ -613,6 +613,7 @@ return (
                               author={animal.author}
                               authorImage={animal.authorImage}
                               authorId={animal.authorId}
+                              created={animal.date}
                               lastUpdated={animal.lastUpdated}
                               scientificName={animal.scientificName}
                               commonName={animal.commonName}

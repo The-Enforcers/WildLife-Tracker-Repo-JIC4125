@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 
-const ImageCard = ({ title, image, post_id, author, authorImage, authorId, lastUpdated, scientificName, commonName, animalType, trackerType, enclosureType, likeCount }) => {
+const ImageCard = ({ title, image, post_id, author, authorImage, authorId, created, lastUpdated, scientificName, commonName, animalType, trackerType, enclosureType, likeCount }) => {
   return (
     <Card
       sx={{
@@ -75,15 +75,18 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, lastU
           >
             {title}
           </Typography>
-          { (
-            <Typography variant="body2" color="textSecondary" sx={{marginBottom: "10px"}}>
-              {new Date(lastUpdated).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </Typography>
-          )}
+          <Typography variant="body2" color="textSecondary" sx={{marginBottom: "10px"}}>
+            <strong>Last Updated: </strong>
+            {lastUpdated ? (new Date(created).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })) : (new Date(created).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }))}
+          </Typography>
           <Typography variant="body2" color="text.secondary" className="card-text"
             sx={{ whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
             <strong>Scientific name:</strong> {scientificName}

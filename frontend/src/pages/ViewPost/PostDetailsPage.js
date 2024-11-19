@@ -265,7 +265,21 @@ const PostDetailsPage = () => {
                   />
                   <p className="author-name"> {post.author}</p>
                 </div>
-                {post.lastUpdated && (
+                
+                <Typography variant="body2" color="textSecondary">
+                  Created:{" "}
+                  {new Date(post.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}{" "}
+                  at{" "}
+                  {new Date(post.date).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Typography>
+                {post.lastUpdated ? (
                   <Typography variant="body2" color="textSecondary">
                     Last updated:{" "}
                     {new Date(post.lastUpdated).toLocaleDateString("en-US", {
@@ -279,7 +293,7 @@ const PostDetailsPage = () => {
                       minute: "2-digit",
                     })}
                   </Typography>
-                )}
+                ) : <Typography></Typography>}
             </div>
             
             <div className="post-picture">
