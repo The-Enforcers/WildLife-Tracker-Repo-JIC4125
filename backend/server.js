@@ -1,3 +1,5 @@
+// server.js
+
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -13,12 +15,19 @@ require("dotenv").config();
 // Create an Express app
 const app = express();
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: 'https://localhost:3000',
   credentials: true
 }));
-app.use(express.json());
+
+app.use(express.json()); // Parse JSON bodies
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-secret-key",
@@ -27,19 +36,22 @@ app.use(
     cookie: { secure: true }
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// post routes
+// Post routes
 const postRoutes = require("./routes/postRoutes");
-app.use("/api/posts",  postRoutes); // Use token verification for post routes
+app.use("/api/posts", postRoutes); // Routes are protected within postRoutes.js
 
-// user routes
+// User routes
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/user", userRoutes);
 
+// Mongoose Models
 const User = require('./models/User');
 
+// Passport Google OAuth Strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -127,6 +139,7 @@ app.get("/auth/logout", (req, res) => {
   });
 });
 
+// Get authenticated user data
 app.get("/api/user", verifyToken, async (req, res) => {
   try {
     // Get user from database using the ID from the token

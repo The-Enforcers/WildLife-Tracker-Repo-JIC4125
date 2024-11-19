@@ -1,3 +1,5 @@
+// postService.js
+
 import axios from "axios";
 
 const API_URL = `https://${window.location.hostname}:5001/api`;
@@ -7,26 +9,37 @@ const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
-// get all posts
+// Get all posts
 export const getPosts = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/posts`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all posts:", error);
+    throw error;
+  }
 };
 
-// get post by id
+// Get post by id
 export const getPostById = async (id) => {
-  const response = await axios.get(`${API_URL}/posts/${id}`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/posts/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching post with id ${id}:`, error);
+    throw error;
+  }
 };
 
-export const getPostsByAuthor = async (googleId) => {
-  if (!googleId) {
-    console.error("No Google ID provided.");
+// Get posts by author (using user._id)
+export const getPostsByAuthor = async (userId) => { // Changed parameter from googleId to userId
+  if (!userId) {
+    console.error("No User ID provided.");
     return;
   }
 
   try {
-    const response = await axios.get(`${API_URL}/posts/author/${googleId}`);
+    const response = await axios.get(`${API_URL}/posts/author/${userId}`);
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -38,46 +51,60 @@ export const getPostsByAuthor = async (googleId) => {
   }
 };
 
-
-// create post
+// Create post
 export const createPost = async (postData) => {
   const token = getAuthToken();
-  const response = await axios.post(`${API_URL}/posts`, postData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}/posts`, postData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
 };
 
-// update post
+// Update post
 export const updatePost = async (id, postData) => {
   const token = getAuthToken();
-  const response = await axios.put(`${API_URL}/posts/${id}`, postData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  try {
+    const response = await axios.put(`${API_URL}/posts/${id}`, postData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 
-  console.log(
-    "Sending update request for post ID:",
-    id,
-    "with data:",
-    postData
-  );
-  console.log("Update response:", response.data);
-  return response.data;
+    console.log(
+      "Sending update request for post ID:",
+      id,
+      "with data:",
+      postData
+    );
+    console.log("Update response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating post with id ${id}:`, error);
+    throw error;
+  }
 };
 
-// search posts
+// Search posts
 export const searchPosts = async (searchParameters) => {
-  const response = await axios.get(`${API_URL}/posts/search`, {
-    params: { title: searchParameters },
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/posts/search`, {
+      params: { title: searchParameters },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    throw error;
+  }
 };
 
-// upload image
+// Upload image
 export const uploadImage = async (imageFile) => {
   if (!imageFile) {
     console.error("No image file provided.");
@@ -107,49 +134,145 @@ export const uploadImage = async (imageFile) => {
     return data.filename; // Return the filename
   } catch (error) {
     console.error("Error uploading image:", error);
-  }
-};
-
-export const bookmarkPost = async (userId, postId) => {
-  try {
-    const response = await axios.post(`${API_URL}/user/${userId}/${postId}/bookmark`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to bookmark post", error);
     throw error;
   }
 };
 
-export const unbookmarkPost = async (userId, postId) => {
+// Bookmark a post
+export const bookmarkPost = async (userId, postId) => { // Ensure userId is the MongoDB _id
   try {
-    const response = await axios.delete(`${API_URL}/user/${userId}/${postId}/bookmark`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to unbookmark post", error);
-    throw error;
-  }
-};
-
-export const getBookmarkedPosts = async (userId) => {
-  try {
-    const response = await axios.get(`${API_URL}/user/${userId}/bookmarked`);
-    return response.data;
-  } catch (error) {
-    console.error("Failed to fetch bookmarked posts", error);
-    throw error;
-  }
-};
-
-// updates user profile bio and occupation
-export const updateUserProfile = async (userId, bio, occupation) => {
-  try {
-    const response = await axios.put(`${API_URL}/user/${userId}/profile`, {
-      bio,
-      occupation,
+    const token = getAuthToken();
+    const response = await axios.post(`${API_URL}/user/${userId}/${postId}/bookmark`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to update user profile", error);
+    console.error("Failed to bookmark post:", error);
     throw error;
   }
 };
+
+// Unbookmark a post
+export const unbookmarkPost = async (userId, postId) => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.delete(`${API_URL}/user/${userId}/${postId}/bookmark`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to unbookmark post:", error);
+    throw error;
+  }
+};
+
+// Get bookmarked posts
+export const getBookmarkedPosts = async (userId) => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get(`${API_URL}/user/${userId}/bookmarked`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch bookmarked posts:", error);
+    throw error;
+  }
+};
+
+// Update user profile bio and occupation
+export const updateUserProfile = async (userId, bio, occupation) => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.put(`${API_URL}/user/${userId}/profile`, {
+      bio,
+      occupation,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update user profile:", error);
+    throw error;
+  }
+};
+
+// Delete image from a post
+export const deleteImage = async (postId, imageField) => {
+  const token = getAuthToken();
+  console.log('DeleteImage called with:', { postId, imageField });
+  
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      data: { imageField } // Send imageField in the request body
+    };
+    console.log('Making delete request with config:', config);
+
+    const response = await axios.delete(`${API_URL}/posts/${postId}/image`, config);
+    console.log('Delete response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Full error object:", error);
+    if (error.response) {
+      console.error("Response error data:", error.response.data);
+      console.error("Response error status:", error.response.status);
+      throw new Error(error.response.data.message || 'Failed to delete image');
+    }
+    throw new Error('Network error while deleting image');
+  }
+};
+
+// Delete a post
+// PostService.js
+
+export const deletePost = async (id) => {
+  try {
+    const token = getAuthToken();
+    console.log(`Attempting to delete post with ID: ${id}. Retrieved token: ${token}`);
+
+    if (!token) {
+      console.error('No token found in localStorage');
+      throw new Error('No token found in localStorage');
+    }
+
+    const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    console.log(`Delete request sent. Response status: ${response.status}`);
+
+    if (!response.ok) {
+      let errorMessage = 'Failed to delete post';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (err) {
+        errorMessage = `${response.status} ${response.statusText}`;
+      }
+      console.error(`Delete failed: ${errorMessage}`);
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+    console.log('Delete successful:', data);
+    return data; 
+  } catch (error) {
+    console.error('Error in deletePost:', error);
+    throw error;
+  }
+};
+

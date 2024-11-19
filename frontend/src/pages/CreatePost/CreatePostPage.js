@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+// CreatePostPage.js
+import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import {
@@ -7,33 +8,41 @@ import {
   TextField,
   Typography,
   Grid,
-  IconButton,
   Select,
   MenuItem,
   FormControl,
   InputLabel,
   Paper,
   Chip,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 
-// react quill for rich text editor
+// React Quill for rich text editor
 import ReactQuill from "react-quill-new";
 import "react-quill/dist/quill.snow.css";
 import { quillModules, quillFormats } from './QuillConfig';
 
 // MUI Icons
-import { Edit as EditIcon } from "@mui/icons-material";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import {
   createPost,
   getPostById,
   updatePost,
   uploadImage,
+  deleteImage,
+  deletePost,
 } from "../../services/postService";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
 
-import "./CreatePostPage.css"
+import "./CreatePostPage.css";
 
 // Constants for image uploads
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -49,133 +58,108 @@ const dataTypeOptions = [
   "Pressure (air or water)",
 ];
 
-// Component for main image upload
-const MainImageUploadArea = ({ type, image, handleImageChange }) => (
-  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <Box
-      sx={{
-        position: "relative",
-        width: image ? "100%" : 75,
-        height: image ? "auto" : 75,
-        maxWidth: 200,
-        maxHeight: 200,
-        border: image ? "none" : "2px dashed #ccc",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {image ? (
-        <img
-          src={image instanceof File ? URL.createObjectURL(image) : image}
-          alt="Uploaded Preview"
-          style={{
-            maxHeight: 200,
-            maxWidth: "100%",
-            objectFit: "contain",
-            borderRadius: "10px",
-          }}
-        />
-      ) : (
-        <UploadIcon sx={{ fontSize: 30, color: "#ccc" }} />
-      )}
-      <IconButton
-        color="primary"
-        aria-label="upload picture"
-        component="label"
-        sx={{
-          position: "absolute",
-          bottom: 10,
-          right: 10,
-          backgroundColor: "#e0e0e0",
-          width: 50,
-          height: 50,
-          "&:hover": {
-            backgroundColor: "#c0c0c0",
-          },
-          boxShadow: "0px 0px 5px darkgray"
-        }}
-      >
-        <input
-          hidden
-          accept="image/*"
-          type="file"
-          onChange={(e) => handleImageChange(type, e)}
-        />
-        <UploadIcon sx={{ fontSize: 30 }} />
-      </IconButton>
-    </Box>
-  </Box>
-);
+// Component for the top image upload area
+const TopImageUploadArea = ({ images, handleImageChange, handleImageDelete }) => {
+  const imageTypes = [
+    { type: 'mainImage', label: 'Main Image', required: true },
+    { type: 'trackerType', label: 'Tracker Image', required: false },
+    { type: 'enclosureType', label: 'Enclosure Image', required: false },
+    { type: 'attachmentType', label: 'Attachment Image', required: false },
+  ];
 
+  // Filter out images that haven't been uploaded yet (except for Main Image)
+  const displayedImages = imageTypes.filter(imgType => {
+    if (imgType.type === 'mainImage') {
+      return true;
+    }
+    return images[imgType.type];
+  });
 
+  return (
+    <Grid container spacing={2} justifyContent="center" className="top-image-upload-area">
+      {displayedImages.map((imgType, index) => (
+        <Grid item xs={12} sm={3} key={index}>
+          <Box
+            className={`image-upload-box ${
+              images[imgType.type] ? 'uploaded' : 'not-uploaded'
+            } ${imgType.required ? 'required' : 'optional'}`}
+          >
+            {!imgType.required && images[imgType.type] && (
+              <IconButton
+                className="delete-image-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleImageDelete(imgType.type);
+                }}
+                size="small"
+              >
+                <CloseIcon className="delete-icon" />
+              </IconButton>
+            )}
+            <input
+              key={images[imgType.type] ? images[imgType.type].name || images[imgType.type] : ''}
+              hidden
+              accept="image/*"
+              type="file"
+              id={`upload-${imgType.type}`}
+              onChange={(e) => handleImageChange(imgType.type, e)}
+            />
+            <label htmlFor={`upload-${imgType.type}`}>
+              <Box className="upload-box-content">
+                {images[imgType.type] ? (
+                  <>
+                    <img
+                      src={
+                        images[imgType.type] instanceof File
+                          ? URL.createObjectURL(images[imgType.type])
+                          : images[imgType.type]
+                      }
+                      alt={imgType.label}
+                      className="uploaded-image"
+                    />
+                    <Box className="overlay-circle">
+                      <UploadIcon className="overlay-icon" />
+                    </Box>
+                  </>
+                ) : (
+                  <UploadIcon className="upload-icon" />
+                )}
+                <Typography
+                  variant="subtitle1"
+                  className="upload-label"
+                >
+                  {imgType.label}{' '}
+                  {imgType.required && (
+                    <span className="required-indicator">*</span>
+                  )}
+                </Typography>
+              </Box>
+            </label>
+          </Box>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
 
-// Component for additional image uploads (tracker, enclosure, attachment)
-const ImageUploadArea = ({ type, image, handleImageChange }) => (
-  <Grid item xs={2} container alignItems="center" justifyContent="flex-end">
-    <IconButton
-      color="primary"
+// Component for image upload button (used for tracker, enclosure, attachment)
+const ImageUploadButton = ({ type, image, handleImageChange, label }) => (
+  <Grid item xs={3} container alignItems="center" justifyContent="flex-end" className="image-upload-button-container">
+    <Button
+      variant="outlined"
       component="label"
-      sx={{
-        padding: 0,
-        border: "1px solid rgba(0, 0, 0, 0.23)",
-        borderRadius: "4px",
-        width: "56px",
-        height: "56px",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      className={`image-upload-button ${image ? 'uploaded' : 'not-uploaded'}`} // Apply 'uploaded' class conditionally
+      startIcon={<UploadIcon />}
     >
+      {label}
       <input
         hidden
         accept="image/*"
         type="file"
         onChange={(e) => handleImageChange(type, e)}
       />
-      {image ? (
-        <>
-          <img
-            src={image instanceof File ? URL.createObjectURL(image) : image}
-            alt={`${type} Images`}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(0,0,0,0)",
-            }}
-          >
-            <EditIcon sx={{ fontSize: 24 }} />
-          </div>
-        </>
-      ) : (
-        <>
-          <UploadIcon sx={{ width: 20, height: 20 }} />
-          <Typography
-            variant="caption"
-            align="center"
-            sx={{
-              fontSize: "10px",
-              position: "absolute",
-              bottom: 4,
-              left: 0,
-              right: 0,
-            }}
-          >
-            Image
-          </Typography>
-        </>
-      )}
-    </IconButton>
+    </Button>
   </Grid>
 );
 
@@ -201,6 +185,17 @@ const CreatePostPage = () => {
   const [lastUpdatedDate, setLastUpdatedDate] = useState(null);
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
+  const [editorHeight, setEditorHeight] = useState(600);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const editorContainerRef = useRef(null);
+  const pageContainerRef = useRef(null);
+  const quillRef = useRef(null);
+  const submitButtonRef = useRef(null);
+
+  const [startY, setStartY] = useState(0);
+  const [startHeight, setStartHeight] = useState(0);
+  const sensitivity = 1; // Adjust this value as needed
 
   const [images, setImages] = useState({
     mainImage: null,
@@ -209,15 +204,97 @@ const CreatePostPage = () => {
     attachmentType: null,
   });
 
-  const [imageFiles, setImageFiles] = useState({
-    mainImage: null,
-    trackerType: null,
-    enclosureType: null,
-    attachmentType: null,
-  });
+  // State for delete confirmation dialog
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+
+  // Handle deletion of the post
+  const handleDeleteClick = () => {
+    console.log("Delete button clicked. Opening confirmation dialog.");
+    setOpenConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    console.log("Confirm delete clicked. Initiating delete process.");
+    try {
+      console.log("Deleting post with ID:", id);
+      await deletePost(id);
+      showSnackbar("Post deleted successfully", "success");
+      navigate("/posts");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      showSnackbar(error.message || "Error deleting post", "error");
+    } finally {
+      console.log("Closing confirmation dialog.");
+      setOpenConfirmDialog(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    console.log("Cancel delete clicked. Closing confirmation dialog.");
+    setOpenConfirmDialog(false);
+  };
+
+  const handleResizeStart = useCallback(
+    (e) => {
+      e.preventDefault();
+      setIsResizing(true);
+      setStartY(e.clientY);
+      setStartHeight(editorHeight);
+    },
+    [editorHeight]
+  );
+
+  const handleResizeEnd = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const handleResize = useCallback(
+    (e) => {
+      if (isResizing) {
+        const deltaY = e.clientY - startY;
+        const adjustedDeltaY = deltaY * sensitivity;
+        const newHeight = Math.max(200, startHeight + adjustedDeltaY);
+
+        setEditorHeight(newHeight);
+
+        // Scroll logic adjusted to keep the entire submit button in view
+        const submitButton = submitButtonRef.current;
+        const pageContainer = pageContainerRef.current;
+        if (submitButton && pageContainer) {
+          const padding = 20; // Adjust as needed
+
+          // Calculate the bottom position of the submit button relative to the page container
+          const submitButtonOffsetTop =
+            submitButton.offsetTop + submitButton.offsetHeight + padding;
+
+          // The current visible area bottom
+          const visibleAreaBottom = pageContainer.scrollTop + pageContainer.clientHeight;
+
+          // If the submit button's bottom is below the visible area, scroll down
+          if (submitButtonOffsetTop > visibleAreaBottom) {
+            const scrollAmount = submitButtonOffsetTop - visibleAreaBottom;
+            pageContainer.scrollTop += scrollAmount;
+          }
+        }
+      }
+    },
+    [isResizing, startY, startHeight, sensitivity]
+  );
+
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResize);
+      document.addEventListener('mouseup', handleResizeEnd);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [isResizing, handleResize, handleResizeEnd]);
+
   useEffect(() => {
     if (!loading && !user) {
-      // Show popup if no user is logged in and loading is complete
       setShowPopup(true);
     }
   }, [loading, user]);
@@ -237,26 +314,29 @@ const CreatePostPage = () => {
           setEnclosureType(postData.enclosureType);
           setAttachmentType(postData.attachmentType);
           setRecommendations(postData.recommendations);
-          setImageFiles({
-            mainImage: postData.postImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.postImage}`
-              : null,
-            trackerType: postData.trackerImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.trackerImage}`
-              : null,
-            enclosureType: postData.enclosureImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.enclosureImage}`
-              : null,
-            attachmentType: postData.attachmentImage
-              ? `https://${window.location.hostname}:5001/api/posts/image/${postData.attachmentImage}`
-              : null,
-          });
+
+          // Build the image URLs
+          const mainImageUrl = postData.postImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.postImage}`
+            : null;
+          const trackerImageUrl = postData.trackerImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.trackerImage}`
+            : null;
+          const enclosureImageUrl = postData.enclosureImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.enclosureImage}`
+            : null;
+          const attachmentImageUrl = postData.attachmentImage
+            ? `https://${window.location.hostname}:5001/api/posts/image/${postData.attachmentImage}`
+            : null;
+
+          // Set images state with URLs
           setImages({
-            mainImage: null,
-            trackerType: null,
-            enclosureType: null,
-            attachmentType: null,
+            mainImage: mainImageUrl,
+            trackerType: trackerImageUrl,
+            enclosureType: enclosureImageUrl,
+            attachmentType: attachmentImageUrl,
           });
+
           setLastUpdatedDate(postData.lastUpdated);
         } catch (error) {
           console.error("Error fetching post for editing:", error);
@@ -267,7 +347,7 @@ const CreatePostPage = () => {
   }, [id]);
 
   const handleClosePopup = () => {
-    window.location.href = "https://localhost:5001/auth/google"; // Redirect to Google OAuth
+    window.location.href = "https://localhost:5001/auth/google";
   };
 
   const handleImageChange = (field, e) => {
@@ -276,21 +356,13 @@ const CreatePostPage = () => {
       const fileExtension = file.name.split(".").pop().toLowerCase();
 
       if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
-        setError(
-          `Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(
-            ", "
-          )}`
-        );
+        setError(`Invalid file type. Allowed types are: ${ALLOWED_EXTENSIONS.join(", ")}`);
         setErrorOverlay(true);
         return;
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        setError(
-          `File size too large. Maximum size is ${
-            MAX_FILE_SIZE / (1024 * 1024)
-          }MB.`
-        );
+        setError(`File size too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`);
         setErrorOverlay(true);
         return;
       }
@@ -300,10 +372,58 @@ const CreatePostPage = () => {
         [field]: file,
       }));
 
-      setImageFiles((prevImages) => ({
-        ...prevImages,
-        [field]: URL.createObjectURL(file),
-      }));
+      // Reset the input value to allow re-uploading the same file
+      e.target.value = '';
+    }
+  };
+
+  const handleImageDelete = async (imageType) => {
+    try {
+      console.log('Delete initiated for:', imageType);
+
+      if (isEditing) {
+        const fieldMapping = {
+          trackerType: 'trackerImage',
+          enclosureType: 'enclosureImage',
+          attachmentType: 'attachmentImage'
+        };
+
+        const imageField = fieldMapping[imageType];
+        if (!imageField) {
+          throw new Error('Invalid image type for deletion');
+        }
+
+        // Update state immediately for UI feedback
+        setImages(prevImages => ({
+          ...prevImages,
+          [imageType]: null
+        }));
+
+        // Call backend
+        const updatedPost = await deleteImage(id, imageField);
+        showSnackbar("Image deleted successfully", "success");
+
+        // Update all image states based on the returned post data
+        setImages({
+          mainImage: updatedPost.postImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.postImage}` : null,
+          trackerType: updatedPost.trackerImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.trackerImage}` : null,
+          enclosureType: updatedPost.enclosureImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.enclosureImage}` : null,
+          attachmentType: updatedPost.attachmentImage ?
+            `https://${window.location.hostname}:5001/api/posts/image/${updatedPost.attachmentImage}` : null
+        });
+      } else {
+        // For new posts, just update state
+        setImages(prevImages => ({
+          ...prevImages,
+          [imageType]: null
+        }));
+      }
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      showSnackbar(error.message || "Failed to delete image", "error");
     }
   };
 
@@ -326,21 +446,23 @@ const CreatePostPage = () => {
       setError("All fields are required.");
       return;
     }
-  
-    if (!images.mainImage && !imageFiles.mainImage) {
+
+    if (!images.mainImage) {
       setError(`Main image required`);
       return;
     }
-    
+
     try {
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
           const filename = await uploadImage(image);
           return { [key]: filename };
         }
-        // Use existing image if no new file uploaded
-        if (typeof imageFiles[key] === "string") {
-          return { [key]: imageFiles[key].split("/").pop() };
+        if (typeof image === "string") {
+          // Extract the filename from the URL
+          const parts = image.split("/");
+          const filename = parts[parts.length - 1];
+          return { [key]: filename };
         }
         return { [key]: null };
       });
@@ -356,15 +478,13 @@ const CreatePostPage = () => {
         trackerType: trackerType === "custom" ? customTrackerType : trackerType,
         trackerImage: imageFilenames.trackerType,
         dataTypes,
-        enclosureType:
-          enclosureType === "custom" ? customEnclosureType : enclosureType,
+        enclosureType: enclosureType === "custom" ? customEnclosureType : enclosureType,
         enclosureImage: imageFilenames.enclosureType,
-        attachmentType:
-          attachmentType === "custom" ? customAttachmentType : attachmentType,
+        attachmentType: attachmentType === "custom" ? customAttachmentType : attachmentType,
         attachmentImage: imageFilenames.attachmentType,
         recommendations,
         author: user.displayName,
-        authorId: user.googleId,
+        // authorId: user.googleId, // Removed as backend handles it
         authorImage: user.picture,
         lastUpdated: new Date().toISOString(),
       };
@@ -385,37 +505,12 @@ const CreatePostPage = () => {
     }
   };
 
-  // Note that, to get scrolling to work, you have to set the height to 95% 
   return (
-    <Box sx={{ overflowY: "scroll", height: "90%"}}> 
+    <Box className="page-container" ref={pageContainerRef}>
       {errorOverlay && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              maxWidth: "80%",
-              textAlign: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
-              style={{ marginBottom: "20px", color: "red" }}
-            >
+        <div className="error-overlay">
+          <div className="error-popup">
+            <Typography variant="h6" className="error-message">
               {error}
             </Typography>
             <Button
@@ -430,38 +525,10 @@ const CreatePostPage = () => {
         </div>
       )}
 
-      {/* Show the login popup if no user */}
       {showPopup && (
         <>
-          {/* Blocking overlay to prevent background interaction */}
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-              zIndex: 999,
-              pointerEvents: "all",
-            }}
-          />
-
-          {/* Login popup */}
-          <div
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "#fff",
-              padding: "20px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-              zIndex: 1000,
-              borderRadius: "8px",
-              textAlign: "center",
-            }}
-          >
+          <div className="popup-overlay" />
+          <div className="login-popup">
             <Typography variant="h6" gutterBottom>
               You must be logged in to create a post.
             </Typography>
@@ -476,10 +543,23 @@ const CreatePostPage = () => {
         </>
       )}
 
-      <Paper elevation={0} className="paper-form" sx={{ px: 4, marginBottom: 3, overflowY: "scoll", width: "50%", paddingTop: "50px", margin: "0px auto"}}>
-        <Typography variant="h4" gutterBottom sx={{width: "100%", textAlign: "center"}}>
+      <Paper elevation={0} className="paper-form">
+        {isEditing && (
+          <Button
+          variant="contained"
+          color="error" // This will style the button in red
+          className="delete-post-button"
+          onClick={handleDeleteClick}
+          startIcon={<DeleteIcon />}
+        >
+          Delete
+        </Button>
+        )}
+
+        <Typography variant="h4" gutterBottom className="form-title">
           {isEditing ? "Edit Animal Profile" : "New Animal Profile"}
         </Typography>
+
         {lastUpdatedDate && (
           <Typography variant="body2" color="textSecondary">
             Edited:{" "}
@@ -497,23 +577,22 @@ const CreatePostPage = () => {
         )}
 
         {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
+          <Typography color="error" className="error-text">
             {error}
           </Typography>
         )}
-        <Box component="form" onSubmit={handleSubmit} sx={{paddingTop: "50px"}}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <MainImageUploadArea
-                type="mainImage"
-                image={imageFiles.mainImage}
-                handleImageChange={handleImageChange}
-              />
-            </Grid> 
 
-            <Grid item xs={12} md={6}>
-              <TextField // Input Box - Post Title
-                id="post-title" 
+        <Box component="form" onSubmit={handleSubmit} className="form-container">
+          <TopImageUploadArea
+            images={images}
+            handleImageChange={handleImageChange}
+            handleImageDelete={handleImageDelete}
+          />
+
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} className="left-column">
+              <TextField
+                id="post-title"
                 name="post-title"
                 label="Post Title"
                 variant="outlined"
@@ -521,9 +600,9 @@ const CreatePostPage = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <TextField // Input Box - Scientific Name
+              <TextField
                 id="scientific-name"
                 name="scientific-name"
                 label="Scientific Name"
@@ -532,9 +611,9 @@ const CreatePostPage = () => {
                 onChange={(e) => setScientificName(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <TextField // Input Box - Common Name
+              <TextField
                 id="common-name"
                 name="common-name"
                 label="Common Name(s)"
@@ -543,11 +622,11 @@ const CreatePostPage = () => {
                 onChange={(e) => setCommonName(e.target.value)}
                 required
                 fullWidth
-                sx={{ marginBottom: 2 }}
+                className="text-field"
               />
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+              <FormControl fullWidth className="form-control">
                 <InputLabel id="animal-type-label">Animal Family</InputLabel>
-                <Select 
+                <Select
                   id="animal-type"
                   name="animal-type"
                   labelId="animal-type-label"
@@ -563,20 +642,14 @@ const CreatePostPage = () => {
                   <MenuItem value="Bird">Bird</MenuItem>
                 </Select>
               </FormControl>
-            </Grid> 
+            </Grid>
 
             <Grid item xs={12} md={6}>
-              <Grid 
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              > 
-                <Grid item xs={10}>
+              {/* Tracker Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
-                    <InputLabel id="tracker-type-label">
-                      Tracker Type
-                    </InputLabel>
+                    <InputLabel id="tracker-type-label">Tracker Type</InputLabel>
                     <Select
                       id="tracker-type"
                       name="tracker-type"
@@ -596,38 +669,33 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {trackerType === "custom" && (
+                    <TextField
+                      id="custom-tracker-type"
+                      name="custom-tracker-type"
+                      label="Custom Tracker Type"
+                      variant="outlined"
+                      value={customTrackerType}
+                      onChange={(e) => setCustomTrackerType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="trackerType"
-                  image={imageFiles.trackerType}
+                  image={images.trackerType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {trackerType === "custom" && (
-                <TextField
-                  id="custom-tracker-type"
-                  name="custom-tracker-type"
-                  label="Custom Tracker Type"
-                  variant="outlined"
-                  value={customTrackerType}
-                  onChange={(e) => setCustomTrackerType(e.target.value)}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              )}
 
-              <Grid
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              >
-                <Grid item xs={10}>
+              {/* Enclosure Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
-                    <InputLabel id="enclosure-type-label">
-                      Enclosure Type
-                    </InputLabel>
+                    <InputLabel id="enclosure-type-label">Enclosure Type</InputLabel>
                     <Select
                       id="enclosure-type"
                       name="enclosure-type"
@@ -644,38 +712,33 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {enclosureType === "custom" && (
+                    <TextField
+                      id="custom-enclosure-type"
+                      name="custom-enclosure-type"
+                      label="Custom Enclosure Type"
+                      variant="outlined"
+                      value={customEnclosureType}
+                      onChange={(e) => setCustomEnclosureType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="enclosureType"
-                  image={imageFiles.enclosureType}
+                  image={images.enclosureType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {enclosureType === "custom" && (
-                <TextField
-                  id="custom-enclosure-type"
-                  name="custom-enclosure-type"
-                  label="Custom Enclosure Type"
-                  variant="outlined"
-                  value={customEnclosureType}
-                  onChange={(e) => setCustomEnclosureType(e.target.value)}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              )}
 
-              <Grid
-                container
-                alignItems="flex-start"
-                spacing={2}
-                sx={{ mb: 2 }}
-              >
-                <Grid item xs={10}>
+              {/* Attachment Type Section */}
+              <Grid container spacing={1} className="input-group" alignItems="center">
+                <Grid item xs={9}>
                   <FormControl fullWidth>
-                    <InputLabel id="attachment-type-label">
-                      Attachment Type
-                    </InputLabel>
+                    <InputLabel id="attachment-type-label">Attachment Type</InputLabel>
                     <Select
                       id="attachment-type"
                       name="attachment-type"
@@ -693,72 +756,79 @@ const CreatePostPage = () => {
                       <MenuItem value="custom">Custom</MenuItem>
                     </Select>
                   </FormControl>
+                  {attachmentType === "custom" && (
+                    <TextField
+                      id="custom-attachment-type"
+                      name="custom-attachment-type"
+                      label="Custom Attachment Type"
+                      variant="outlined"
+                      value={customAttachmentType}
+                      onChange={(e) => setCustomAttachmentType(e.target.value)}
+                      required
+                      fullWidth
+                      className="text-field custom-text-field"
+                    />
+                  )}
                 </Grid>
-                <ImageUploadArea
+                <ImageUploadButton
                   type="attachmentType"
-                  image={imageFiles.attachmentType}
+                  image={images.attachmentType}
                   handleImageChange={handleImageChange}
+                  label="Image"
                 />
               </Grid>
-              {attachmentType === "custom" && (
-                <TextField
-                  id="custom-attachment-type"
-                  name="custom-attachment-type"
-                  label="Custom Attachment Type"
-                  variant="outlined"
-                  value={customAttachmentType}
-                  onChange={(e) => setCustomAttachmentType(e.target.value)}
-                  required
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-              )}
             </Grid>
 
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Data Types:
               </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              <Box className="data-types-container">
                 {dataTypeOptions.map((option) => (
                   <Chip
                     key={option}
                     label={option}
                     onClick={() => handleDataTypeToggle(option)}
                     color={dataTypes.includes(option) ? "primary" : "default"}
-                    sx={{ marginBottom: 1 }}
+                    className="data-type-chip"
                   />
                 ))}
               </Box>
             </Grid>
 
-            <Grid item xs={12} sx={{ padding: 3, marginBottom: 3 }}>
+            <Grid item xs={12} className="recommendations-section">
               <Typography variant="h6" gutterBottom>
                 Recommendations:
               </Typography>
-              <ReactQuill
-                value={recommendations}
-                onChange={handleEditorChange}
-                theme="snow"
-                modules={quillModules}
-                formats={quillFormats}
-                style={{ height: "300px" }}
-              />
+              <div
+                className="resizable-editor"
+                style={{ height: editorHeight }}
+                ref={editorContainerRef}
+              >
+                {isResizing && <div className="editor-overlay" />}
+                <ReactQuill
+                  ref={quillRef}
+                  value={recommendations}
+                  onChange={handleEditorChange}
+                  theme="snow"
+                  modules={quillModules}
+                  formats={quillFormats}
+                  style={{ height: editorHeight - 42 }}
+                />
+                <div
+                  className="resize-handle"
+                  onMouseDown={handleResizeStart}
+                  title="Drag to resize"
+                />
+              </div>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} className="submit-button-container" ref={submitButtonRef}>
               <Button
                 variant="contained"
                 color="primary"
                 type="submit"
-                sx={{
-                  borderRadius: "20px",
-                  padding: "10px 20px",
-                  backgroundColor: "#212e38",
-                  "&:hover": {
-                    backgroundColor: "#303f9f",
-                  },
-                }}
+                className="submit-button"
               >
                 {isEditing ? "Update" : "Submit"}
               </Button>
@@ -766,6 +836,29 @@ const CreatePostPage = () => {
           </Grid>
         </Box>
       </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openConfirmDialog}
+        onClose={handleCancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this post? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary" type="button">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary" type="button" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

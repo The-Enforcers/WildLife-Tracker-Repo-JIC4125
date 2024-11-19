@@ -1,8 +1,356 @@
+/* Page Layout */
+.page-container {
+    overflow-y: scroll;
+    height: 100%;
+    padding-bottom: 5rem;
+}
+
+.paper-form {
+    position: relative;
+    padding: 0 2rem;
+    margin-bottom: 3rem;
+    width: 50%;
+    padding-top: 50px;
+    margin: 0 auto;
+}
+
+.delete-post-button {
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 10 !important;
+  }
+
 @media(max-width: 1500px) {
-
     .paper-form {
-
         width: 95% !important;
     }
-
 }
+
+.form-container {
+    padding-top: 50px;
+}
+
+.form-title {
+    width: 100%;
+    text-align: center;
+}
+
+/* Form Fields */
+.left-column > .MuiFormControl-root,
+.left-column > .MuiTextField-root {
+    margin-bottom: 1rem;
+}
+
+.text-field, .form-control {
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    display: flex;
+    align-items: flex-start !important; /* Align items to the top row */
+    margin-bottom: 1rem;
+}
+
+.input-group > .MuiGrid-item {
+    padding: 0;
+}
+
+.input-group .MuiFormControl-root {
+    margin-right: 8px;
+}
+
+/* Custom Text Field Styling */
+.custom-text-field {
+    margin-top: 0.25rem !important;
+    margin-bottom: 1rem;
+}
+
+/* 'X' Button on Image Upload Boxes */
+.delete-image-button {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    z-index: 20 !important;
+    padding: 4px !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
+}
+
+.delete-image-button:hover {
+    background-color: rgba(255, 255, 255, 1) !important;
+    transform: scale(1.1);
+}
+
+.delete-icon {
+    font-size: 18px !important;
+    color: #ff0000 !important;
+}
+
+
+/* Top Image Upload Area */
+.top-image-upload-area {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.image-upload-box.optional {
+    border-style: dashed;
+    border-width: 2px;
+}
+
+/* Ensure the delete button stays on top */
+.image-upload-box .MuiIconButton-root {
+    z-index: 30;
+}
+
+.image-upload-box {
+    border: 2px dashed #ccc; /* Grey outline */
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.3s, background-color 0.3s;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Makes the box square */
+    background-color: #f0f0f0; /* Light grey background */
+}
+
+.image-upload-box.not-uploaded {
+    background-color: #f0f0f0;
+}
+
+.image-upload-box.uploaded {
+    border-color: #ccc; /* Grey border after upload */
+}
+
+.image-upload-box.required {
+    border-color: #ccc;
+}
+
+.upload-box-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
+.uploaded-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.upload-icon {
+    font-size: 50px;
+    color: #ccc;
+    margin-bottom: 0.5rem;
+}
+
+.upload-label {
+    font-weight: bold;
+    color: #000000;
+    font-size: 20px !important; /* Larger text */
+}
+
+.required-indicator {
+    color: red;
+}
+
+.overlay-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.overlay-icon {
+    color: #aaa; /* Light grey */
+    font-size: 32px;
+}
+
+/* Image Upload Button */
+.image-upload-button-container {
+    margin-left: -8px; /* Adjust margin to reduce space between button and text entry */
+}
+
+.image-upload-button {
+    border: 1px solid #1976d2; /* Default blue border */
+    border-radius: 4px;
+    height: 56px; /* Match text field height */
+    color: #1976d2; /* Blue text */
+    text-transform: none;
+    width: 100%;
+    transition: border-color 0.3s, color 0.3s;
+}
+
+.image-upload-button.uploaded {
+    border-color: #ccc; /* Change to grey border when an image is uploaded */
+    color: #333; /* Optional: change text color to a darker grey */
+}
+
+/* Data Types Section */
+.data-types-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.data-type-chip {
+    margin-bottom: 8px;
+}
+
+/* Recommendations Editor */
+.recommendations-section {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.resizable-editor {
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 0rem;
+    overflow: visible;
+  }  
+  
+  .resizable-editor .ql-container {
+    height: 100%; 
+  }
+  
+  .resizable-editor .ql-editor {
+    height: 100%; 
+    overflow: auto; 
+  }
+  
+  .resize-handle {
+    position: absolute;
+    bottom: -20px;  
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;   
+    height: 6px;    
+    background-color: #ddd;
+    cursor: ns-resize;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+    z-index: 20;
+}
+
+.resize-handle::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    width: 12px;  
+    height: 12px; 
+    border: solid #ddd;
+    border-width: 0 3px 3px 0; 
+    transform: translate(-50%, 0) rotate(45deg);
+    transition: border-color 0.2s ease;
+}
+
+.resize-handle:hover {
+    background-color: #bbb;
+}
+
+.resize-handle:hover::after {
+    border-color: #bbb;
+}
+
+  .editor-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    z-index: 10;
+    cursor: ns-resize;
+    background: transparent;
+  }
+
+/* Error Overlay */
+.error-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.error-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 80%;
+    text-align: center;
+}
+
+.error-message {
+    margin-bottom: 20px;
+    color: red;
+}
+
+/* Login Popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    pointer-events: all;
+}
+
+.login-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Submit Button */
+.submit-button {
+    border-radius: 20px;
+    padding: 10px 20px;
+    background-color: #212e38;
+}
+
+.submit-button:hover {
+    background-color: #303f9f;
+}
+
+.submit-button-container {
+    margin-bottom: 20px;
+}
+
+/* Error Text */
+.error-text {
+    margin-bottom: 1rem;
+}
+

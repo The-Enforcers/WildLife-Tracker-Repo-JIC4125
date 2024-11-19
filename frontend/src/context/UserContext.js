@@ -1,3 +1,4 @@
+// UserContext.js
 import React, { createContext, useState, useEffect } from "react";
 import { useSnackbar } from "../components/SnackBar/SnackBar";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +50,7 @@ export const UserProvider = ({ children }) => {
         if (contentType && contentType.includes("application/json")) {
           const userData = await response.json();
 
-          if (response.ok && userData && userData.googleId && userData.email) {
+          if (response.ok && userData && userData._id && userData.email) { // Changed googleId to _id
             setUser(userData);
             localStorage.setItem("user", JSON.stringify(userData));
             updateToken(storedToken);

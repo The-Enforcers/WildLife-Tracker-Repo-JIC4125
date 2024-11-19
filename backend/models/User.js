@@ -1,3 +1,4 @@
+// models/User.js
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -24,13 +25,16 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "Wildlife Enthusiast",
   },
-  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+  bookmarkedPosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-const User = mongoose.model("User", UserSchema);
-
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);

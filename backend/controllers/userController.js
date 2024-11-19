@@ -1,13 +1,18 @@
+// controllers/userController.js
 const User = require("../models/User");
 
 // Update user bio and occupation
 exports.updateUserProfile = async (req, res) => {
-  const { userId } = req.params;
   const { bio, occupation } = req.body;
 
   try {
+    // Ensure the user can only update their own profile
+    if (req.params.userId !== req.userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
-      userId,
+      req.userId,
       { bio, occupation },
       { new: true, runValidators: true }
     );
@@ -23,9 +28,14 @@ exports.updateUserProfile = async (req, res) => {
 // Add a bookmark
 exports.bookmarkPost = async (req, res) => {
   try {
-    const { userId, id: postId } = req.params; // Retrieve userId and postId from params
+    const { postId } = req.params;
 
-    const user = await User.findById(userId);
+    // Ensure the user can only modify their own bookmarks
+    if (req.params.userId !== req.userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -38,18 +48,23 @@ exports.bookmarkPost = async (req, res) => {
     res.status(200).json({ message: "Post bookmarked successfully" });
   } catch (err) {
     console.error("Error in bookmarkPost:", err);
-    res
-      .status(500)
-      .json({ message: "An error occurred while bookmarking the post" });
+    res.status(500).json({
+      message: "An error occurred while bookmarking the post",
+    });
   }
 };
 
 // Remove a bookmark
 exports.unbookmarkPost = async (req, res) => {
   try {
-    const { userId, id: postId } = req.params;
+    const { postId } = req.params;
 
-    const user = await User.findById(userId);
+    // Ensure the user can only modify their own bookmarks
+    if (req.params.userId !== req.userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -62,18 +77,21 @@ exports.unbookmarkPost = async (req, res) => {
     res.status(200).json({ message: "Post unbookmarked successfully" });
   } catch (err) {
     console.error("Error in unbookmarkPost:", err);
-    res
-      .status(500)
-      .json({ message: "An error occurred while unbookmarking the post" });
+    res.status(500).json({
+      message: "An error occurred while unbookmarking the post",
+    });
   }
 };
 
 // Get all bookmarked posts
 exports.getBookmarkedPosts = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // Ensure the user can only access their own bookmarks
+    if (req.params.userId !== req.userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
 
-    const user = await User.findById(userId).populate("bookmarkedPosts");
+    const user = await User.findById(req.userId).populate("bookmarkedPosts");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -81,8 +99,8 @@ exports.getBookmarkedPosts = async (req, res) => {
     res.status(200).json(user.bookmarkedPosts);
   } catch (err) {
     console.error("Error in getBookmarkedPosts:", err);
-    res
-      .status(500)
-      .json({ message: "An error occurred while retrieving bookmarked posts" });
+    res.status(500).json({
+      message: "An error occurred while retrieving bookmarked posts",
+    });
   }
 };

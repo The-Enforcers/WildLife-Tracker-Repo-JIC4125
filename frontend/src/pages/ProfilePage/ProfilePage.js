@@ -1,3 +1,4 @@
+// ProfilePage.js
 import React, { useState, useEffect, useContext } from "react";
 import {
   Avatar,
@@ -127,13 +128,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (user && user.googleId) {
+      if (user && user._id) { // Changed googleId to _id
         setLoading(true);
         try {
           // Fetch posts and likes in parallel
           const [postsResponse, likesResponse] = await Promise.all([
-            getPostsByAuthor(user.googleId),
-            fetch(`https://${window.location.hostname}:5001/api/posts/author/${user.googleId}/likes`)
+            getPostsByAuthor(user._id), // Changed googleId to _id
+            fetch(`https://${window.location.hostname}:5001/api/posts/author/${user._id}/likes`) // Changed googleId to _id
           ]);
           
           const posts = await postsResponse;
