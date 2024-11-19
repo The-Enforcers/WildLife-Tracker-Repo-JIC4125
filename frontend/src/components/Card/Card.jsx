@@ -11,7 +11,6 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, creat
         borderRadius: 9,
         overflow: 'hidden',
         boxShadow: 0,
-        border: "1px solid lightgray",
         cursor: 'pointer',
         backgroundColor: '#efefef',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
