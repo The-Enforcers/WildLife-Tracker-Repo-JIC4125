@@ -649,7 +649,7 @@ return (
                     size="large"
                     showFirstButton
                     showLastButton
-                    sx={{backgroundColor: "#f0f4f9", padding: "10px", borderRadius: "25px", boxShadow: "0px 0px 10px 2px lightgray"}}
+                    sx={{backgroundColor: "#f0f4f9", padding: "10px", borderRadius: "25px", boxShadow: "0px 0px 10px 0px lightgray"}}
                   />
                 </Box>
               )}
