@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postController");
 const imageController = require("../controllers/imageController");
+const userController = require("../controllers/userController");
 const multer = require("multer");
 const verifyToken = require("../middleware/authMiddleware");
 
@@ -17,8 +18,9 @@ router.get("/search", postController.searchPosts);
 router.get("/", postController.getAllPosts);
 router.get("/:id", postController.getPostById);
 router.get("/image/:filename", imageController.getImage);
-router.get("/author/:authorId", postController.getPostsByAuthorId);
+router.get("/author/posts/:authorId", postController.getPostsByAuthorId);
 router.get("/author/:userId/likes", postController.getUserPostsLikes);
+router.get("/author/:userId", userController.getUserInfo);
 
 // Routes requiring authentication
 router.post("/", verifyToken, postController.createPost);

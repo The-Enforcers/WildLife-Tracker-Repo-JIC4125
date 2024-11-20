@@ -43,6 +43,11 @@ const PostDetailsPage = () => {
     setExpandedBox((prev) => (prev === boxType ? null : boxType));
   };
 
+  const handleAuthorClick = () => {
+    // Navigate to the author's profile page
+    navigate(`/user/${post.authorId}`);
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -253,47 +258,47 @@ const PostDetailsPage = () => {
                   <p className="common-name">{post.animalType}</p>
                 </div>}
               </div>
-              <div className="post-author">
-                  <img
-                    className="profile-picture"
-                    src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
-                    alt="Author"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
-                    }}
-                  />
-                  <p className="author-name"> {post.author}</p>
-                </div>
-                
+              <div className="post-author" onClick={handleAuthorClick} style={{ cursor: 'pointer' }}>
+                <img
+                  className="profile-picture"
+                  src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                  alt="Author"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
+                  }}
+                />
+                <p className="author-name">{post.author}</p>
+              </div>
+              
+              <Typography variant="body2" color="textSecondary">
+                Created:{" "}
+                {new Date(post.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}{" "}
+                at{" "}
+                {new Date(post.date).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Typography>
+              {post.lastUpdated ? (
                 <Typography variant="body2" color="textSecondary">
-                  Created:{" "}
-                  {new Date(post.date).toLocaleDateString("en-US", {
+                  Last updated:{" "}
+                  {new Date(post.lastUpdated).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}{" "}
                   at{" "}
-                  {new Date(post.date).toLocaleTimeString("en-US", {
+                  {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </Typography>
-                {post.lastUpdated ? (
-                  <Typography variant="body2" color="textSecondary">
-                    Last updated:{" "}
-                    {new Date(post.lastUpdated).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}{" "}
-                    at{" "}
-                    {new Date(post.lastUpdated).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </Typography>
-                ) : <Typography></Typography>}
+              ) : <Typography></Typography>}
             </div>
             
             <div className="post-picture">

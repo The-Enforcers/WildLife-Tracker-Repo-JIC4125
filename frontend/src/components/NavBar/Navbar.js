@@ -57,7 +57,7 @@ const Navbar = ({ breadcrumbs }) => {
 
   const handleProfileClick = () => {
     handleClose();
-    navigate("/profile");
+    navigate("/user/" + user._id);
   };
 
   const handleBookmarkClick = async (event) => {

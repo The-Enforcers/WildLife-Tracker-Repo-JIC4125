@@ -104,3 +104,34 @@ exports.getBookmarkedPosts = async (req, res) => {
     });
   }
 };
+
+exports.getUserInfo = async (req, res) => {
+
+  try {
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user_requested = new User({
+      _id: user._id, 
+      googleId: null,
+      displayName: user.displayName,
+      email: null,
+      picture: user.picture,
+      bio: user.bio,
+      occupation: user.occupation,
+      bookmarkedPosts: null,
+      createdAt: user.createdAt
+    });
+
+    res.status(200).json(user_requested);
+  } catch (err) {
+    console.error("Error in getBookmarkedPosts:", err);
+    res.status(500).json({
+      message: "An error occurred while retrieving bookmarked posts",
+    });
+  }
+
+}

@@ -1,36 +1,48 @@
-// ProfilePage.js
 import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Avatar,
   Box,
   Card,
-  Chip,
   Container,
   Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Paper,
   Tab,
   Tabs,
   Typography,
   TextField,
   Button,
-  styled
+  styled,
+  CircularProgress,
+  Pagination
 } from "@mui/material";
 import {
   DateRange,
-  Pets,
   CameraAlt,
-  Favorite,
+  Bookmark,
 } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
-import { Link } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   getPostsByAuthor,
+  getUser,
   updateUserProfile,
 } from "../../services/postService";
+
+import ImageCard from "../../components/Card/Card";
+
+// Keep existing styled components and theme...
+const gridTheme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 900,
+      md: 1300,
+      lg: 1600,
+      xl: 1920,
+    },
+  },
+});
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(0),
@@ -80,47 +92,67 @@ function TabPanel(props) {
 }
 
 export default function ProfilePage() {
+  const { id } = useParams(); // Get id from URL
+  const { user: currentUser } = useContext(UserContext);
+  const [profileUser, setProfileUser] = useState(null);
   const [value, setValue] = useState(0);
-  const { user } = useContext(UserContext);
   const [authorPosts, setAuthorPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalLikes, setTotalLikes] = useState(0);
 
   // State for bio and occupation editing
   const [isEditingBio, setIsEditingBio] = useState(false);
-  const [bioText, setBioText] = useState(user?.bio || "Wildlife Enthusiast");
+  const [bioText, setBioText] = useState("");
   const [isEditingOccupation, setIsEditingOccupation] = useState(false);
-  const [occupationText, setOccupationText] = useState(
-    user?.occupation || "Wildlife Enthusiast"
-  );
+  const [occupationText, setOccupationText] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalPosts: 0,
+    postsPerPage: 2
+  });
+
+  // Check if current user is viewing their own profile
+  const isOwnProfile = currentUser?._id === id;
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   const handleSaveBio = async () => {
+    if (!isOwnProfile) return;
+    
     try {
       const updatedUser = await updateUserProfile(
-        user._id,
+        id,
         bioText,
-        user.occupation
+        profileUser.occupation
       );
       setBioText(updatedUser.bio);
       setIsEditingBio(false);
+      setProfileUser(prev => ({ ...prev, bio: updatedUser.bio }));
     } catch (error) {
       console.error("Error updating bio:", error);
     }
   };
 
   const handleSaveOccupation = async () => {
+    if (!isOwnProfile) return;
+
     try {
       const updatedUser = await updateUserProfile(
-        user._id,
-        user.bio,
+        id,
+        profileUser.bio,
         occupationText
       );
       setOccupationText(updatedUser.occupation);
       setIsEditingOccupation(false);
+      setProfileUser(prev => ({ ...prev, occupation: updatedUser.occupation }));
     } catch (error) {
       console.error("Error updating occupation:", error);
     }
@@ -128,104 +160,125 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (user && user._id) { // Changed googleId to _id
-        setLoading(true);
-        try {
-          // Fetch posts and likes in parallel
-          const [postsResponse, likesResponse] = await Promise.all([
-            getPostsByAuthor(user._id), // Changed googleId to _id
-            fetch(`https://${window.location.hostname}:5001/api/posts/author/${user._id}/likes`) // Changed googleId to _id
-          ]);
-          
-          const posts = await postsResponse;
-          const likesData = await likesResponse.json();
-          
-          setAuthorPosts(posts);
-          setTotalLikes(likesData.totalLikes);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          if (error.response?.status === 404) {
-            setAuthorPosts([]);
-          }
-        } finally {
-          setLoading(false);
+
+      console.log("GETTING USER");
+      setLoading(true);
+      try {
+        // Fetch user profile data
+        const userData = await getUser(id);
+        setProfileUser(userData);
+        setBioText(userData.bio || "Wildlife Enthusiast");
+        setOccupationText(userData.occupation || "Wildlife Enthusiast");
+
+        // Fetch posts
+        const postsResponse = await getPostsByAuthor(id, currentPage, 12);
+        setPagination(postsResponse.pagination);
+        setAuthorPosts(postsResponse.posts);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        if (error.response?.status === 404) {
+          setAuthorPosts([]);
         }
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, [user]);
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!profileUser) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography variant="h5">User not found</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ flexGrow: 1, overflowY: "scroll", height: "100%" }}>
-      <Container maxWidth="lg">
-        <StyledPaper elevation={3}>
-          <Grid container spacing={3}>
-            <Grid
-              item
-              xs={12}
-              md={4}
-              mt={8}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <ProfileAvatar
-                alt={user?.displayName || "User Avatar"}
-                src={user?.picture || "/placeholder.svg?height=200&width=200"}
-              />
-              <Typography variant="h5">
-                {user?.displayName || "Anonymous"}
-              </Typography>
+    <Box sx={{overflowY: "scroll", height: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",    
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 3
+          }}
+        >
+          <ProfileAvatar sx={{margin: "25px"}}
+            alt={profileUser?.displayName || "User Avatar"}
+            src={profileUser?.picture || "/placeholder.svg?height=200&width=200"}
+          />
+          <div style={{display: "flex", flexDirection: "column", alignItems: "flex-start"}}>
+            <Typography variant="h5">
+              {profileUser?.displayName || "Anonymous"}
+            </Typography>
 
-              <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                gutterBottom
-              >
-                {isEditingOccupation ? (
-                  <Box>
-                    <TextField
-                      fullWidth
-                      value={occupationText}
-                      onChange={(e) => setOccupationText(e.target.value)}
-                      variant="outlined"
-                      placeholder="Enter your occupation"
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        mt: 1,
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleSaveOccupation}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        variant="text"
-                        color="secondary"
-                        onClick={() => setIsEditingOccupation(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
-                  </Box>
-                ) : (
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              gutterBottom
+            >
+              {isEditingOccupation && isOwnProfile ? (
+                <Box>
+                  <TextField
+                    fullWidth
+                    value={occupationText}
+                    onChange={(e) => setOccupationText(e.target.value)}
+                    variant="outlined"
+                    placeholder="Enter your occupation"
+                  />
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
+                      justifyContent: "flex-end",
+                      mt: 1,
                     }}
                   >
-                    <Typography variant="body1">{occupationText}</Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSaveOccupation}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="text"
+                      color="secondary"
+                      onClick={() => setIsEditingOccupation(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="body1">{profileUser.occupation}</Typography>
+                  {isOwnProfile && (
                     <Button
                       variant="text"
                       color="primary"
@@ -233,202 +286,217 @@ export default function ProfilePage() {
                     >
                       Edit
                     </Button>
-                  </Box>
-                )}
-              </Typography>
+                  )}
+                </Box>
+              )}
+            </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                <DateRange fontSize="small" sx={{ mr: 1 }} />
-                <Typography variant="body2">
-                  Member since:{" "}
-                  {user?.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
-                    : "N/A"}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  aria-label="profile tabs"
+            <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+              <DateRange fontSize="small" sx={{ mr: 1 }} />
+              <Typography variant="body2">
+                Member since:{" "}
+                {profileUser?.createdAt
+                  ? new Date(profileUser.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "N/A"}
+              </Typography>
+            </Box>
+          </div>
+        </Box>
+      </Box>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: "25px"
+        }}
+      >
+        {isEditingBio && isOwnProfile ? (
+          <Box>
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              value={bioText}
+              onChange={(e) => setBioText(e.target.value)}
+              variant="outlined"
+              placeholder="Describe your passion for wildlife..."
+            />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                mt: 1,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSaveBio}
+              >
+                Save
+              </Button>
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => setIsEditingBio(false)}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        ) : (
+          <div
+            style={{
+              display: "inline-block",
+              backgroundColor: "#f0f4f9",
+              padding: "15px",
+              borderRadius: "15px",
+              maxWidth: "50%"
+            }}
+          >
+            <Typography>
+              {profileUser?.bio || "..."}
+              {isOwnProfile && (
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => setIsEditingBio(true)}
                 >
-                  <Tab label="About" icon={<Pets />} iconPosition="start" />
-                  <Tab
-                    label="Recent Animal Profiles"
-                    icon={<CameraAlt />}
-                    iconPosition="start"
-                  />
-                </Tabs>
-              </Box>
-              <TabPanel value={value} index={0}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <StatsCard>
-                      <Typography variant="h4">
-                        {loading ? "..." : authorPosts.length}
-                      </Typography>
-                      <Typography variant="subtitle1" color="textSecondary">
-                        Total Animal Profiles
-                      </Typography>
-                    </StatsCard>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <StatsCard>
-                      <Typography variant="h4">
-                        {loading ? "..." : totalLikes}
-                      </Typography>
-                      <Typography variant="subtitle1" color="textSecondary">
-                        Total Likes Received
-                      </Typography>
-                    </StatsCard>
-                  </Grid>
-                </Grid>
-                <Box mt={2}>
-                  <StatsCard>
-                    {isEditingBio ? (
-                      <Box>
-                        <TextField
-                          fullWidth
-                          multiline
-                          rows={4}
-                          value={bioText}
-                          onChange={(e) => setBioText(e.target.value)}
-                          variant="outlined"
-                          placeholder="Describe your passion for wildlife..."
-                        />
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            mt: 1,
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleSaveBio}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            variant="text"
-                            color="secondary"
-                            onClick={() => setIsEditingBio(false)}
-                          >
-                            Cancel
-                          </Button>
-                        </Box>
-                      </Box>
-                    ) : (
-                      <Box
+                  Edit
+                </Button>
+              )}
+            </Typography>
+          </div>
+        )}
+      </div>
+
+      <Grid item xs={12} md={8} sx={{maxWidth: "2000px", margin: "0px auto"}}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", margin: "0px auto"}}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="profile tabs"
+            centered
+          >
+            <Tab
+              label={`Animal Profiles (${authorPosts.length})`}
+              icon={<CameraAlt />}
+              iconPosition="start"
+            />
+            {isOwnProfile && (<Tab
+              label="Bookmarked Profiles (0)"
+              icon={<Bookmark />}
+              iconPosition="start"
+            />)}
+          </Tabs>
+        </Box>
+
+        {/* Rest of the component remains the same... */}
+        {/* TabPanel and Grid components for displaying posts */}
+        <TabPanel value={value} index={0}>
+          {loading ? (
+            <Typography>Loading...</Typography>
+          ) : (
+            <Box sx={{ overflow: "auto" }}>
+              <ThemeProvider theme={gridTheme}>
+                <div className="animal-cards-box">
+                  <div className="animal-cards-box-inner">
+                      <Grid 
+                        container 
+                        spacing={2} 
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
+                          marginBottom: "200px",
+                          maxWidth: "100%",
                         }}
                       >
-                        <Typography variant="body1">{bioText}</Typography>
-                        <Button
-                          variant="text"
-                          color="primary"
-                          onClick={() => setIsEditingBio(true)}
-                        >
-                          Edit
-                        </Button>
-                      </Box>
-                    )}
-                  </StatsCard>
-                </Box>
-                <br />
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {[
-                    "River Otter",
-                    "Grizzly Bear",
-                    "Bald Eagle",
-                    "Frog",
-                    "American Bison",
-                    "Elk",
-                    "Moose",
-                    "Mountain Lion",
-                    "Beaver",
-                  ].map((species) => (
-                    <Chip
-                      key={species}
-                      label={species}
-                      icon={<Favorite />}
-                      variant="outlined"
-                    />
-                  ))}
-                </Box>
-              </TabPanel>
-              <TabPanel value={value} index={1}>
-                {loading ? (
-                  <Typography>Loading...</Typography>
-                ) : (
-                  <Box sx={{ maxHeight: 300, overflow: "auto" }}>
-                    <List>
-                      {authorPosts
-                        .sort((a, b) => new Date(b.date) - new Date(a.date))
-                        .map((post) => (
-                          <ListItem
-                            key={post._id}
-                            component={Link}
-                            to={`/posts/${post._id}`}
-                            style={{ textDecoration: "none", color: "inherit" }}
-                          >
-                            <ListItemAvatar>
-                              <Avatar
-                                src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                                alt={post.title}
+                        {authorPosts.map((animal, index) => {
+                          const itemCount = authorPosts.length;
+                          let gridProps;
+
+                          if (itemCount === 1) {
+                            gridProps = { xs: 12, sm: 12, md: 12, lg: 12 };
+                          } else if (itemCount === 2) {
+                            gridProps = { xs: 12, sm: 6, md: 6, lg: 6 };
+                          } else if (itemCount === 3) {
+                            gridProps = { xs: 12, sm: 6, md: 4, lg: 4 };
+                          } else {
+                            gridProps = { xs: 12, sm: 6, md: 4, lg: 3 };
+                          }
+
+                          return (
+                            <Grid item key={index} {...gridProps} sx={{ display: 'flex'}}>
+                              <ImageCard
+                                title={animal.title}
+                                description={animal.trackerType}
+                                post_id={animal._id}
+                                image={animal.postImage}
+                                author={animal.author}
+                                authorImage={animal.authorImage}
+                                authorId={animal.authorId}
+                                created={animal.date}
+                                lastUpdated={animal.lastUpdated}
+                                scientificName={animal.scientificName}
+                                commonName={animal.commonName}
+                                animalType={animal.animalType}
+                                trackerType={animal.trackerType}
+                                enclosureType={animal.enclosureType}
+                                likeCount={animal.likeCount || 0}
                               />
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={post.title}
-                              secondary={
-                                <>
-                                  <Typography
-                                    component="span"
-                                    variant="body2"
-                                    color="textSecondary"
-                                  >
-                                    {post.commonName}
-                                  </Typography>
-                                  <Typography
-                                    component="span"
-                                    variant="caption"
-                                    color="textSecondary"
-                                  >
-                                    {` • ${new Date(post.date).toLocaleDateString()}`}
-                                  </Typography>
-                                  <Typography
-                                    component="span"
-                                    variant="caption"
-                                    color="textSecondary"
-                                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                                  >
-                                    {` • `}
-                                    <Favorite sx={{ fontSize: 14 }} />
-                                    {` ${post.likeCount || 0}`}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                          </ListItem>
-                        ))}
-                    </List>
-                  </Box>
-                )}
-              </TabPanel>
-            </Grid>
-          </Grid>
-        </StyledPaper>
-      </Container>
+                            </Grid>
+                          );
+                        })}
+                      </Grid>
+                  </div>
+                </div>
+              </ThemeProvider>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 50,
+                  left: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "10px 0",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "10px",
+                    backgroundColor: "#f0f4f9",
+                    borderRadius: "25px",
+                    border: "1px solid lightgray",
+                  }}
+                >
+                  <Pagination 
+                    count={pagination.totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                  />
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </TabPanel>
+        {isOwnProfile && (<TabPanel value={value} index={1}>
+          {/* Bookmarked profiles content */}
+        </TabPanel>)}
+      </Grid>
     </Box>
   );
 }

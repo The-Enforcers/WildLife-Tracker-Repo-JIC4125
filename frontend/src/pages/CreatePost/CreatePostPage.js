@@ -493,11 +493,12 @@ const CreatePostPage = () => {
         await updatePost(id, postData);
         showSnackbar("Updated!", "success");
         setLastUpdatedDate(new Date().toLocaleString());
+        navigate("/posts/" + id);
       } else {
-        await createPost(postData);
+        const saved_post = await createPost(postData);
         showSnackbar("Posted!", "success");
+        navigate("/posts/" + saved_post._id);
       }
-      navigate("/posts");
     } catch (error) {
       showSnackbar("Error creating/updating post", "error");
       console.error("Error creating/updating post:", error);

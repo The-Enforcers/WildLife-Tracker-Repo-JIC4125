@@ -26,11 +26,11 @@ const AppRoutes = () => {
                     <Route path="/" element={<Main />} />
                     <Route path="/posts" element={<SearchResultsPage />} />
                     <Route path="/posts/:id" element={<PostDetailsPage />} />
+                    <Route path="/user/:id" element={<ProfilePage />} />
 
                     {/* Protected Routes */}
                     <Route path="/edit-post/:id" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/create" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
-                    <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                     <Route path="/login" element={<LoginPage />} />
                   </Routes>
                 </Layout>

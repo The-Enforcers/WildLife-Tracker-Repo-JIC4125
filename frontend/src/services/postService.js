@@ -9,6 +9,16 @@ const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
+export const getUser = async (userId) => {
+  try {
+    const response = await axios.get(`${API_URL}/posts/author/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching user with id ${userId}:`, error);
+    throw error;
+  }
+};
+
 // Get all posts
 export const getPosts = async (page = 1, limit = 12) => {
   try {
@@ -32,14 +42,15 @@ export const getPostById = async (id) => {
 };
 
 // Get posts by author (using user._id)
-export const getPostsByAuthor = async (userId) => { // Changed parameter from googleId to userId
+export const getPostsByAuthor = async (userId, page = 1, limit = 12) => { // Changed parameter from googleId to userId
   if (!userId) {
     console.error("No User ID provided.");
     return;
   }
 
   try {
-    const response = await axios.get(`${API_URL}/posts/author/${userId}`);
+    const response = await axios.get(`${API_URL}/posts/author/posts/${userId}?page=${page}&limit=${limit}`);
+    
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -326,4 +337,3 @@ export const deletePost = async (id) => {
     throw error;
   }
 };
-

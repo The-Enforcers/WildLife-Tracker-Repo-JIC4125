@@ -36,11 +36,27 @@ exports.getAllPosts = async (req, res) => {
 
 exports.getPostsByAuthorId = async (req, res) => {
   try {
-    const posts = await Post.find({ authorId: req.params.authorId });
-    if (posts.length === 0) {
-      return res.status(404).json({ message: "No posts found for this author" });
-    }
-    res.json(posts);
+    const { page, limit, skip } = getPaginationParams(req.query);
+    //
+    const posts = await Post.find({ authorId: req.params.authorId })
+    .sort({ date: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+    const total = await Post.countDocuments({ authorId: req.params.authorId });
+
+    res.status(200).json({
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalPosts: total,
+        postsPerPage: limit,
+        hasNextPage: skip + limit < total,
+        hasPreviousPage: page > 1
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
