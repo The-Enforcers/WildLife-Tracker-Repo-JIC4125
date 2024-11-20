@@ -6,6 +6,7 @@ import CreatePostPage from "../pages/CreatePost/CreatePostPage.js";
 import SearchResultsPage from "../pages/SearchResultsPage/SearchResultsPage.js";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.js";
 import LoginPage from "../pages/Login/login.js";
+import AdminPage from "../pages/Admin/admin.js"
 import Layout from "../pages/Layout/Layout.js";
 import { UserProvider } from "../context/UserContext.js";
 import { SnackbarProvider } from "../components/SnackBar/SnackBar.js";
@@ -32,6 +33,7 @@ const AppRoutes = () => {
                     <Route path="/edit-post/:id" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/create" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/admin" element={<AdminPage />} />
                   </Routes>
                 </Layout>
               }
