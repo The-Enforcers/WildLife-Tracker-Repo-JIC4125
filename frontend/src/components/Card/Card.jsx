@@ -1,17 +1,17 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 
-const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scientificName, commonName, animalType, trackerType, enclosureType }) => {
+const ImageCard = ({ title, image, post_id, author, authorImage, authorId, created, lastUpdated, scientificName, commonName, animalType, trackerType, enclosureType, likeCount }) => {
   return (
     <Card
       sx={{
-        width: '100%', // Ensure card takes up all available space in its grid item
-        maxWidth: 340, // You can increase this if you want to give the card a larger maximum width
+        width: '100%',
+        maxWidth: 340,
         margin: "0px auto",
         borderRadius: 9,
         overflow: 'hidden',
-        boxShadow: 3,
         cursor: 'pointer',
+        backgroundColor: '#efefef',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         '&:hover': {
           transform: 'scale(1.05)',
@@ -20,80 +20,101 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
       }}
     >
       <a href={`/posts/${post_id}`} style={{ textDecoration: 'none' }}>
-        <img src={`https://${window.location.hostname}:5001/api/posts/image/` + image} alt={title}
-          style={{
-            width: '100%',
-            height: '110px',
-            objectFit: 'cover',
-            borderTopLeftRadius: '8px',
-            borderTopRightRadius: '8px',
-          }}
-        />
+        <Box sx={{ position: 'relative', width: '100%', height: '200px', overflow: 'hidden' }}>
+          <img
+            src={`https://${window.location.hostname}:5001/api/posts/image/` + image}
+            alt={title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              color: 'white',
+              borderRadius: '10px',
+              padding: '5px 10px',
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              borderTopRightRadius: "50px"
+            }}
+          >
+            <span role="img" aria-label="likes">❤️</span>
+            {likeCount}
+            <Box sx={{width: "0px"}}>
+              
+            </Box>
+          </Box>
+
+        </Box>
         <CardContent sx={{ padding: 2 }}>
           <Typography
             variant="h6"
             component="div"
-            sx={{ 
-              fontWeight: 'bold', 
-              color: '#333', 
-              whiteSpace: "normal", 
-              textOverflow: "ellipsis", 
-              overflow: "hidden", 
-              display: "-webkit-box", 
-              WebkitBoxOrient: "vertical", 
+            sx={{
+              fontWeight: 'bold',
+              color: '#333',
+              whiteSpace: "normal",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
               WebkitLineClamp: "2",
               lineHeight: "1.5em",
               maxHeight: "calc(1.5em * 2)",
-              minHeight: "calc(1.5em * 2)"
+              minHeight: "calc(1.5em * 2)",
+              marginBottom: "10px"
             }}
           >
             {title}
           </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{marginBottom: "10px"}}>
+            <strong>Last Updated: </strong>
+            {lastUpdated ? (new Date(created).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })) : (new Date(created).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }))}
+          </Typography>
           <Typography variant="body2" color="text.secondary" className="card-text"
-            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
+            sx={{ whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
             <strong>Scientific name:</strong> {scientificName}
-          </Typography><Typography variant="body2" color="text.secondary" className="card-text"
-            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
+          </Typography>
+          <Typography variant="body2" color="text.secondary" className="card-text"
+            sx={{ whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
             <strong>Common Names:</strong> {commonName}
           </Typography>
-          <Typography variant="body2" color="text.secondary" className="card-text"
-            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
-            <strong>Animal Family:</strong> {animalType}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" className="card-text"
-            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
-            <strong>Tracker Type:</strong> {trackerType}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" className="card-text"
-            sx={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>
-            <strong>Enclosure Type:</strong> {enclosureType}
-          </Typography>
 
-          <Box className="author-box-outer" 
+          <Box className="author-box-outer"
             sx={{
-              backgroundColor: "#f0f4f9", 
-              borderRadius: "50px", 
+              backgroundColor: "#d5d5d5",
+              borderRadius: "50px",
               marginTop: "15px",
-              // Will add this transition back in when we add profile pages
-              /*transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.05)',
-                boxShadow: 1,
-              },*/
             }}>
-            <Box className="author-box" sx={{display: "flex", flexDirection: "row", padding: "10px", margin: "auto"}}>
+            <Box className="author-box" sx={{ display: "flex", flexDirection: "row", padding: "10px", margin: "auto" }}>
               <img
-                className="authorImage" 
-                src={authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                className="authorImage"
+                src={authorImage || "https://via.placeholder.com/150"}
                 alt="Author"
-                style={{width: "50px", borderRadius: "50px"}}
+                style={{ width: "50px", borderRadius: "50px" }}
               />
               <Typography
                 variant="body1"
                 color="text.primary"
                 sx={{
                   display: "flex",
-                  alignItems: "center", // Centers content vertically
+                  alignItems: "center",
                   paddingLeft: "10px",
                   height: "50px",
                 }}
@@ -104,7 +125,6 @@ const ImageCard = ({ title, image, post_id, author, authorImage, authorId, scien
               </Typography>
             </Box>
           </Box>
-
         </CardContent>
       </a>
     </Card>

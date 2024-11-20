@@ -30,6 +30,7 @@
 .animal-cards-box {
 
     display: flex;
+    flex-direction: column;
     flex: 0 1 80%;
     margin-left: 16px;
     overflow-y: scroll;
