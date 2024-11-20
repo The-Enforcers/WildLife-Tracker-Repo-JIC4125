@@ -17,8 +17,9 @@ const Layout = ({ children }) => {
       "/posts": "Search",
       "/create": "Create Animal Profile",
       "/profile": "Profile",
-      "/user": "Profile",  // Default for user route
+      "/user": "Profile",
       "/login": "Login",
+      "/admin" :"Admin"
     };
   
     const pathSegments = location.pathname.split("/").filter((segment) => segment);

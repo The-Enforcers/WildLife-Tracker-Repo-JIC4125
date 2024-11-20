@@ -110,7 +110,7 @@ export default function ProfilePage() {
     currentPage: 1,
     totalPages: 1,
     totalPosts: 0,
-    postsPerPage: 2
+    postsPerPage: 12
   });
 
   // Check if current user is viewing their own profile
@@ -187,7 +187,7 @@ export default function ProfilePage() {
     if (id) {
       fetchData();
     }
-  }, [id]);
+  }, [id, currentPage]);
 
   if (loading) {
     return (
