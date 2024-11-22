@@ -6,7 +6,7 @@ const imageController = require("../controllers/imageController");
 const userController = require("../controllers/userController");
 const multer = require("multer");
 const verifyToken = require("../middleware/authMiddleware");
-
+const adminMiddleware = require("../middleware/authMiddleware");
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,

@@ -20,4 +20,39 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+const adminMiddleware = (req, res, next) => {
+
+  const authHeader = req.headers['authorization'];
+
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(403).json({ message: 'No token provided.' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Failed to authenticate token.' });
+    }
+    req.userId = decoded.id; // This will be user._id
+  });
+
+
+  const user = req.user; // Retrieved from JWT or session
+  if (user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+//prefered method below
+
+  // const dbUser = await User.findById(user.id);
+  // if (dbUser && dbUser.role === 'admin') {
+  //   return next();
+  // }
+
+
+  next();
+};
+
+
 module.exports = verifyToken;
+module.exports = adminMiddleware;
