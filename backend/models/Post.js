@@ -82,6 +82,16 @@ const PostSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  reports: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  reportCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = mongoose.model("Post", PostSchema);

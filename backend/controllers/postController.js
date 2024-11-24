@@ -441,3 +441,88 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ message: err.message || "Server error during deletion" });
   }
 };
+
+exports.reportPost = async (req, res) => {
+  try {
+      const { postId } = req.params;
+      const userId = req.userId;
+
+      const post = await Post.findById(postId);
+
+      if (!post) {
+          return res.status(404).json({ message: "Post not found" });
+      }
+
+      const alreadyReported = post.reports
+          .map((id) => id.toString())
+          .includes(userId.toString());
+
+      if (alreadyReported) {
+          return res.status(400).json({ message: "Post already reported by user" });
+      }
+
+      // Add report to post
+      post.reports.push(userId);
+      post.reportCount = post.reports.length;
+      await post.save();
+
+      res.json({ message: "Post reported successfully", reportCount: post.reportCount });
+  } catch (err) {
+      console.error("Error in reportPost:", err);
+      res.status(500).json({ message: err.message });
+  }
+};
+
+exports.unreportPost = async (req, res) => {
+  try {
+      const { postId } = req.params;
+      const userId = req.userId;
+
+      const post = await Post.findById(postId);
+
+      if (!post) {
+          return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Remove report from post
+      post.reports = post.reports.filter(
+          (id) => id.toString() !== userId.toString()
+      );
+      post.reportCount = post.reports.length;
+      await post.save();
+
+      res.json({
+          message: "Post unreported successfully",
+          reportCount: post.reportCount,
+      });
+  } catch (err) {
+      console.error("Error in unreportPost:", err);
+      res.status(500).json({ message: err.message });
+  }
+};
+
+exports.hasUserReportedPost = async (req, res) => {
+  try {
+      const { postId } = req.params;
+      const userId = req.userId;
+      const post = await Post.findById(postId);
+
+      if (!post) {
+          console.log('Post not found');
+          return res.status(404).json({ message: "Post not found" });
+      }
+
+      const hasReported = post.reports
+          .map((id) => id.toString())
+          .includes(userId.toString());
+
+      res.json({ hasReported });
+  } catch (err) {
+      console.error("Error in hasUserReportedPost:", err);
+      res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+

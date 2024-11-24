@@ -43,4 +43,10 @@ router.post("/:postId/like", verifyToken, postController.likePost);
 router.delete("/:postId/like", verifyToken, postController.unlikePost);
 router.get("/:postId/hasLiked", verifyToken, postController.hasUserLikedPost);
 
+// Report and unreport posts
+router.post("/:postId/report", verifyToken, postController.reportPost);
+router.delete("/:postId/report", verifyToken, postController.unreportPost);
+router.get("/:postId/hasReported", verifyToken, postController.hasUserReportedPost);
+
+
 module.exports = router;
