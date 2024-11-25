@@ -159,7 +159,8 @@ app.get("/api/user", verifyToken, async (req, res) => {
       bio: user.bio,
       occupation: user.occupation,
       bookmarkedPosts: user.bookmarkedPosts,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      role:user.role
     });
   } catch (error) {
     console.error("Error in /api/user route:", error);
