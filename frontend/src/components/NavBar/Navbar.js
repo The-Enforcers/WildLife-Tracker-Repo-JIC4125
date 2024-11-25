@@ -5,7 +5,7 @@ import { getBookmarkedPosts, unbookmarkPost } from "../../services/postService";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import GoogleIcon from "@mui/icons-material/Google";
-import BookmarkRemoveIcon from "@mui/icons-material/BookmarkRemoveOutlined";
+import ClearIcon from "@mui/icons-material/Clear";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import {
   Avatar,
@@ -238,7 +238,7 @@ const Navbar = ({ breadcrumbs }) => {
                     handleRemoveBookmark(post._id);
                   }}
                 >
-                  <BookmarkRemoveIcon fontSize="small" sx={{ color: "black" }} />
+                  <ClearIcon fontSize="small" sx={{ color: "black" }} />
                 </IconButton>
               </MenuItem>
             ))

@@ -10,11 +10,11 @@ import "./Main.css";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
 // Local icon image assets
-import icon1 from "../../assets/Mammals.png";
-import icon4 from "../../assets/Birds.png";
-import icon3 from "../../assets/Amphibians.png";
-import icon2 from "../../assets/Reptiles.png";
-import icon5 from "../../assets/Fish.png";
+import { ReactComponent as MammalsIcon } from "../../assets/Mammals.svg";
+import { ReactComponent as BirdsIcon } from "../../assets/Birds.svg";
+import { ReactComponent as AmphibiansIcon } from "../../assets/Amphibians.svg";
+import { ReactComponent as ReptilesIcon } from "../../assets/Reptiles.svg";
+import { ReactComponent as FishIcon } from "../../assets/Fish.svg";
 
 const animalNames = [
   "Deer",
@@ -154,17 +154,6 @@ const Main = () => {
     navigate(`/posts/${postId}`);
   };
 
-  const handleIconSearchFilter = (animalType) => {
-
-    // Construct query string
-    const queryParams = new URLSearchParams();
-
-    if (animalType.length > 0) queryParams.append(animalType, true);
-    if (input) queryParams.append("search", input);
-
-    // Navigate to the search results page with query string
-    navigate(`/posts?${queryParams.toString()}`);
-  };
 
   return (
     <div className="greet-container">
@@ -237,35 +226,37 @@ const Main = () => {
               className="icon-wrapper"
               onClick={() => handleAnimalClick("mammal")}
             >
-              <img src={icon1} alt="Mammals Icon" className="icon-image" />
+              <MammalsIcon className="icon-image" />
               <p className="icon-label">Mammals</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("reptile")}
             >
-              <img src={icon2} alt="Reptiles Icon" className="icon-image" />
+              <ReptilesIcon
+                className="icon-image"
+              />
               <p className="icon-label">Reptiles</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("amphibian")}
             >
-              <img src={icon3} alt="Amphibians Icon" className="icon-image" />
+              <AmphibiansIcon className="icon-image" />
               <p className="icon-label">Amphibians</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("fish")}
             >
-              <img src={icon5} alt="Fish Icon" className="icon-image" />
+              <FishIcon className="icon-image" />
               <p className="icon-label">Fish</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("bird")}
             >
-              <img src={icon4} alt="Birds Icon" className="icon-image" />
+              <BirdsIcon className="icon-image" />
               <p className="icon-label">Birds</p>
             </div>
           </div>

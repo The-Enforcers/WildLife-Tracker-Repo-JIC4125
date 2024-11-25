@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Avatar,
   Box,
-  Card,
-  Container,
   Grid,
-  Paper,
   Tab,
   Tabs,
   Typography,
@@ -44,31 +41,11 @@ const gridTheme = createTheme({
   },
 });
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(0),
-  marginTop: theme.spacing(0),
-  marginBottom: theme.spacing(0),
-  [theme.breakpoints.up("md")]: {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-    padding: theme.spacing(3),
-  },
-}));
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
   width: theme.spacing(18),
   height: theme.spacing(18),
   marginBottom: theme.spacing(2),
-}));
-
-const StatsCard = styled(Card)(({ theme }) => ({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  background: "#12121208",
-  padding: theme.spacing(2),
 }));
 
 function TabPanel(props) {

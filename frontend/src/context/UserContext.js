@@ -62,10 +62,6 @@ export const UserProvider = ({ children }) => {
             }
           } else if (response.status === 401 || response.status === 403) {
             setUser(null);
-            // Only show the message if we're actually logged out
-            if (user) {
-              showSnackbar("Session expired. Please log in again.", "info");
-            }
           }
         } else {
           console.log("Response was not JSON:", await response.text());
