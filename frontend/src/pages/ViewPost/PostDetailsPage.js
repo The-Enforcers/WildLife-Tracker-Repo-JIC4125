@@ -17,6 +17,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ReportIcon from '@mui/icons-material/Report';
 import {
   Button,
   Typography,
@@ -38,6 +39,8 @@ const PostDetailsPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [isReported, setIsReported] = useState(false);
+  const [reportCount, setReportCount] = useState(0);
 
   const handleBoxClick = (boxType) => {
     setExpandedBox((prev) => (prev === boxType ? null : boxType));
@@ -85,6 +88,26 @@ const PostDetailsPage = () => {
     };
     checkLikeStatus();
   }, [user, post, id, token]);
+
+  useEffect(() => {
+    const checkReportStatus = async () => {
+        if (user && post) {
+            try {
+                const response = await fetch(`https://${window.location.hostname}:5001/api/posts/${id}/hasReported`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                setIsReported(data.hasReported);
+            } catch (error) {
+                console.error("Failed to check report status", error);
+            }
+        }
+    };
+    checkReportStatus();
+}, [user, post, id, token]);
 
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
@@ -134,6 +157,36 @@ const PostDetailsPage = () => {
     }
   };
 
+  const handleReport = async () => {
+    if (!user) {
+        showSnackbar("Please log in to report posts", "error");
+        return;
+    }
+    try {
+        const response = await fetch(`https://${window.location.hostname}:5001/api/posts/${id}/report`, {
+            method: isReported ? 'DELETE' : 'POST', // Toggle between report and unreport
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            setIsReported(!isReported);
+            setReportCount(data.reportCount);
+            showSnackbar(isReported ? "Post unreported" : "Post reported", isReported ? "error" : "success");
+        } else {
+            showSnackbar("Failed to update report status: invalid response", "error");
+        }
+    } catch (error) {
+        console.error("Failed to toggle report status", error);
+        showSnackbar("Failed to update report status: an unexpected error occurred", "error");
+    }
+};
+
+
+
   if (error) return <div style={styles.error}>{error}</div>;
   if (!post) return <div style={styles.loading}>Loading...</div>;
 
@@ -181,6 +234,25 @@ const PostDetailsPage = () => {
 
             {user && (
               <>
+                <IconButton
+                  onClick={handleReport}
+                  aria-label="report animal profile"
+                  sx={{
+                    backgroundColor: "#212e38",
+                    color: isReported ? "red" : "white", 
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    borderRadius: "50%",
+                    padding: "10px",
+                    marginLeft: "8px",
+              }}
+                >
+                  <Tooltip title="Report" placement="top">
+                      <ReportIcon />
+                  </Tooltip>
+              </IconButton>
+
                 <IconButton
                   onClick={handleBookmark}
                   aria-label="bookmark animal profile"
