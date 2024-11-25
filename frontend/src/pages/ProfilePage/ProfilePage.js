@@ -11,7 +11,6 @@ import {
   Button,
   styled,
   CircularProgress,
-  Pagination,
 } from "@mui/material";
 import { DateRange, CameraAlt, Bookmark } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
@@ -30,9 +29,9 @@ const gridTheme = createTheme({
   breakpoints: {
     values: {
       xs: 0,
-      sm: 900,
-      md: 1300,
-      lg: 1600,
+      sm: 650,
+      md: 1000,
+      lg: 1400,
       xl: 1920,
     },
   },
@@ -79,20 +78,11 @@ export default function ProfilePage() {
   const [occupationText, setOccupationText] = useState("");
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalPosts: 0,
-    postsPerPage: 12,
-  });
+
 
   // Check if current user is viewing their own profile
   const isOwnProfile = currentUser?._id === id;
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -137,7 +127,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("GETTING USER");
       setLoading(true);
       try {
         // Fetch user profile data
@@ -147,8 +136,7 @@ export default function ProfilePage() {
         setOccupationText(userData.occupation || "Wildlife Enthusiast");
 
         // Fetch posts
-        const postsResponse = await getPostsByAuthor(id, currentPage, 12);
-        setPagination(postsResponse.pagination);
+        const postsResponse = await getPostsByAuthor(id);
         setAuthorPosts(postsResponse.posts);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -163,7 +151,7 @@ export default function ProfilePage() {
     if (id) {
       fetchData();
     }
-  }, [id, currentPage]);
+  }, [id]);
 
   // Fetch bookmarked posts when the profile is viewed
   useEffect(() => {
@@ -431,8 +419,7 @@ export default function ProfilePage() {
                       container
                       spacing={2}
                       sx={{
-                        marginBottom: "200px",
-                        maxWidth: "100%",
+                        marginBottom: "100px",
                       }}
                     >
                       {authorPosts.map((animal, index) => {
@@ -480,41 +467,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </ThemeProvider>
-
-              <Box
-                sx={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 50,
-                  left: 0,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "10px 0",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: "10px",
-                    backgroundColor: "#f0f4f9",
-                    borderRadius: "25px",
-                    border: "1px solid lightgray",
-                  }}
-                >
-                  <Pagination
-                    count={pagination.totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    color="primary"
-                    size="large"
-                    showFirstButton
-                    showLastButton
-                  />
-                </Box>
-              </Box>
             </Box>
           )}
         </TabPanel>

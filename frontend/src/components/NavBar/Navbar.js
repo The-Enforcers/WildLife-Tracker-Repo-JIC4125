@@ -129,7 +129,7 @@ const Navbar = ({ breadcrumbs }) => {
           sx={{ display: "flex", alignItems: "center", textAlign: "center" }}
         >
           {user && (
-            <Tooltip title="Bookmarked Posts">
+            <Tooltip title="Bookmarks">
               <IconButton
                 onClick={handleBookmarkClick}
                 size="small"

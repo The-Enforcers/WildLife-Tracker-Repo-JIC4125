@@ -219,7 +219,7 @@ const ImageCard = ({
           color="textSecondary"
           sx={{ marginTop: "20px" }}
         >
-          <strong>Last Updated: </strong>
+          Last Updated:{" "}  
           {lastUpdated
             ? new Date(created).toLocaleDateString("en-US", {
                 year: "numeric",

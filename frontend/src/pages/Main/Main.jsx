@@ -15,6 +15,7 @@ import { ReactComponent as BirdsIcon } from "../../assets/Birds.svg";
 import { ReactComponent as AmphibiansIcon } from "../../assets/Amphibians.svg";
 import { ReactComponent as ReptilesIcon } from "../../assets/Reptiles.svg";
 import { ReactComponent as FishIcon } from "../../assets/Fish.svg";
+import debounce from "lodash/debounce"; // Import lodash debounce
 
 const animalNames = [
   "Deer",
@@ -34,6 +35,7 @@ const Main = () => {
   const [animationStarted, setAnimationStarted] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [loadingImages, setLoadingImages] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
@@ -43,23 +45,6 @@ const Main = () => {
     fish: false,
     bird: false,
   });
-
-  const searchFunc = useCallback(() => {
-    const animalFamily = [];
-    if (filters.mammal) animalFamily.push("Mammal");
-    if (filters.reptile) animalFamily.push("Reptile");
-    if (filters.amphibian) animalFamily.push("Amphibians");
-    if (filters.fish) animalFamily.push("Fish");
-    if (filters.bird) animalFamily.push("Bird");
-
-    const queryParams = new URLSearchParams();
-    if (animalFamily.length > 0)
-      queryParams.append("animalType", animalFamily.join(","));
-    if (input) queryParams.append("search", input);
-
-    // Navigate to the search results page with query string
-    navigate(`/posts?${queryParams.toString()}`);
-  }, [filters, input, navigate]);
 
   const handleAnimalClick = (animal) => {
     setFilters({
@@ -84,15 +69,6 @@ const Main = () => {
 
   // Define the base URL for image API (adjust this based on your server configuration)
   const imageApiBaseUrl = "https://localhost:5001/api/posts/image/";
-
-  const handleSearch = async (searchTerm) => {
-    try {
-      const results = await searchPosts(searchTerm); // Use searchPosts from postService
-      setSearchResults(results);
-    } catch (error) {
-      console.error("Error searching posts:", error);
-    }
-  };
 
   useEffect(() => {
     if (!animationStarted) return;
@@ -119,15 +95,34 @@ const Main = () => {
       setCurrentAnimalIndex((c) => c + 1);
     }
   }, [displayedText, isDeleting, animationStarted, currentAnimalIndex]);
+ 
+  // eslint-disable-next-line 
+  const handleSearch = useCallback(
+    debounce(async (query) => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      setIsLoading(true);
+  
+      try {
+        const response = await searchPosts({ search: query, filters });
+        setSearchResults(response.posts || []);
+      } catch (error) {
+        console.error("Error while searching posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    [filters]
+  );
 
   useEffect(() => {
-    if (input.length > 1) {
-      handleSearch(input);
-    } else {
-      setSearchResults([]);
-    }
-  }, [input]);
-
+    handleSearch(input);
+    return () => handleSearch.cancel(); // Clean up debounce
+  }, [input, handleSearch]);
+  
+  
   const handleImageLoad = (id) => {
     setLoadingImages((prevLoadingImages) => ({
       ...prevLoadingImages,
@@ -154,7 +149,6 @@ const Main = () => {
     navigate(`/posts/${postId}`);
   };
 
-
   return (
     <div className="greet-container">
       <div className="greet">
@@ -164,17 +158,21 @@ const Main = () => {
         </p>
       </div>
 
+      {/* Integrating SearchBox */}
       <SearchBox
         input={input}
         setInput={setInput}
-        onSearch={searchFunc}
-        setFilters={setFilters}
+        onSearch={() => {}}
       />
 
       {/* Display search results */}
       {input && (
         <div className="search-results-container">
-          {searchResults.length > 0 ? (
+          {isLoading ? (
+            <div className="spinner-container">
+              <CircularProgress size={40} />
+            </div>
+          ) : searchResults.length > 0 ? (
             searchResults.map((post) => (
               <div
                 key={post._id}
