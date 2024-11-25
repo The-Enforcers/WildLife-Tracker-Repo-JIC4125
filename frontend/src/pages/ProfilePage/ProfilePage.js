@@ -11,19 +11,16 @@ import {
   Button,
   styled,
   CircularProgress,
-  Pagination
+  Pagination,
 } from "@mui/material";
-import {
-  DateRange,
-  CameraAlt,
-  Bookmark,
-} from "@mui/icons-material";
+import { DateRange, CameraAlt, Bookmark } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   getPostsByAuthor,
   getUser,
   updateUserProfile,
+  getBookmarkedPosts,
 } from "../../services/postService";
 
 import ImageCard from "../../components/Card/Card";
@@ -40,7 +37,6 @@ const gridTheme = createTheme({
     },
   },
 });
-
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
   width: theme.spacing(18),
@@ -81,13 +77,14 @@ export default function ProfilePage() {
   const [bioText, setBioText] = useState("");
   const [isEditingOccupation, setIsEditingOccupation] = useState(false);
   const [occupationText, setOccupationText] = useState("");
+  const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalPosts: 0,
-    postsPerPage: 12
+    postsPerPage: 12,
   });
 
   // Check if current user is viewing their own profile
@@ -103,7 +100,7 @@ export default function ProfilePage() {
 
   const handleSaveBio = async () => {
     if (!isOwnProfile) return;
-    
+
     try {
       const updatedUser = await updateUserProfile(
         id,
@@ -112,7 +109,7 @@ export default function ProfilePage() {
       );
       setBioText(updatedUser.bio);
       setIsEditingBio(false);
-      setProfileUser(prev => ({ ...prev, bio: updatedUser.bio }));
+      setProfileUser((prev) => ({ ...prev, bio: updatedUser.bio }));
     } catch (error) {
       console.error("Error updating bio:", error);
     }
@@ -129,7 +126,10 @@ export default function ProfilePage() {
       );
       setOccupationText(updatedUser.occupation);
       setIsEditingOccupation(false);
-      setProfileUser(prev => ({ ...prev, occupation: updatedUser.occupation }));
+      setProfileUser((prev) => ({
+        ...prev,
+        occupation: updatedUser.occupation,
+      }));
     } catch (error) {
       console.error("Error updating occupation:", error);
     }
@@ -137,7 +137,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-
       console.log("GETTING USER");
       setLoading(true);
       try {
@@ -166,9 +165,32 @@ export default function ProfilePage() {
     }
   }, [id, currentPage]);
 
+  // Fetch bookmarked posts when the profile is viewed
+  useEffect(() => {
+    const fetchBookmarkedPosts = async () => {
+      if (isOwnProfile) {
+        try {
+          const bookmarks = await getBookmarkedPosts(currentUser._id);
+          setBookmarkedPosts(bookmarks);
+        } catch (error) {
+          console.error("Error fetching bookmarked posts:", error);
+        }
+      }
+    };
+
+    fetchBookmarkedPosts();
+  }, [isOwnProfile, currentUser._id]);
+
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -176,19 +198,26 @@ export default function ProfilePage() {
 
   if (!profileUser) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <Typography variant="h5">User not found</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{overflowY: "scroll", height: "100%" }}>
+    <Box sx={{ overflowY: "scroll", height: "100%" }}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",    
+          alignItems: "center",
           width: "100%",
         }}
       >
@@ -197,23 +226,28 @@ export default function ProfilePage() {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            gap: 3
+            gap: 3,
           }}
         >
-          <ProfileAvatar sx={{margin: "25px"}}
+          <ProfileAvatar
+            sx={{ margin: "25px" }}
             alt={profileUser?.displayName || "User Avatar"}
-            src={profileUser?.picture || "/placeholder.svg?height=200&width=200"}
+            src={
+              profileUser?.picture || "/placeholder.svg?height=200&width=200"
+            }
           />
-          <div style={{display: "flex", flexDirection: "column", alignItems: "flex-start"}}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
             <Typography variant="h5">
               {profileUser?.displayName || "Anonymous"}
             </Typography>
 
-            <Typography
-              variant="subtitle1"
-              color="textSecondary"
-              gutterBottom
-            >
+            <Typography variant="subtitle1" color="textSecondary" gutterBottom>
               {isEditingOccupation && isOwnProfile ? (
                 <Box>
                   <TextField
@@ -254,7 +288,9 @@ export default function ProfilePage() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Typography variant="body1">{profileUser.occupation}</Typography>
+                  <Typography variant="body1">
+                    {profileUser.occupation}
+                  </Typography>
                   {isOwnProfile && (
                     <Button
                       variant="text"
@@ -273,11 +309,14 @@ export default function ProfilePage() {
               <Typography variant="body2">
                 Member since:{" "}
                 {profileUser?.createdAt
-                  ? new Date(profileUser.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                  ? new Date(profileUser.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )
                   : "N/A"}
               </Typography>
             </Box>
@@ -290,7 +329,7 @@ export default function ProfilePage() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: "25px"
+          marginBottom: "25px",
         }}
       >
         {isEditingBio && isOwnProfile ? (
@@ -334,7 +373,7 @@ export default function ProfilePage() {
               backgroundColor: "#f0f4f9",
               padding: "15px",
               borderRadius: "15px",
-              maxWidth: "50%"
+              maxWidth: "50%",
             }}
           >
             <Typography>
@@ -353,8 +392,10 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <Grid item xs={12} md={8} sx={{maxWidth: "2000px", margin: "0px auto"}}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider", margin: "0px auto"}}>
+      <Grid item xs={12} md={8} sx={{ maxWidth: "2000px", margin: "0px auto" }}>
+        <Box
+          sx={{ borderBottom: 1, borderColor: "divider", margin: "0px auto" }}
+        >
           <Tabs
             value={value}
             onChange={handleChange}
@@ -362,15 +403,17 @@ export default function ProfilePage() {
             centered
           >
             <Tab
-              label={`Animal Profiles (${authorPosts.length})`}
+              label={`Recents (${authorPosts.length})`}
               icon={<CameraAlt />}
               iconPosition="start"
             />
-            {isOwnProfile && (<Tab
-              label="Bookmarked Profiles (0)"
-              icon={<Bookmark />}
-              iconPosition="start"
-            />)}
+            {isOwnProfile && (
+              <Tab
+                label={`Bookmarks (${bookmarkedPosts.length})`}
+                icon={<Bookmark />}
+                iconPosition="start"
+              />
+            )}
           </Tabs>
         </Box>
 
@@ -384,51 +427,56 @@ export default function ProfilePage() {
               <ThemeProvider theme={gridTheme}>
                 <div className="animal-cards-box">
                   <div className="animal-cards-box-inner">
-                      <Grid 
-                        container 
-                        spacing={2} 
-                        sx={{
-                          marginBottom: "200px",
-                          maxWidth: "100%",
-                        }}
-                      >
-                        {authorPosts.map((animal, index) => {
-                          const itemCount = authorPosts.length;
-                          let gridProps;
+                    <Grid
+                      container
+                      spacing={2}
+                      sx={{
+                        marginBottom: "200px",
+                        maxWidth: "100%",
+                      }}
+                    >
+                      {authorPosts.map((animal, index) => {
+                        const itemCount = authorPosts.length;
+                        let gridProps;
 
-                          if (itemCount === 1) {
-                            gridProps = { xs: 12, sm: 12, md: 12, lg: 12 };
-                          } else if (itemCount === 2) {
-                            gridProps = { xs: 12, sm: 6, md: 6, lg: 6 };
-                          } else if (itemCount === 3) {
-                            gridProps = { xs: 12, sm: 6, md: 4, lg: 4 };
-                          } else {
-                            gridProps = { xs: 12, sm: 6, md: 4, lg: 3 };
-                          }
+                        if (itemCount === 1) {
+                          gridProps = { xs: 12, sm: 12, md: 12, lg: 12 };
+                        } else if (itemCount === 2) {
+                          gridProps = { xs: 12, sm: 6, md: 6, lg: 6 };
+                        } else if (itemCount === 3) {
+                          gridProps = { xs: 12, sm: 6, md: 4, lg: 4 };
+                        } else {
+                          gridProps = { xs: 12, sm: 6, md: 4, lg: 3 };
+                        }
 
-                          return (
-                            <Grid item key={index} {...gridProps} sx={{ display: 'flex'}}>
-                              <ImageCard
-                                title={animal.title}
-                                description={animal.trackerType}
-                                post_id={animal._id}
-                                image={animal.postImage}
-                                author={animal.author}
-                                authorImage={animal.authorImage}
-                                authorId={animal.authorId}
-                                created={animal.date}
-                                lastUpdated={animal.lastUpdated}
-                                scientificName={animal.scientificName}
-                                commonName={animal.commonName}
-                                animalType={animal.animalType}
-                                trackerType={animal.trackerType}
-                                enclosureType={animal.enclosureType}
-                                likeCount={animal.likeCount || 0}
-                              />
-                            </Grid>
-                          );
-                        })}
-                      </Grid>
+                        return (
+                          <Grid
+                            item
+                            key={index}
+                            {...gridProps}
+                            sx={{ display: "flex" }}
+                          >
+                            <ImageCard
+                              title={animal.title}
+                              description={animal.trackerType}
+                              post_id={animal._id}
+                              image={animal.postImage}
+                              author={animal.author}
+                              authorImage={animal.authorImage}
+                              authorId={animal.authorId}
+                              created={animal.date}
+                              lastUpdated={animal.lastUpdated}
+                              scientificName={animal.scientificName}
+                              commonName={animal.commonName}
+                              animalType={animal.animalType}
+                              trackerType={animal.trackerType}
+                              enclosureType={animal.enclosureType}
+                              likeCount={animal.likeCount || 0}
+                            />
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
                   </div>
                 </div>
               </ThemeProvider>
@@ -456,7 +504,7 @@ export default function ProfilePage() {
                     border: "1px solid lightgray",
                   }}
                 >
-                  <Pagination 
+                  <Pagination
                     count={pagination.totalPages}
                     page={currentPage}
                     onChange={handlePageChange}
@@ -470,9 +518,75 @@ export default function ProfilePage() {
             </Box>
           )}
         </TabPanel>
-        {isOwnProfile && (<TabPanel value={value} index={1}>
-          {/* Bookmarked profiles content */}
-        </TabPanel>)}
+        {isOwnProfile && (
+          <TabPanel value={value} index={1}>
+            {loading ? (
+              <Typography>Loading...</Typography>
+            ) : bookmarkedPosts.length > 0 ? (
+              <Box sx={{ overflow: "auto" }}>
+                <ThemeProvider theme={gridTheme}>
+                  <div className="animal-cards-box">
+                    <div className="animal-cards-box-inner">
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{
+                          marginBottom: "200px",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        {bookmarkedPosts.map((animal, index) => {
+                          const itemCount = bookmarkedPosts.length;
+                          let gridProps;
+
+                          if (itemCount === 1) {
+                            gridProps = { xs: 12, sm: 12, md: 12, lg: 12 };
+                          } else if (itemCount === 2) {
+                            gridProps = { xs: 12, sm: 6, md: 6, lg: 6 };
+                          } else if (itemCount === 3) {
+                            gridProps = { xs: 12, sm: 6, md: 4, lg: 4 };
+                          } else {
+                            gridProps = { xs: 12, sm: 6, md: 4, lg: 3 };
+                          }
+
+                          return (
+                            <Grid
+                              item
+                              key={index}
+                              {...gridProps}
+                              sx={{ display: "flex" }}
+                            >
+                              <ImageCard
+                                title={animal.title}
+                                description={animal.trackerType}
+                                post_id={animal._id}
+                                image={animal.postImage}
+                                author={animal.author}
+                                authorImage={animal.authorImage}
+                                authorId={animal.authorId}
+                                created={animal.date}
+                                lastUpdated={animal.lastUpdated}
+                                scientificName={animal.scientificName}
+                                commonName={animal.commonName}
+                                animalType={animal.animalType}
+                                trackerType={animal.trackerType}
+                                enclosureType={animal.enclosureType}
+                                likeCount={animal.likeCount || 0}
+                                showDetails={false}
+                              />
+                            </Grid>
+                          );
+                        })}
+                      </Grid>
+                    </div>
+                  </div>
+                </ThemeProvider>
+              </Box>
+            ) : (
+              <Typography align="center">No bookmarked posts found.</Typography>
+            )}
+          </TabPanel>
+        )}
       </Grid>
     </Box>
   );

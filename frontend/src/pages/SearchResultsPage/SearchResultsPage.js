@@ -621,6 +621,7 @@ return (
                               trackerType={animal.trackerType}
                               enclosureType={animal.enclosureType}
                               likeCount={animal.likeCount || 0}
+                              showDetails={true}
                             />
                           </Grid>
                         );
