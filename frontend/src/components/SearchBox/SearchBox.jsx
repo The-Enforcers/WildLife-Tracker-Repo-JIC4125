@@ -3,10 +3,11 @@ import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import FilterListIcon from "@mui/icons-material/FilterList"; // Import Filter icon
 import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
 
-const SearchBox = ({ input, setInput, onSearch }) => {
+const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
@@ -14,6 +15,9 @@ const SearchBox = ({ input, setInput, onSearch }) => {
     navigate("/create");
   };
 
+  const handleFilterClick = () => {
+    navigate("/posts");
+  };
 
   // Function to clear input
   const clearInput = () => {
@@ -22,20 +26,20 @@ const SearchBox = ({ input, setInput, onSearch }) => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         onSearch();
       }
     };
 
     const inputElement = inputRef.current;
     if (inputElement) {
-      inputElement.addEventListener('keydown', handleKeyDown);
+      inputElement.addEventListener("keydown", handleKeyDown);
     }
 
     // Cleanup the event listener on component unmount
     return () => {
       if (inputElement) {
-        inputElement.removeEventListener('keydown', handleKeyDown);
+        inputElement.removeEventListener("keydown", handleKeyDown);
       }
     };
   }, [onSearch]);
@@ -60,25 +64,34 @@ const SearchBox = ({ input, setInput, onSearch }) => {
             </span>
           )}
 
-          <span
-            className="search-icon"
-            onClick={() => onSearch()}
-          >
+          <span className="search-icon" onClick={() => onSearch()}>
             <SearchIcon
               data-tooltip-id="search"
-              data-tooltip-content="search results"
+              data-tooltip-content="Search results"
               fontSize="medium"
               cursor="pointer"
             />
-            <Tooltip
-              id="filter"
-              style={{
-                padding: "5px",
-                fontSize: "12px",
-                color: "#f0f4f9",
-              }}
-            />
           </span>
+
+          {/* Conditionally show Filter Icon */}
+          {showFilter && (
+            <span className="filter-icon" onClick={handleFilterClick}>
+              <FilterListIcon
+                data-tooltip-id="filter"
+                data-tooltip-content="Filter posts"
+                fontSize="medium"
+                cursor="pointer"
+              />
+              <Tooltip
+                id="filter"
+                style={{
+                  padding: "5px",
+                  fontSize: "12px",
+                  color: "#f0f4f9",
+                }}
+              />
+            </span>
+          )}
         </div>
 
         {/* Post button */}

@@ -163,6 +163,7 @@ const Main = () => {
         input={input}
         setInput={setInput}
         onSearch={() => {}}
+        showFilter={true}
       />
 
       {/* Display search results */}
