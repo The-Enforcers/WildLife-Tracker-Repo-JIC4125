@@ -459,6 +459,7 @@ export default function ProfilePage() {
                               trackerType={animal.trackerType}
                               enclosureType={animal.enclosureType}
                               likeCount={animal.likeCount || 0}
+                              showDetails={true}
                             />
                           </Grid>
                         );
@@ -524,7 +525,7 @@ export default function ProfilePage() {
                                 trackerType={animal.trackerType}
                                 enclosureType={animal.enclosureType}
                                 likeCount={animal.likeCount || 0}
-                                showDetails={false}
+                                showDetails={true}
                               />
                             </Grid>
                           );

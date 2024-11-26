@@ -150,18 +150,6 @@ const ImageCard = ({
                 overflow: "hidden",
               }}
             >
-              <strong>Animal Type:</strong> {animalType}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              className="card-text"
-              sx={{
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-              }}
-            >
               <strong>Tracker Type:</strong> {trackerType}
             </Typography>
           </>
