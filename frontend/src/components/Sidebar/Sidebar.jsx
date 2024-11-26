@@ -11,6 +11,11 @@ import AddIcon from "@mui/icons-material/Add";
 import HomeIcon from "@mui/icons-material/Home";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
+
+// MUI components
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 // wildlife movement institute logo
 import logo from "../../assets/logo.png";
@@ -24,6 +29,11 @@ const Sidebar = () => {
   const [tutorialActive, setTutorialActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const iconRefs = useRef([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 400);
+
+  // For mobile dropdown menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
 
   // Define tutorial steps
   const tutorialSteps = [
@@ -55,10 +65,12 @@ const Sidebar = () => {
     }
   }, []);
 
-  // Auto-collapse sidebar on small screens unless the tutorial is active
+  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1000 && !tutorialActive) {
+      setIsMobile(window.innerWidth < 400);
+
+      if (window.innerWidth < 768) {
         setExtended(false);
       } else if (location.pathname === "/" && !tutorialActive) {
         setExtended(true);
@@ -72,13 +84,23 @@ const Sidebar = () => {
     };
   }, [location, tutorialActive]);
 
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const toggleSidebar = () => {
     setExtended(!extended);
   };
 
   const handleNavigation = (path) => {
     navigate(path);
-    setExtended(false);
+    if (isMobile) {
+      handleMenuClose();
+    }
   };
 
   const closeHelpPopup = () => {
@@ -111,85 +133,115 @@ const Sidebar = () => {
 
   return (
     <>
-      <div
-        className={`sidebar ${extended ? "extended" : "collapsed"}`}
-        style={{ width: extended ? "260px" : "75px" }}
-      >
-        <div className="top">
-          <div className="toggle-container">
-            {extended ? (
-              <>
-                <div className="logo" onClick={() => handleNavigation("/")}>
-                  <img
-                    src={logo}
-                    alt="Wildlife Movement Institute Logo"
-                    className="logo-image"
+      {isMobile && (
+        <>
+          <MenuIcon onClick={handleMenuClick} className="menu-icon" />
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={openMenu}
+            onClose={handleMenuClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem onClick={() => handleNavigation("/")}>
+              <HomeIcon style={{ marginRight: "10px" }} />
+              Home
+            </MenuItem>
+            <MenuItem onClick={() => handleNavigation("/create")}>
+              <AddIcon style={{ marginRight: "10px" }} />
+              New Animal Profile
+            </MenuItem>
+            <MenuItem onClick={() => handleNavigation("/posts")}>
+              <SearchIcon style={{ marginRight: "10px" }} />
+              Search Animal Profiles
+            </MenuItem>
+          </Menu>
+        </>
+      )}
+
+      {!isMobile && (
+        <div
+          className={`sidebar ${extended ? "extended" : "collapsed"}`}
+          style={{ width: extended ? "260px" : "75px" }}
+        >
+          <div className="top">
+            <div className="toggle-container">
+              {extended ? (
+                <>
+                  <div className="logo" onClick={() => handleNavigation("/")}>
+                    <img
+                      src={logo}
+                      alt="Wildlife Movement Institute Logo"
+                      className="logo-image"
+                    />
+                  </div>
+
+                  <ChevronLeftIcon
+                    onClick={toggleSidebar}
+                    className="menu"
+                    data-tooltip-id="menu"
+                    data-tooltip-content="Collapse"
                   />
-                </div>
+                </>
+              ) : (
+                <>
+                  <ChevronRightIcon
+                    onClick={toggleSidebar}
+                    className="menu"
+                    data-tooltip-id="menu"
+                    data-tooltip-content="Expand"
+                  />
+                </>
+              )}
+              <Tooltip id="menu" place="bottom" />
+            </div>
 
-                <ChevronLeftIcon
-                  onClick={toggleSidebar}
-                  className="menu"
-                  data-tooltip-id="menu"
-                  data-tooltip-content="Collapse"
-                />
-              </>
-            ) : (
-              <>
-                <ChevronRightIcon
-                  onClick={toggleSidebar}
-                  className="menu"
-                  data-tooltip-id="menu"
-                  data-tooltip-content="Expand"
-                />
-              </>
-            )}
-            <Tooltip id="menu" place="bottom" />
+            <div
+              ref={(el) => (iconRefs.current[0] = el)}
+              onClick={() => handleNavigation("/")}
+              className={`new-post ${currentStep === 0 ? "highlight" : ""}`}
+            >
+              <HomeIcon />
+              <Tooltip id="home" place="bottom" />
+              {extended && <p>Home</p>}
+            </div>
+
+            <div
+              ref={(el) => (iconRefs.current[1] = el)}
+              onClick={() => handleNavigation("/create")}
+              className={`new-post ${currentStep === 1 ? "highlight" : ""}`}
+            >
+              <AddIcon />
+              <Tooltip id="new-post" place="bottom" />
+              {extended && <p>New Animal Profile</p>}
+            </div>
+
+            <div
+              ref={(el) => (iconRefs.current[2] = el)}
+              onClick={() => handleNavigation("/posts")}
+              className={`search-posts ${currentStep === 2 ? "highlight" : ""}`}
+            >
+              <SearchIcon />
+              <Tooltip id="search-posts" place="bottom" />
+              {extended && <p>Search Animal Profiles</p>}
+            </div>
           </div>
-
-          <div
-            ref={(el) => (iconRefs.current[0] = el)}
-            onClick={() => handleNavigation("/")}
-            className={`new-post ${currentStep === 0 ? "highlight" : ""}`}
-          >
-            <HomeIcon />
-            <Tooltip id="home" place="bottom" />
-            {extended && <p>Home</p>}
-          </div>
-
-          <div
-            ref={(el) => (iconRefs.current[1] = el)}
-            onClick={() => handleNavigation("/create")}
-            className={`new-post ${currentStep === 1 ? "highlight" : ""}`}
-          >
-            <AddIcon />
-            <Tooltip id="new-post" place="bottom" />
-            {extended && <p>New Animal Profile</p>}
-          </div>
-
-          <div
-            ref={(el) => (iconRefs.current[2] = el)}
-            onClick={() => handleNavigation("/posts")}
-            className={`search-posts ${currentStep === 2 ? "highlight" : ""}`}
-          >
-            <SearchIcon />
-            <Tooltip id="search-posts" place="bottom" />
-            {extended && <p>Search Animal Profiles</p>}
+          <div className="bottom">
+            <div
+              ref={(el) => (iconRefs.current[3] = el)}
+              className={`bottom-item recent-entry ${
+                currentStep === 3 ? "highlight" : ""
+              }`}
+              onClick={() => setTutorialActive(true)}
+            >
+              <HelpOutlineIcon />
+              {extended && <p>Help</p>}
+            </div>
           </div>
         </div>
-        <div className="bottom">
-          <div
-            ref={(el) => (iconRefs.current[3] = el)}
-            className={`bottom-item recent-entry ${
-              currentStep === 3 ? "highlight" : ""
-            }`}
-            onClick={() => setTutorialActive(true)}
-          >
-            <HelpOutlineIcon />
-            {extended && <p>Help</p>}
-          </div>
-        </div>
-      </div>
+      )}
 
       {isHelpPopupOpen && (
         <HelpPopup isOpen={isHelpPopupOpen} onClose={closeHelpPopup} />

@@ -40,6 +40,7 @@ const PostDetailsPage = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isReported, setIsReported] = useState(false);
+  // eslint-disable-next-line 
   const [reportCount, setReportCount] = useState(0);
 
   const handleBoxClick = (boxType) => {

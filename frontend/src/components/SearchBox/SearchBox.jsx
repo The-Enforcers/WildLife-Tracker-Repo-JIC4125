@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -10,6 +10,7 @@ import "./SearchBox.css";
 const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 400);
 
   const handlePostClick = () => {
     navigate("/create");
@@ -19,10 +20,21 @@ const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
     navigate("/posts");
   };
 
-  // Function to clear input
   const clearInput = () => {
     setInput("");
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 400);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -54,27 +66,31 @@ const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
             value={input}
             type="text"
             ref={inputRef}
-            placeholder="Search by title, author, scientific name, or common name"
+            placeholder={
+              isSmallScreen
+                ? "Search Posts"
+                : "Search by title, author, scientific name, or common name"
+            }
           />
 
-          {/* Clear Icon: Show only when there's input */}
           {input && (
             <span className="clear-icon" onClick={clearInput}>
               <ClearIcon fontSize="small" />
             </span>
           )}
 
-          <span className="search-icon" onClick={() => onSearch()}>
-            <SearchIcon
-              data-tooltip-id="search"
-              data-tooltip-content="Search results"
-              fontSize="medium"
-              cursor="pointer"
-            />
-          </span>
+          {!isSmallScreen && (
+            <span className="search-icon" onClick={() => onSearch()}>
+              <SearchIcon
+                data-tooltip-id="search"
+                data-tooltip-content="Search results"
+                fontSize="medium"
+                cursor="pointer"
+              />
+            </span>
+          )}
 
-          {/* Conditionally show Filter Icon */}
-          {showFilter && (
+          {showFilter && !isSmallScreen && (
             <span className="filter-icon" onClick={handleFilterClick}>
               <FilterListIcon
                 data-tooltip-id="filter"

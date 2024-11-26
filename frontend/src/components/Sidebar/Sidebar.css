@@ -133,7 +133,8 @@
   align-items: center;
   justify-content: space-between;
 }
-/* wildlife institute logo */
+
+/* Wildlife Institute logo */
 .logo img {
   width: 180px;
   height: 52px;
@@ -141,6 +142,7 @@
   cursor: pointer;
   transition: box-shadow 0.1s ease-in-out;
 }
+
 /* Tutorial Backdrop */
 .tutorial-backdrop {
   position: fixed;
@@ -194,6 +196,7 @@
   font-size: 1rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
 .tutorial-btn:hover {
   background-color: #0056b3;
   transform: scale(1.07);
@@ -207,4 +210,35 @@
 /* Ensure tooltips are above other content */
 .__react_component_tooltip {
   z-index: 9999 !important;
+}
+
+/* Mobile styles */
+.menu-icon {
+  display: none; /* Hide by default */
+}
+
+@media (max-width: 399px) {
+  .menu-icon {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    cursor: pointer;
+    font-size: 2rem;
+    color: #444746;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .toggle-container {
+    display: none; /* Hide the chevron icons */
+  }
+
+  /* Adjust the content area to not be pushed by the sidebar */
+  .content {
+    margin-left: 0 !important;
+  }
 }
