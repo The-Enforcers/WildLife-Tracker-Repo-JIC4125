@@ -70,7 +70,7 @@ const Sidebar = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 400);
 
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 810) {
         setExtended(false);
       } else if (location.pathname === "/" && !tutorialActive) {
         setExtended(true);
