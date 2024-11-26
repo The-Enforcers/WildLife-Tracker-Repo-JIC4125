@@ -137,6 +137,7 @@ const SearchResultsPage = () => {
   };
 
   // Debounced applyFilters function
+  // eslint-disable-next-line 
   const debouncedApplyFilters = useCallback(
     debounce(async () => {
       // Start a timer for showing loading state
@@ -198,6 +199,7 @@ return (
                 setCurrentPage(1);
                 debouncedApplyFilters();
               }}
+              showFilter={false}
             />
           </Box>
         </Box>
@@ -621,6 +623,7 @@ return (
                               trackerType={animal.trackerType}
                               enclosureType={animal.enclosureType}
                               likeCount={animal.likeCount || 0}
+                              showDetails={true}
                             />
                           </Grid>
                         );

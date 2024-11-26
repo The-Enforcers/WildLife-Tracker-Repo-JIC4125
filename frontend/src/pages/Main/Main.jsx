@@ -10,11 +10,12 @@ import "./Main.css";
 import SearchBox from "../../components/SearchBox/SearchBox";
 
 // Local icon image assets
-import icon1 from "../../assets/Mammals.png";
-import icon4 from "../../assets/Birds.png";
-import icon3 from "../../assets/Amphibians.png";
-import icon2 from "../../assets/Reptiles.png";
-import icon5 from "../../assets/Fish.png";
+import { ReactComponent as MammalsIcon } from "../../assets/Mammals.svg";
+import { ReactComponent as BirdsIcon } from "../../assets/Birds.svg";
+import { ReactComponent as AmphibiansIcon } from "../../assets/Amphibians.svg";
+import { ReactComponent as ReptilesIcon } from "../../assets/Reptiles.svg";
+import { ReactComponent as FishIcon } from "../../assets/Fish.svg";
+import debounce from "lodash/debounce"; // Import lodash debounce
 
 const animalNames = [
   "Deer",
@@ -34,6 +35,7 @@ const Main = () => {
   const [animationStarted, setAnimationStarted] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [loadingImages, setLoadingImages] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
@@ -43,23 +45,6 @@ const Main = () => {
     fish: false,
     bird: false,
   });
-
-  const searchFunc = useCallback(() => {
-    const animalFamily = [];
-    if (filters.mammal) animalFamily.push("Mammal");
-    if (filters.reptile) animalFamily.push("Reptile");
-    if (filters.amphibian) animalFamily.push("Amphibians");
-    if (filters.fish) animalFamily.push("Fish");
-    if (filters.bird) animalFamily.push("Bird");
-
-    const queryParams = new URLSearchParams();
-    if (animalFamily.length > 0)
-      queryParams.append("animalType", animalFamily.join(","));
-    if (input) queryParams.append("search", input);
-
-    // Navigate to the search results page with query string
-    navigate(`/posts?${queryParams.toString()}`);
-  }, [filters, input, navigate]);
 
   const handleAnimalClick = (animal) => {
     setFilters({
@@ -84,15 +69,6 @@ const Main = () => {
 
   // Define the base URL for image API (adjust this based on your server configuration)
   const imageApiBaseUrl = "https://localhost:5001/api/posts/image/";
-
-  const handleSearch = async (searchTerm) => {
-    try {
-      const results = await searchPosts(searchTerm); // Use searchPosts from postService
-      setSearchResults(results);
-    } catch (error) {
-      console.error("Error searching posts:", error);
-    }
-  };
 
   useEffect(() => {
     if (!animationStarted) return;
@@ -119,15 +95,34 @@ const Main = () => {
       setCurrentAnimalIndex((c) => c + 1);
     }
   }, [displayedText, isDeleting, animationStarted, currentAnimalIndex]);
+ 
+  // eslint-disable-next-line 
+  const handleSearch = useCallback(
+    debounce(async (query) => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      setIsLoading(true);
+  
+      try {
+        const response = await searchPosts({ search: query, filters });
+        setSearchResults(response.posts || []);
+      } catch (error) {
+        console.error("Error while searching posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    [filters]
+  );
 
   useEffect(() => {
-    if (input.length > 1) {
-      handleSearch(input);
-    } else {
-      setSearchResults([]);
-    }
-  }, [input]);
-
+    handleSearch(input);
+    return () => handleSearch.cancel(); // Clean up debounce
+  }, [input, handleSearch]);
+  
+  
   const handleImageLoad = (id) => {
     setLoadingImages((prevLoadingImages) => ({
       ...prevLoadingImages,
@@ -154,18 +149,6 @@ const Main = () => {
     navigate(`/posts/${postId}`);
   };
 
-  const handleIconSearchFilter = (animalType) => {
-
-    // Construct query string
-    const queryParams = new URLSearchParams();
-
-    if (animalType.length > 0) queryParams.append(animalType, true);
-    if (input) queryParams.append("search", input);
-
-    // Navigate to the search results page with query string
-    navigate(`/posts?${queryParams.toString()}`);
-  };
-
   return (
     <div className="greet-container">
       <div className="greet">
@@ -175,17 +158,22 @@ const Main = () => {
         </p>
       </div>
 
+      {/* Integrating SearchBox */}
       <SearchBox
         input={input}
         setInput={setInput}
-        onSearch={searchFunc}
-        setFilters={setFilters}
+        onSearch={() => {}}
+        showFilter={true}
       />
 
       {/* Display search results */}
       {input && (
         <div className="search-results-container">
-          {searchResults.length > 0 ? (
+          {isLoading ? (
+            <div className="spinner-container">
+              <CircularProgress size={40} />
+            </div>
+          ) : searchResults.length > 0 ? (
             searchResults.map((post) => (
               <div
                 key={post._id}
@@ -237,35 +225,37 @@ const Main = () => {
               className="icon-wrapper"
               onClick={() => handleAnimalClick("mammal")}
             >
-              <img src={icon1} alt="Mammals Icon" className="icon-image" />
+              <MammalsIcon className="icon-image" />
               <p className="icon-label">Mammals</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("reptile")}
             >
-              <img src={icon2} alt="Reptiles Icon" className="icon-image" />
+              <ReptilesIcon
+                className="icon-image"
+              />
               <p className="icon-label">Reptiles</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("amphibian")}
             >
-              <img src={icon3} alt="Amphibians Icon" className="icon-image" />
+              <AmphibiansIcon className="icon-image" />
               <p className="icon-label">Amphibians</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("fish")}
             >
-              <img src={icon5} alt="Fish Icon" className="icon-image" />
+              <FishIcon className="icon-image" />
               <p className="icon-label">Fish</p>
             </div>
             <div
               className="icon-wrapper"
               onClick={() => handleAnimalClick("bird")}
             >
-              <img src={icon4} alt="Birds Icon" className="icon-image" />
+              <BirdsIcon className="icon-image" />
               <p className="icon-label">Birds</p>
             </div>
           </div>
