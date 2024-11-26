@@ -41,7 +41,7 @@
   margin-right: 5px;
 }
 
-/* Icon images section */
+/* Icon ss section */
 .icon-images {
   display: flex;
   justify-content: space-evenly;
@@ -244,5 +244,11 @@
 
   .bottom-info {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 249px) {
+  .icon-images {
+    display: none;
   }
 }
