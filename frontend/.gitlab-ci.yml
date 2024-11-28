@@ -1,0 +1,90 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.yml
+  - template: Jobs/Code-Quality.gitlab-ci.yml
+
+variables:
+  GIT_STRATEGY: fetch
+  APPLICATION: shorturl-server
+  CI_REGISTRY_IMAGE: $CI_REGISTRY/$APPLICATION
+  TAG: $CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA
+  CI: 'false' # setting to false to ignore NPM build warnings
+  GITLAB_ADVANCED_SAST_ENABLED: 'true'
+  SAST_IMAGE_SUFFIX: '-fips'
+
+stages:
+  - test
+  - build
+  - scan
+  - deploy
+
+# Generate SBOM
+gemnasium-dependency_scanning:
+  stage: test
+  artifacts:
+    paths:
+      - "gl-sbom-*.cdx.json"
+
+code_quality:
+  stage: test
+
+code_quality_html:
+  extends: code_quality
+  stage: test
+  variables:
+    REPORT_FORMAT: html
+  artifacts:
+    paths: [gl-code-quality-report.html]
+
+build_image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_JOB_TOKEN\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$TAG
+  only:
+    - main
+    - dev
+
+container_scanning:
+  stage: scan
+  needs:
+    - build_image
+  variables:
+    CS_IMAGE: $CI_REGISTRY_IMAGE:$TAG
+    CS_IMAGE_SUFFIX: "-fips"
+    CS_DOCKERFILE_PATH: $CI_PROJECT_DIR/Dockerfile
+    CS_DISABLE_DEPENDENCY_LIST: "true"
+    CS_DISABLE_LANGUAGE_VULNERABILITY_SCAN: "true"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+dev-deploy:
+  stage: deploy
+  image: 
+    name: alpine/git:latest
+  script:
+    - echo "Deploying to development environment"
+    # Add custom deployment logic here
+  environment:
+    name: development
+  only:
+    - dev
+
+prod-deploy:
+  stage: deploy
+  image: 
+    name: alpine/git:latest
+  script:
+    - echo "Deploying to production environment"
+    # Add custom deployment logic here
+  environment:
+    name: production
+  only:
+    - main
