@@ -334,7 +334,7 @@ const PostDetailsPage = () => {
               <div className="post-author" onClick={handleAuthorClick} style={{ cursor: 'pointer' }}>
                 <img
                   className="profile-picture"
-                  src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                  src={post.authorImage || "https://via.placeholder.com/150"}
                   alt="Author"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -477,6 +477,21 @@ const PostDetailsPage = () => {
               readOnly={true}
               theme="bubble"
             />
+            <Button
+        variant="outlined"
+        onClick={() => navigate(-1)}
+        sx={{
+          margin: "16px",
+          color: "#212e38",
+          borderColor: "#212e38",
+          "&:hover": {
+            backgroundColor: "#f0f4f9",
+            borderColor: "#303f9f",
+          },
+        }}
+      >
+        Back
+      </Button>
           </div>
         </div>
       </div>
