@@ -25,17 +25,19 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "Wildlife Enthusiast",
   },
-  bookmarkedPosts: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
-    },
-  ],
-
+  bookmarkedPosts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Post",
+  }],
   role: { 
-    type: String, enum: ['user', 'admin'], default: 'user'
-   },
-
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now,

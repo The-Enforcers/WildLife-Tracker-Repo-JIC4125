@@ -11,6 +11,7 @@ import Layout from "../pages/Layout/Layout.js";
 import { UserProvider } from "../context/UserContext.js";
 import { SnackbarProvider } from "../components/SnackBar/SnackBar.js";
 import ProtectedRoute from "./ProtectedRoute.js";
+import AdminRoute from "./AdminRoute";
 
 const AppRoutes = () => {
   
@@ -33,7 +34,7 @@ const AppRoutes = () => {
                     <Route path="/edit-post/:id" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/create" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/admin" element={<AdminPage />} />
+                    <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
                   </Routes>
                 </Layout>
               }
