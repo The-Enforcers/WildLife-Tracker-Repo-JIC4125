@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   Checkbox,
@@ -13,10 +13,10 @@ import {
   CircularProgress,
   Pagination,
 } from "@mui/material";
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 
-import SearchIcon from '@mui/icons-material/Search';
-import CancelIcon from '@mui/icons-material/Cancel';
+import SearchIcon from "@mui/icons-material/Search";
+import CancelIcon from "@mui/icons-material/Cancel";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -41,7 +41,7 @@ const gridTheme = createTheme({
 
 const SearchResultsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const navigate = useNavigate();
   // Get initial values from URL query params (or defaults)
   const initialInput = searchParams.get("search") || "";
   const initialPage = parseInt(searchParams.get("page")) || 1;
@@ -54,7 +54,7 @@ const SearchResultsPage = () => {
     currentPage: initialPage,
     totalPages: 1,
     totalPosts: 0,
-    postsPerPage: 12
+    postsPerPage: 12,
   });
 
   // New state variable to track view mode
@@ -122,14 +122,14 @@ const SearchResultsPage = () => {
     const { name, checked } = event.target;
     setCurrentPage(1);
     if (name === "newToOld" || name === "oldToNew" || name === "mostLiked") {
-      setFilters(prev => ({
+      setFilters((prev) => ({
         ...prev,
         newToOld: name === "newToOld" ? checked : false,
         oldToNew: name === "oldToNew" ? checked : false,
         mostLiked: name === "mostLiked" ? checked : false,
       }));
     } else {
-      setFilters(prev => ({
+      setFilters((prev) => ({
         ...prev,
         [name]: checked,
       }));
@@ -141,7 +141,7 @@ const SearchResultsPage = () => {
   };
 
   // Debounced applyFilters function
-  // eslint-disable-next-line 
+  // eslint-disable-next-line
   const debouncedApplyFilters = useCallback(
     debounce(async () => {
       // Start a timer for showing loading state
@@ -154,12 +154,12 @@ const SearchResultsPage = () => {
           page: currentPage,
           limit: 12,
           search: input,
-          filters: filters
+          filters: filters,
         });
-        
+
         setAnimals(response.posts);
         setPagination(response.pagination);
-        
+
         // Update URL parameters
         const params = {
           search: input,
@@ -169,7 +169,7 @@ const SearchResultsPage = () => {
             .reduce((acc, key) => {
               acc[key] = "true";
               return acc;
-            }, {})
+            }, {}),
         };
         setSearchParams(params);
       } catch (error) {
@@ -184,7 +184,7 @@ const SearchResultsPage = () => {
 
   useEffect(() => {
     debouncedApplyFilters();
-    
+
     // Cleanup function
     return () => {
       debouncedApplyFilters.cancel();
@@ -215,7 +215,7 @@ const SearchResultsPage = () => {
             />
           </Box>
         </Box>
-     
+
         <div
           className="filters-and-results-box"
           style={{
@@ -241,12 +241,12 @@ const SearchResultsPage = () => {
                 className="filter-group"
                 defaultExpanded={true}
                 sx={{
-                  backgroundColor: "#f0f4f9", 
+                  backgroundColor: "#f0f4f9",
                   boxShadow: "none",
                   borderRadius: "15px",
                   "&:first-of-type": {
-                    borderRadius: "15px"
-                  }
+                    borderRadius: "15px",
+                  },
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -308,15 +308,17 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={false}
-              sx={{
-                backgroundColor: "#f0f4f9", 
-                boxShadow: "none",
-                borderRadius: "15px",
-                "&:first-of-type": {
-                  borderRadius: "15px"
-                }
-              }}
+              <Accordion
+                className="filter-group"
+                defaultExpanded={false}
+                sx={{
+                  backgroundColor: "#f0f4f9",
+                  boxShadow: "none",
+                  borderRadius: "15px",
+                  "&:first-of-type": {
+                    borderRadius: "15px",
+                  },
+                }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Tracker</Typography>
@@ -397,15 +399,17 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={false}
-              sx={{
-                backgroundColor: "#f0f4f9", 
-                boxShadow: "none",
-                borderRadius: "15px",
-                "&:first-of-type": {
-                  borderRadius: "15px"
-                }
-              }}
+              <Accordion
+                className="filter-group"
+                defaultExpanded={false}
+                sx={{
+                  backgroundColor: "#f0f4f9",
+                  boxShadow: "none",
+                  borderRadius: "15px",
+                  "&:first-of-type": {
+                    borderRadius: "15px",
+                  },
+                }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Enclosure</Typography>
@@ -456,15 +460,17 @@ const SearchResultsPage = () => {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion className="filter-group" defaultExpanded={false}
-              sx={{
-                backgroundColor: "#f0f4f9", 
-                boxShadow: "none",
-                borderRadius: "15px",
-                "&:first-of-type": {
-                  borderRadius: "15px"
-                }
-              }}
+              <Accordion
+                className="filter-group"
+                defaultExpanded={false}
+                sx={{
+                  backgroundColor: "#f0f4f9",
+                  boxShadow: "none",
+                  borderRadius: "15px",
+                  "&:first-of-type": {
+                    borderRadius: "15px",
+                  },
+                }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Attachment</Typography>
@@ -524,14 +530,16 @@ const SearchResultsPage = () => {
                   </FormGroup>
                 </AccordionDetails>
               </Accordion>
-              <Accordion className="filter-group" defaultExpanded={true}
+              <Accordion
+                className="filter-group"
+                defaultExpanded={true}
                 sx={{
                   backgroundColor: "#f0f4f9",
                   boxShadow: "none",
                   borderRadius: "15px",
                   "&:first-of-type": {
-                    borderRadius: "15px"
-                  }
+                    borderRadius: "15px",
+                  },
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -600,110 +608,130 @@ const SearchResultsPage = () => {
             </div>
           </div>
           <ThemeProvider theme={gridTheme}>
-                {isLoadingDelayed ? (
+            {isLoadingDelayed ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                {/* Conditional Rendering based on viewMode */}
+                {viewMode ? (
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
+                      marginBottom: pagination.totalPages > 1 ? "24px" : "64px",
+                      width: { xs: "100%", sm: "70%" },
+                      margin: "0 auto",
+                      overflowY: "auto",
                     }}
                   >
-                    <CircularProgress />
+                    {animals.map((animal, index) => (
+                      <Box
+                        key={index}
+                        onClick={() => navigate(`/posts/${animal._id}`)} // Navigate to post on card click
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          marginBottom: 2,
+                          gap: 6,
+                          padding: 2,
+                          backgroundColor: "#f9f9f9",
+                          borderRadius: "25px",
+                          alignItems: "center",
+                          width: "100%",
+                          cursor: "pointer",
+                          transition:
+                            "transform 0.3s ease, box-shadow 0.3s ease",
+                          "&:hover": {
+                            transform: "scale(1.03)",
+                          },
+                        }}
+                      >
+                        {/* Post Image */}
+                        <img
+                          src={`https://${window.location.hostname}:5001/api/posts/image/${animal.postImage}`}
+                          alt={animal.title}
+                          style={{
+                            width: "170px",
+                            height: "auto",
+                            marginRight: "16px",
+                            borderRadius: "8px",
+                            objectFit: "cover",
+                          }}
+                        />
+
+                        {/* Content Section */}
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="h5" gutterBottom>
+                            <strong>{animal.title}</strong>
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            <strong>Scientific Name:</strong>{" "}
+                            {animal.scientificName}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            <strong>Common Name:</strong> {animal.commonName}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            <strong>Tracker Type:</strong> {animal.trackerType}
+                          </Typography>
+
+                          {/* Author Section */}
+                          <Box
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/user/${animal.authorId}`);
+                            }}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              marginTop: "10px",
+                              background: "#f0f4f9",
+                              width: "fit-content",
+                              padding: "5px",
+                              borderRadius: "30px",
+                              paddingRight: "60px",
+                              backgroundColor: "#D5D5D5",
+                              transition:
+                                "transform 0.3s ease, box-shadow 0.3s ease",
+                              "&:hover": {
+                                transform: "scale(1.01)",
+                                boxShadow: 3,
+                              },
+                            }}
+                          >
+                            {/* Author Image */}
+                            <img
+                              src={`${animal.authorImage}`}
+                              alt={animal.author}
+                              style={{
+                                width: "45px",
+                                height: "45px",
+                                borderRadius: "50%", // Circle shape for author image
+                                objectFit: "cover",
+                                marginRight: "8px", // Space between image and name
+                                cursor: "pointer", // Indicate that the image is clickable
+                              }}
+                            />
+
+                            {/* Author Name */}
+                            <Typography variant="body2" color="textSecondary">
+                              <strong>{animal.author}</strong>
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    ))}
                   </Box>
                 ) : (
-                  <>
-                    {/* Conditional Rendering based on viewMode */}
-                    {viewMode ? (
-  <Box
-    sx={{
-      marginBottom: pagination.totalPages > 1 ? "24px" : "64px",
-      width: { xs: "100%", sm: "70%" }, 
-      margin: "0 auto",
-      overflowY: "auto",
-      
-    }}
-  >
-    {animals.map((animal, index) => (
-      <Box
-        key={index}
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginBottom: 2,
-          gap: 6,
-          padding: 2,
-          backgroundColor: "#f9f9f9",
-          borderRadius: "8px",
-          alignItems: "center",
-          width: "100%", // Full width
-        }}
-      >
-        {/* Post Image */}
-        <img
-          src={`https://${window.location.hostname}:5001/api/posts/image/${animal.postImage}`}
-          alt={animal.title}
-          style={{
-            width: "170px",
-            height: "auto",
-            marginRight: "16px",
-            borderRadius: "8px",
-            objectFit: "cover",
-
-          }}
-        />
-
-        {/* Content Section */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h5" gutterBottom>
-          <strong> {animal.title}</strong>
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            <strong>Scientific Name:</strong> {animal.scientificName}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            <strong>Common Name:</strong> {animal.commonName}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            <strong>Tracker Type:</strong> {animal.trackerType}
-          </Typography>
-         {/* Author Section */}
-<Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    marginTop: "10px",
-  }}
->
-  {/* Author Image */}
-  <img
-    src={`${animal.authorImage}`}
-    alt={animal.author}
-    style={{
-      width: "45px",
-      height: "45px",
-      borderRadius: "50%", // Circle shape for author image
-      objectFit: "cover",
-      marginRight: "8px", // Space between image and name
-    }}
-  />
-
-  {/* Author Name */}
-  <Typography variant="body2" color="textSecondary">
-    <strong>{animal.author}</strong>
-  </Typography>
-</Box>
-
-        </Box>
-       
-      </Box>
-    ))}
-  </Box>
-
-) : (
-  <div className="animal-cards-box">
-  <div className="animal-cards-box-inner">
-
+                  <div className="animal-cards-box">
+                    <div className="animal-cards-box-inner">
                       <Grid
                         container
                         spacing={2}
@@ -777,41 +805,39 @@ const SearchResultsPage = () => {
                         })}
                       </Grid>
                       <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      padding: "10px 0",
-                      position: "sticky",
-                      bottom: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0)",
-                      zIndex: 1,
-                      flex: "1 0 80px",
-                      paddingBottom: "50px",
-                    }}
-                  >
-                    <Pagination
-                      count={pagination.totalPages}
-                      page={currentPage}
-                      onChange={handlePageChange}
-                      color="primary"
-                      size="large"
-                      showFirstButton
-                      showLastButton
-                      sx={{
-                        backgroundColor: "#f0f4f9",
-                        padding: "10px",
-                        borderRadius: "25px",
-                        border: "1px solid lightgray",
-                      }}
-                    />
-                  </Box>
-                      </div>
-            </div>
-
-                    )}
-                  </>
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: "10px 0",
+                          position: "sticky",
+                          bottom: 0,
+                          backgroundColor: "rgba(0, 0, 0, 0)",
+                          zIndex: 1,
+                          flex: "1 0 80px",
+                          paddingBottom: "50px",
+                        }}
+                      >
+                        <Pagination
+                          count={pagination.totalPages}
+                          page={currentPage}
+                          onChange={handlePageChange}
+                          color="primary"
+                          size="large"
+                          showFirstButton
+                          showLastButton
+                          sx={{
+                            backgroundColor: "#f0f4f9",
+                            padding: "10px",
+                            borderRadius: "25px",
+                            border: "1px solid lightgray",
+                          }}
+                        />
+                      </Box>
+                    </div>
+                  </div>
                 )}
-                
+              </>
+            )}
           </ThemeProvider>
         </div>
       </Box>
