@@ -4,6 +4,22 @@ This project is designed to serve as a centralized repository for information on
 
 # Release Notes
 
+## Version 0.5.0
+
+### Features
+
+- **Quality Updates:** Added a list and grid view to show search results in different ways.
+- **Ban and Report functionality** Posts can now be reported and users can be banned by the admin.
+- **Bookmarks:** Bookmarks now show in your profile page.
+- **Small screen updates**: Updated ours screens to look better in smaller screens.
+
+### Bug Fixes
+Fixed bug where profile page doesnt load for user's not logged in
+Added better and more detailed error handling
+### Known Issues
+Fixed most major issues 
+
+
 ## Version 0.4.0
 
 ### Features
