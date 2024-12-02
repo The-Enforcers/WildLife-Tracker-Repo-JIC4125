@@ -81,7 +81,7 @@ export default function ProfilePage() {
 
 
   // Check if current user is viewing their own profile
-  const isOwnProfile = currentUser?._id === id;
+  const isOwnProfile = currentUser ? currentUser._id === id : false;
 
 
   const handleChange = (event, newValue) => {
@@ -156,7 +156,7 @@ export default function ProfilePage() {
   // Fetch bookmarked posts when the profile is viewed
   useEffect(() => {
     const fetchBookmarkedPosts = async () => {
-      if (isOwnProfile) {
+      if (isOwnProfile && currentUser) { // Ensure currentUser exists
         try {
           const bookmarks = await getBookmarkedPosts(currentUser._id);
           setBookmarkedPosts(bookmarks);
@@ -165,9 +165,10 @@ export default function ProfilePage() {
         }
       }
     };
-
+  
     fetchBookmarkedPosts();
-  }, [isOwnProfile, currentUser._id]);
+  }, [isOwnProfile, currentUser]);
+  
 
   if (loading) {
     return (
