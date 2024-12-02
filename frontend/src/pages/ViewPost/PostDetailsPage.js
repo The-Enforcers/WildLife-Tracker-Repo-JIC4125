@@ -253,7 +253,7 @@ const PostDetailsPage = () => {
         onClick={() => navigate(-1)}
         sx={{
           color: "#212e38",
-          marginInline: "70px",
+          marginInline: "80px",
           borderColor: "#212e38",
           "&:hover": {
             backgroundColor: "#f0f4f9",
