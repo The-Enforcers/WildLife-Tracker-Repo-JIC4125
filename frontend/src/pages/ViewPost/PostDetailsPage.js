@@ -248,6 +248,25 @@ const PostDetailsPage = () => {
 
   return (
     <>
+      <Button
+        variant="outlined"
+        onClick={() => navigate(-1)}
+        sx={{
+          color: "#212e38",
+          marginInline: "70px",
+          borderColor: "#212e38",
+          "&:hover": {
+            backgroundColor: "#f0f4f9",
+            borderColor: "#303f9f",
+          },
+          display: { xs: "none", sm: "flex" },
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <span style={{ fontSize: "12px" }}>{"<"}</span>
+        Back
+      </Button>
       <div className="post-container">
         <div className="post-container-inner">
           <div className="button-container">
