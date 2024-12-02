@@ -247,7 +247,7 @@ const Sidebar = () => {
         <HelpPopup isOpen={isHelpPopupOpen} onClose={closeHelpPopup} />
       )}
 
-      {tutorialActive && (
+      {tutorialActive && !isMobile && (
         <div className="tutorial-backdrop">
           <div
             className="tutorial-highlight"
