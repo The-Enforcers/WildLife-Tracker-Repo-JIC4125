@@ -423,7 +423,7 @@ const PostDetailsPage = () => {
                 onClick={handleImageClick}
                 style={{ cursor: "pointer" }}
               />
-              <Box mr>
+              <Box mr={2}>
                 <IconButton
                   onClick={handleShare}
                   aria-label="Share animal profile"
