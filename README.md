@@ -99,7 +99,7 @@ Fixed most major issues
 - Incomplete "Post" page UI
 - Simplified Post creation and Post Viewing UX from final intended design.
 
-# Development Instructions & Notes
+# Installation Guide
 
 This project is a full-stack application for creating, viewing, and managing wildlife tracking posts. The frontend is built with React, and the backend uses Node.js with Express and MongoDB.
 
