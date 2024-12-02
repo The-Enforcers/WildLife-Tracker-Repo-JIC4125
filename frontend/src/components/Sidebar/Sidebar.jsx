@@ -164,7 +164,7 @@ const Sidebar = () => {
       {!isMobile && (
         <div
           className={`sidebar ${extended ? "extended" : "collapsed"}`}
-          style={{ width: extended ? "260px" : "75px" }}
+          style={{ width: extended ? "255px" : "75px" }}
         >
           <div className="top">
             <div className="toggle-container">
@@ -247,7 +247,7 @@ const Sidebar = () => {
         <HelpPopup isOpen={isHelpPopupOpen} onClose={closeHelpPopup} />
       )}
 
-      {tutorialActive && (
+      {tutorialActive && !isMobile && (
         <div className="tutorial-backdrop">
           <div
             className="tutorial-highlight"

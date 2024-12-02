@@ -1,33 +1,20 @@
 .post-container {
-
   overflow-y: scroll;
   height: 95%;
   height: 100%;
-
 }
 
 .post-container-inner {
-
   height: 95%;
-  width: 65%;
+  width: 70%;
   max-width: 1250px;
   margin: 0px auto;
   padding-top: 50px;
 }
 
-
-@media (max-width: 1500px) {
-
-  .post-container-inner {
-    width: 90%;
-    padding-top: 25px;
-  }
-
-}
-
 /* Post Details stuff */
 .button-container {
-  display: flex; 
+  display: flex;
   justify-content: flex-end;
   margin: 0px auto;
   width: 80%;
@@ -46,7 +33,6 @@
   gap: 50px;
   width: 80%;
   margin: 0px auto;
-  padding-top: 30px;
 }
 
 .post-meta {
@@ -100,14 +86,12 @@
 }
 
 .data-types {
-
   padding-top: 25px;
   width: 80%;
   margin: 0px auto;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-
 }
 
 .expand-icon {
@@ -215,18 +199,21 @@
 .post-picture {
   max-width: 50%;
   display: flex;
-  flex: 1 1 50%;
-  justify-content: right;
+  align-items: end;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 12px;
 }
 
 .post-image {
   max-width: 100%;
-  object-fit: cover;
-  aspect-ratio: 2/1;
-
-  /*float: right;*/
   border-radius: 15px;
   box-shadow: 0px 0px 10px lightgray;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.post-image:hover {
+  transform: scale(1.02);
 }
 
 .post-body {
@@ -243,4 +230,25 @@
 .recommendations-header {
   font-weight: bold;
   font-size: 15px;
+}
+
+@media (max-width: 1500px) {
+  .post-container-inner {
+    width: 90%;
+    padding-top: 25px;
+  }
+}
+
+@media (max-width: 700px) {
+  .post-head {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .button-container {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .post-image {
+    margin-bottom: 5px;
+  }
 }

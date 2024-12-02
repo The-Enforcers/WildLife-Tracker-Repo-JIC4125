@@ -34,7 +34,6 @@ const ImageCard = ({
     <Card
       sx={{
         width: "100%",
-        maxWidth: 340,
         margin: "0px auto",
         borderRadius: 9,
         overflow: "hidden",
@@ -42,7 +41,7 @@ const ImageCard = ({
         backgroundColor: "#efefef",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
-          transform: "scale(1.05)",
+          transform: "scale(1.01)",
           boxShadow: 6,
         },
       }}
@@ -52,8 +51,9 @@ const ImageCard = ({
         sx={{
           position: "relative",
           width: "100%",
-          height: "200px",
+          height: "240px",
           overflow: "hidden",
+          
         }}
       >
         <img
@@ -105,10 +105,7 @@ const ImageCard = ({
             WebkitLineClamp: 2,
             lineHeight: "1.5em",
             marginBottom: "10px",
-            ...(showDetails && {
-              maxHeight: "calc(1.5em * 2)",
-              minHeight: "calc(1.5em * 2)",
-            }),
+          
           })}
         >
           {title}
@@ -164,7 +161,7 @@ const ImageCard = ({
             cursor: "pointer", // Add a pointer cursor to indicate it's clickable
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
             "&:hover": {
-              transform: "scale(1.05)",
+              transform: "scale(1.01)",
               boxShadow: 6,
             },
           }}
@@ -175,7 +172,7 @@ const ImageCard = ({
             sx={{
               display: "flex",
               flexDirection: "row",
-              padding: "10px",
+              padding: "5px",
               margin: "auto",
             }}
           >
@@ -198,28 +195,12 @@ const ImageCard = ({
               <span style={{ paddingTop: "3px" }}>
                 <strong>{author}</strong>
               </span>
+              
             </Typography>
+            
           </Box>
         </Box>
-        <Typography
-          align="center"
-          variant="body2"
-          color="textSecondary"
-          sx={{ marginTop: "20px" }}
-        >
-          Last Updated:{" "}  
-          {lastUpdated
-            ? new Date(created).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })
-            : new Date(created).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-        </Typography>
+     
       </CardContent>
     </Card>
   );

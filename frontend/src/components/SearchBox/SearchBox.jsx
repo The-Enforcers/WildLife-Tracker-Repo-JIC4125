@@ -1,16 +1,20 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import { Tooltip } from "react-tooltip";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
+import ViewListIcon from "@mui/icons-material/ViewListRounded";
+import GridViewIcon from "@mui/icons-material/GridView";
 import FilterListIcon from "@mui/icons-material/FilterList"; // Import Filter icon
 import { useNavigate } from "react-router-dom";
 import "./SearchBox.css";
+import { UserContext } from "../../context/UserContext";
 
-const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
+const SearchBox = ({ input, setInput, onSearch, showFilter, showView }) => {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 400);
+  const { viewMode, setViewMode } = useContext(UserContext);
 
   const handlePostClick = () => {
     navigate("/create");
@@ -22,6 +26,10 @@ const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
 
   const clearInput = () => {
     setInput("");
+  };
+
+  const handleListView = () => {
+    setViewMode(!viewMode); 
   };
 
   useEffect(() => {
@@ -126,6 +134,27 @@ const SearchBox = ({ input, setInput, onSearch, showFilter }) => {
               style={{ padding: "5px", fontSize: "12px", color: "#f0f4f9" }}
             />
           </div>
+
+          {/* View Mode Icon */}
+          {showView && (
+            <div
+            className="new-add-icon"
+            onClick={() => {
+              handleListView();
+              document.querySelectorAll('.react-tooltip').forEach(tooltip => tooltip.style.display = 'none');
+            }}
+            data-tooltip-id={viewMode ? "Grid-View" : "List-View"}
+            data-tooltip-content={viewMode ? "Grid View" : "List View"}
+            style={{padding: "15px"}}
+          >
+            {viewMode ? <GridViewIcon fontSize="medium" /> : <ViewListIcon fontSize="medium" />}
+            <Tooltip
+              place="bottom"
+              id={viewMode ? "Grid-View" : "List-View"}
+              style={{ fontSize: "11px", color: "#f0f4f9" }}
+            />
+          </div>
+          )}
         </div>
       </div>
     </>

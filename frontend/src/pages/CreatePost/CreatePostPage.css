@@ -347,23 +347,3 @@
     border-radius: 8px;
     text-align: center;
 }
-
-/* Submit Button */
-.submit-button {
-    border-radius: 20px;
-    padding: 10px 20px;
-    background-color: #212e38;
-}
-
-.submit-button:hover {
-    background-color: #303f9f;
-}
-
-.submit-button-container {
-    margin-bottom: 20px;
-}
-
-/* Error Text */
-.error-text {
-    margin-bottom: 1rem;
-}

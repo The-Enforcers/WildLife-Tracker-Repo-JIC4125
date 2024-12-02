@@ -153,7 +153,7 @@ const Main = () => {
     <div className="greet-container">
       <div className="greet">
         <p className="sub-greet">
-          Search Tracker Repository for{" "}
+          Tracker Repository for{" "}
           <span className="animal-word">{displayedText}</span>
         </p>
       </div>
@@ -164,6 +164,7 @@ const Main = () => {
         setInput={setInput}
         onSearch={() => {}}
         showFilter={true}
+        showView={false}
       />
 
       {/* Display search results */}

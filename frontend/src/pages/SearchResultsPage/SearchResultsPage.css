@@ -1,9 +1,8 @@
 .filters-and-results-box {
 
     display: flex;
-    padding: 16px;
+    padding: 10px;
     padding-bottom: 48px;
-
 }
 
 
@@ -16,6 +15,7 @@
     max-width: 300px;
     min-width: 250px;
 
+
 }
 
 .filters-box {
@@ -23,6 +23,7 @@
     padding-right: 16px;
     overflow: scroll;
     flex: 0 1 auto; 
+    
 
 }
 
@@ -36,6 +37,9 @@
     overflow-y: scroll;
     padding-bottom: 0px;
     overflow-x: visible;
+    padding-block: 5px;
+
+
 
 }
 
@@ -48,22 +52,16 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    
   }
 
-@media screen and (max-width: 2000px) {
-
-    .animal-cards-box-inner {
-        max-width: 100%;
-    }
-
-}
 
 .filter-group {
 
     background-color: #f0f4f9;
     /*border: 1px solid rgb(210, 209, 209);*/
     border-radius: 15px;
-    padding: 5px;
+    padding: 2px;
     margin: 0px 0px 10px 0px ;
     box-shadow: none;
 
@@ -160,5 +158,37 @@
 .post-grid-container {
 
     padding-top: 16px;
+
+}
+
+
+@media screen and (max-width: 2000px) {
+
+    .animal-cards-box-inner {
+        max-width: 100%;
+    }
+
+}
+@media screen and (max-width: 700px) {
+    .filters-and-results-box {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .filters-main-box {
+        width: 100%;
+        min-width: 100%;
+        min-height: 32%;
+    }
+    .filters-box {
+
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+
+
+    }
+
 
 }
