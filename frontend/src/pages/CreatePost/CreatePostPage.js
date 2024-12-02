@@ -426,7 +426,7 @@ const CreatePostPage = () => {
       showSnackbar(error.message || "Failed to delete image", "error");
     }
   };
-
+  // Handle editor resizing
   const handleEditorChange = (text) => {
     setRecommendations(text);
   };
@@ -438,7 +438,7 @@ const CreatePostPage = () => {
         : [...prev, dataType]
     );
   };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
