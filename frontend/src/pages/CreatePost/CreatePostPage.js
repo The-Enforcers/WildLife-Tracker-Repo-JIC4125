@@ -547,6 +547,7 @@ const CreatePostPage = () => {
       <Paper elevation={0} className="paper-form">
         {isEditing && (
           <Button
+          sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
           variant="contained"
           color="error" // This will style the button in red
           className="delete-post-button"
@@ -562,7 +563,7 @@ const CreatePostPage = () => {
         </Typography>
 
         {lastUpdatedDate && (
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body2" color="textSecondary" align="center">
             Edited:{" "}
             {new Date(lastUpdatedDate).toLocaleDateString("en-US", {
               year: "numeric",
@@ -824,12 +825,12 @@ const CreatePostPage = () => {
               </div>
             </Grid>
 
-            <Grid item xs={12} className="submit-button-container" ref={submitButtonRef}>
+            <Grid item xs={12}  ref={submitButtonRef}>
               <Button
                 variant="contained"
                 color="primary"
                 type="submit"
-                className="submit-button"
+                sx={{borderRadius: "25px", color: "white", fontWeight: "bold", background: "#212e38"}}
               >
                 {isEditing ? "Update" : "Submit"}
               </Button>

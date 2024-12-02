@@ -18,11 +18,13 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ReportIcon from '@mui/icons-material/Report';
+import ShareIcon from '@mui/icons-material/Share';
 import {
   Button,
   Typography,
   IconButton,
   Tooltip,
+  Box,
 } from "@mui/material";
 import { UserContext } from "../../context/UserContext";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
@@ -186,6 +188,21 @@ const PostDetailsPage = () => {
     }
 };
 
+function handleShare() {
+  const url = window.location.href; // Get the current URL
+
+  navigator.clipboard.writeText(url).then(
+    function() {
+      // Success callback
+      showSnackbar('URL copied to clipboard!');
+    },
+    function(err) {
+      console.error('Could not copy URL: ', err);
+    }
+  );
+}
+
+
 
 
   if (error) return <div style={styles.error}>{error}</div>;
@@ -235,25 +252,7 @@ const PostDetailsPage = () => {
 
             {user && (
               <>
-                <IconButton
-                  onClick={handleReport}
-                  aria-label="report animal profile"
-                  sx={{
-                    backgroundColor: "#212e38",
-                    color: isReported ? "red" : "white", 
-                    "&:hover": {
-                      backgroundColor: "#303f9f",
-                    },
-                    borderRadius: "50%",
-                    padding: "10px",
-                    marginLeft: "8px",
-              }}
-                >
-                  <Tooltip title="Report" placement="top">
-                      <ReportIcon />
-                  </Tooltip>
-              </IconButton>
-
+               
                 <IconButton
                   onClick={handleBookmark}
                   aria-label="bookmark animal profile"
@@ -359,7 +358,7 @@ const PostDetailsPage = () => {
               </Typography>
               {post.lastUpdated ? (
                 <Typography variant="body2" color="textSecondary">
-                  Last updated:{" "}
+                  Updated:{" "}
                   {new Date(post.lastUpdated).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -374,13 +373,52 @@ const PostDetailsPage = () => {
               ) : <Typography></Typography>}
             </div>
             
-            <div className="post-picture">
+            <Box className="post-picture">
               <img
                 className="post-image"
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
                 alt="Animal Profile"
               />
-            </div>
+              <Box mr>
+               <IconButton
+                  onClick={handleShare}
+                  aria-label="Share animal profile"
+                  sx={{
+                    backgroundColor: "#212e38",
+                    color: "white", 
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    borderRadius: "50%",
+                    padding: "10px",
+                    marginInline: "10px",
+              }}
+                >
+                  <Tooltip title="Share" placement="top">
+                      <ShareIcon />
+                  </Tooltip>
+              </IconButton>
+              <IconButton
+                  onClick={handleReport}
+                  aria-label="Report animal profile"
+                  sx={{
+                    backgroundColor: "#212e38",
+                    color: isReported ? "red" : "white", 
+                    "&:hover": {
+                      backgroundColor: "#303f9f",
+                    },
+                    borderRadius: "50%",
+                    padding: "10px",
+                    marginBlock: "12px",
+              }}
+                >
+                  <Tooltip title="Report" placement="top">
+                      <ReportIcon />
+                  </Tooltip>
+              </IconButton>
+              </Box>
+
+            </Box>
           </div>
 
           <div className="data-types">

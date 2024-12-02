@@ -13,6 +13,7 @@ export const UserProvider = ({ children }) => {
     () => localStorage.getItem("authToken") || null
   );
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState(false);
   const showSnackbar = useSnackbar();
   const navigate = useNavigate();
 
@@ -130,6 +131,8 @@ export const UserProvider = ({ children }) => {
         setToken: updateToken,
         logoutUser,
         loading,
+        viewMode,
+        setViewMode,
       }}
     >
       {children}

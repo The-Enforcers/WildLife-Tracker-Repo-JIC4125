@@ -31,13 +31,13 @@ const Navbar = ({ breadcrumbs }) => {
   const [bookmarkAnchorEl, setBookmarkAnchorEl] = useState(null);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
   const [profilePicError, setProfilePicError] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 900);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 980);
   const open = Boolean(anchorEl);
   const bookmarkOpen = Boolean(bookmarkAnchorEl);
   const showSnackbar = useSnackbar();
 
   useEffect(() => {
-    const handleResize = () => setIsSmallScreen(window.innerWidth < 900);
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 980);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
