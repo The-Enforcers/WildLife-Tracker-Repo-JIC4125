@@ -44,6 +44,16 @@ app.use(passport.session());
 const postRoutes = require("./routes/postRoutes");
 app.use("/api/posts", postRoutes); // Routes are protected within postRoutes.js
 
+// Admin routes
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
+
+app._router.stack.forEach(function(r){
+  if (r.route && r.route.path){
+    console.log('Route:', r.route.path)
+  }
+});
+
 // User routes
 const userRoutes = require("./routes/userRoutes");
 app.use("/api/user", userRoutes);

@@ -1,36 +1,21 @@
-const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const adminMiddleware = (req, res, next) => {
-
-  const authHeader = req.headers['authorization'];
-
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(403).json({ message: 'No token provided.' });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Failed to authenticate token.' });
+const adminMiddleware = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    req.userId = decoded.id; // This will be user._id
-  });
 
+    if (user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
 
-  const user = req.user; // Retrieved from JWT or session
-  if (user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied' });
+    next();
+  } catch (err) {
+    res.status(500).json({ message: 'Server error in admin middleware' });
   }
-//prefered method below
-
-  // const dbUser = await User.findById(user.id);
-  // if (dbUser && dbUser.role === 'admin') {
-  //   return next();
-  // }
-
-
-  next();
 };
 
 module.exports = adminMiddleware;

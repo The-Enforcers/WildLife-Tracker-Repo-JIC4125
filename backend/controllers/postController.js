@@ -387,7 +387,6 @@ exports.deletePost = async (req, res) => {
     const { id } = req.params;
     console.log(`Starting delete process for post ID: ${id}`);
 
-    // Add validation logging
     if (!mongoose.connection.readyState) {
       console.error('MongoDB not connected');
       return res.status(500).json({ message: "Database connection error" });
@@ -401,7 +400,14 @@ exports.deletePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    if (post.authorId.toString() !== req.userId.toString()) {
+    // Get user to check if they're an admin
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Allow deletion if user is admin OR is the post author
+    if (user.role !== 'admin' && post.authorId.toString() !== req.userId.toString()) {
       console.log(`Authorization mismatch. Post author: ${post.authorId}, Request user: ${req.userId}`);
       return res.status(403).json({ message: "Unauthorized" });
     }
