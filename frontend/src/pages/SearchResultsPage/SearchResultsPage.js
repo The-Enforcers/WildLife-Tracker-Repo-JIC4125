@@ -728,6 +728,34 @@ const SearchResultsPage = () => {
                         </Box>
                       </Box>
                     ))}
+                    <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          padding: "10px 0",
+                          bottom: 0,
+                          backgroundColor: "rgba(0, 0, 0, 0)",
+                          zIndex: 1,
+                          flex: "1 0 80px",
+                          paddingBottom: "50px",
+                        }}
+                      >
+                        <Pagination
+                          count={pagination.totalPages}
+                          page={currentPage}
+                          onChange={handlePageChange}
+                          color="primary"
+                          size="large"
+                          showFirstButton
+                          showLastButton
+                          sx={{
+                            backgroundColor: "#f0f4f9",
+                            padding: "10px",
+                            borderRadius: "25px",
+                            border: "1px solid lightgray",
+                          }}
+                        />
+                      </Box>
                   </Box>
                 ) : (
                   <div className="animal-cards-box">
@@ -808,8 +836,6 @@ const SearchResultsPage = () => {
                         sx={{
                           display: "flex",
                           justifyContent: "center",
-                          padding: "10px 0",
-                          position: "sticky",
                           bottom: 0,
                           backgroundColor: "rgba(0, 0, 0, 0)",
                           zIndex: 1,
