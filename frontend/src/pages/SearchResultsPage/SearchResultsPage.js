@@ -637,7 +637,7 @@ const SearchResultsPage = () => {
                         onClick={() => navigate(`/posts/${animal._id}`)} // Navigate to post on card click
                         sx={{
                           display: "flex",
-                          flexDirection: "row",
+                          flexDirection: { xs: "column", sm: "row" },
                           marginBottom: 2,
                           gap: 6,
                           padding: 2,
