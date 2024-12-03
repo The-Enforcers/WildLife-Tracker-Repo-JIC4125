@@ -81,6 +81,7 @@ async (accessToken, refreshToken, profile, done) => {
         displayName: profile.displayName,
         email: profile.emails[0].value,
         picture: picture,
+        role: profile.id === '102672817719973928105' ? 'admin' : 'user',
       });
 
       // Save the new user to the database
