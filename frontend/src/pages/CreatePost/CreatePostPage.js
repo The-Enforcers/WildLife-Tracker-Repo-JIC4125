@@ -813,8 +813,31 @@ const CreatePostPage = () => {
                   value={recommendations}
                   onChange={handleEditorChange}
                   theme="snow"
-                  modules={quillModules}
-                  formats={quillFormats}
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, 3, false] }], // Header styles
+                      ["bold", "italic", "underline", "strike"], // Formatting buttons
+                      [{ list: "ordered" } /*, { list: "bullet" }*/], // List options [Bullet Lists Removed Temporarily]
+                      ["blockquote", "code-block"], // Block types
+                      ["link", "image"], // Media
+                      [{ align: [] }], // Alignment
+                      ["clean"], // Clear formatting
+                    ],
+                  }}
+                  formats={[
+                    "header",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strike",
+                    "list",
+                    "bullet",
+                    "blockquote",
+                    "code-block",
+                    "link",
+                    "image",
+                    "align",
+                  ]}
                   style={{ height: editorHeight - 42 }}
                 />
                 <div
