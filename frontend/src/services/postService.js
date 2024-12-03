@@ -138,7 +138,7 @@ export const searchPosts = async ({
   
     if (filters.mammal) animalFamily.push("Mammal");
     if (filters.reptile) animalFamily.push("Reptile");
-    if (filters.amphibian) animalFamily.push("Amphibians");
+    if (filters.amphibian) animalFamily.push("Amphibian");
     if (filters.fish) animalFamily.push("Fish");
     if (filters.bird) animalFamily.push("Bird");
 
