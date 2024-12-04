@@ -42,7 +42,7 @@ router.post('/users/:userId/ban', async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -52,10 +52,12 @@ router.post('/users/:userId/ban', async (req, res) => {
     }
 
     user.isBanned = true;
+    user.role = 'banned';
     await user.save();
 
     res.status(200).json({ message: 'User banned successfully' });
   } catch (err) {
+    console.error('Error banning user:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -65,16 +67,18 @@ router.post('/users/:userId/unban', async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     user.isBanned = false;
+    user.role = 'user'; // Default role after unbanning; modify as needed.
     await user.save();
 
     res.status(200).json({ message: 'User unbanned successfully' });
   } catch (err) {
+    console.error('Error unbanning user:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -95,7 +99,7 @@ router.patch('/users/:userId/role', async (req, res) => {
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!['user', 'admin','banned'].includes(role)) {
+    if (!['user', 'admin', 'banned'].includes(role)) {
       return res.status(400).json({ message: 'Invalid role' });
     }
 
@@ -105,14 +109,22 @@ router.patch('/users/:userId/role', async (req, res) => {
     }
 
     user.role = role;
+
+    // Update isBanned based on the role
+    if (role === 'banned') {
+      user.isBanned = true;
+    } else {
+      user.isBanned = false;
+    }
+
     await user.save();
 
-    res.status(200).json({ message: 'User role updated successfully' });
+    res.status(200).json({ message: 'User role and status updated successfully' });
   } catch (err) {
+    console.error('Error updating user role:', err);
     res.status(500).json({ message: err.message });
   }
 });
-
 
 
 module.exports = router;
