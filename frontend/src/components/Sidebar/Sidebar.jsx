@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 import "./Sidebar.css";
 import { Tooltip } from "react-tooltip";
 import HelpPopup from "../HelpPopup/HelpPopup";
 
-// MUI icons
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,17 +12,18 @@ import HomeIcon from "@mui/icons-material/Home";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
-// MUI components
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-// wildlife movement institute logo
 import logo from "../../assets/logo.png";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   const [extended, setExtended] = useState(location.pathname === "/");
   const [isHelpPopupOpen, setIsHelpPopupOpen] = useState(false);
@@ -30,12 +31,9 @@ const Sidebar = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const iconRefs = useRef([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 400);
-
-  // For mobile dropdown menu
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
 
-  // Define tutorial steps
   const tutorialSteps = [
     {
       iconId: "new-post",
@@ -54,22 +52,17 @@ const Sidebar = () => {
     },
   ];
 
-  // Check if the user has visited before and initialize the tutorial state
   useEffect(() => {
     const hasVisitedBefore = localStorage.getItem("visitedBefore");
-
     if (!hasVisitedBefore) {
-      // First time visit, show help popup and tutorial
       setIsHelpPopupOpen(true);
       localStorage.setItem("visitedBefore", "true");
     }
   }, []);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 400);
-
       if (window.innerWidth < 810) {
         setExtended(false);
       } else if (location.pathname === "/" && !tutorialActive) {
@@ -79,9 +72,7 @@ const Sidebar = () => {
 
     window.addEventListener("resize", handleResize);
     handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, [location, tutorialActive]);
 
   const handleMenuClick = (event) => {
@@ -105,18 +96,17 @@ const Sidebar = () => {
 
   const closeHelpPopup = () => {
     setIsHelpPopupOpen(false);
-    setTutorialActive(true); // Start tutorial after the help popup is closed
+    setTutorialActive(true);
   };
 
   const handleNextStep = () => {
     if (currentStep < tutorialSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setTutorialActive(false); // End tutorial
+      setTutorialActive(false);
     }
   };
 
-  // Get the position of the current icon being highlighted
   const getIconPosition = () => {
     const ref = iconRefs.current[tutorialSteps[currentStep].refIndex];
     if (ref) {
@@ -133,7 +123,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {isMobile && (
+      {isMobile ? (
         <>
           <MenuIcon onClick={handleMenuClick} className="menu-icon" />
           <Menu
@@ -157,27 +147,30 @@ const Sidebar = () => {
               <SearchIcon style={{ marginRight: "10px" }} />
               Search Animal Profiles
             </MenuItem>
+            {user?.role === 'admin' && (
+              <>
+                <MenuItem onClick={() => handleNavigation("/admin")}>
+                  <DashboardIcon style={{ marginRight: "10px" }} />
+                  Admin Dashboard
+                </MenuItem>
+                <MenuItem onClick={() => handleNavigation("/admin/manage")}>
+                  <ManageAccountsIcon style={{ marginRight: "10px" }} />
+                  User Management
+                </MenuItem>
+              </>
+            )}
           </Menu>
         </>
-      )}
-
-      {!isMobile && (
-        <div
-          className={`sidebar ${extended ? "extended" : "collapsed"}`}
-          style={{ width: extended ? "255px" : "75px" }}
-        >
+      ) : (
+        <div className={`sidebar ${extended ? "extended" : "collapsed"}`}
+             style={{ width: extended ? "255px" : "75px" }}>
           <div className="top">
             <div className="toggle-container">
               {extended ? (
                 <>
                   <div className="logo" onClick={() => handleNavigation("/")}>
-                    <img
-                      src={logo}
-                      alt="Wildlife Movement Institute Logo"
-                      className="logo-image"
-                    />
+                    <img src={logo} alt="Wildlife Movement Institute Logo" className="logo-image" />
                   </div>
-
                   <ChevronLeftIcon
                     onClick={toggleSidebar}
                     className="menu"
@@ -186,14 +179,12 @@ const Sidebar = () => {
                   />
                 </>
               ) : (
-                <>
-                  <ChevronRightIcon
-                    onClick={toggleSidebar}
-                    className="menu"
-                    data-tooltip-id="menu"
-                    data-tooltip-content="Expand"
-                  />
-                </>
+                <ChevronRightIcon
+                  onClick={toggleSidebar}
+                  className="menu"
+                  data-tooltip-id="menu"
+                  data-tooltip-content="Expand"
+                />
               )}
               <Tooltip id="menu" place="bottom" />
             </div>
@@ -227,13 +218,33 @@ const Sidebar = () => {
               <Tooltip id="search-posts" place="bottom" />
               {extended && <p>Search Animal Profiles</p>}
             </div>
+
+            {user?.role === 'admin' && (
+              <>
+                <div
+                  onClick={() => handleNavigation("/admin")}
+                  className="admin-dashboard"
+                >
+                  <DashboardIcon />
+                  <Tooltip id="admin-dashboard" place="bottom" />
+                  {extended && <p>Admin Dashboard</p>}
+                </div>
+
+                <div
+                  onClick={() => handleNavigation("/admin/manage")}
+                  className="admin-manage"
+                >
+                  <ManageAccountsIcon />
+                  <Tooltip id="admin-manage" place="bottom" />
+                  {extended && <p>User Management</p>}
+                </div>
+              </>
+            )}
           </div>
           <div className="bottom">
             <div
               ref={(el) => (iconRefs.current[3] = el)}
-              className={`bottom-item recent-entry ${
-                currentStep === 3 ? "highlight" : ""
-              }`}
+              className={`bottom-item recent-entry ${currentStep === 3 ? "highlight" : ""}`}
               onClick={() => setTutorialActive(true)}
             >
               <HelpOutlineIcon />
@@ -261,15 +272,10 @@ const Sidebar = () => {
           <div
             className="tutorial-content"
             style={{
-              top: `${
-                getIconPosition().top + getIconPosition().height + 150 >
-                window.innerHeight
-                  ? getIconPosition().top - 100
-                  : getIconPosition().top + getIconPosition().height + 10
-              }px`,
-              left: `${
-                getIconPosition().left + getIconPosition().width + 20
-              }px`,
+              top: `${getIconPosition().top + getIconPosition().height + 150 > window.innerHeight
+                ? getIconPosition().top - 100
+                : getIconPosition().top + getIconPosition().height + 10}px`,
+              left: `${getIconPosition().left + getIconPosition().width + 20}px`,
             }}
           >
             <p>{tutorialSteps[currentStep].text}</p>

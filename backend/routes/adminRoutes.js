@@ -79,4 +79,40 @@ router.post('/users/:userId/unban', async (req, res) => {
   }
 });
 
+
+// Backend route to add to adminRoutes.js
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find({}, 'displayName email role');
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch('/users/:userId/role', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!['user', 'admin','banned'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.status(200).json({ message: 'User role updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 module.exports = router;

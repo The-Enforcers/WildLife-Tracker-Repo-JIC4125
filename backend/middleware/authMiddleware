@@ -1,58 +1,35 @@
-// authMiddleware.js
-
 const jwt = require('jsonwebtoken');
+const User = require('../models/User'); // Adjust the path to your User model
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
-
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
     return res.status(403).json({ message: 'No token provided.' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Failed to authenticate token.' });
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.id; // This will be user._id
+
+    // Fetch the user details from the database
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if the user's role is banned
+    if (user.role === 'banned') {
+      return res.status(403).json({ message: 'Access denied. User is banned.' });
+    }
+
+    // Attach user details to the request for further use
+    req.user = user;
     next();
-  });
-};
-
-const adminMiddleware = (req, res, next) => {
-
-  const authHeader = req.headers['authorization'];
-
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(403).json({ message: 'No token provided.' });
+  } catch (err) {
+    return res.status(401).json({ message: 'Failed to authenticate token.' });
   }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Failed to authenticate token.' });
-    }
-    req.userId = decoded.id; // This will be user._id
-  });
-
-
-  const user = req.user; // Retrieved from JWT or session
-  if (user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-//prefered method below
-
-  // const dbUser = await User.findById(user.id);
-  // if (dbUser && dbUser.role === 'admin') {
-  //   return next();
-  // }
-
-
-  next();
 };
-
 
 module.exports = verifyToken;
-
