@@ -7,6 +7,7 @@ import SearchResultsPage from "../pages/SearchResultsPage/SearchResultsPage.js";
 import ProfilePage from "../pages/ProfilePage/ProfilePage.js";
 import LoginPage from "../pages/Login/login.js";
 import AdminPage from "../pages/Admin/admin.js"
+import AdminManage from "../pages/AdminManage/AdminManage.js"
 import Layout from "../pages/Layout/Layout.js";
 import { UserProvider } from "../context/UserContext.js";
 import { SnackbarProvider } from "../components/SnackBar/SnackBar.js";
@@ -35,6 +36,7 @@ const AppRoutes = () => {
                     <Route path="/create" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+                    <Route path="/admin/manage" element={<AdminRoute><AdminManage /></AdminRoute>} />
                   </Routes>
                 </Layout>
               }
