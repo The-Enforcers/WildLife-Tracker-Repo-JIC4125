@@ -577,15 +577,16 @@ const CreatePostPage = () => {
       <Paper elevation={0} className="paper-form">
         {isEditing && (
           <div style={{display: "flex", flexDirection: "row"}}>
+
             <Button
             sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
             variant="contained"
-            color="success" // This will style the button in red
-            className="update-post-button"
-            onClick={handleSubmit}
-            startIcon={<SaveIcon/>}
+            color="error" // This will style the button in red
+            className="delete-post-button"
+            onClick={handleDeleteClick}
+            startIcon={<DeleteIcon />}
             >
-              Update
+              Delete Animal Profile
             </Button>
 
             <Button
@@ -596,7 +597,7 @@ const CreatePostPage = () => {
             onClick={handleCancelEdit}
             startIcon={<CancelIcon />}
             >
-              Cancel
+              Cancel Edit
             </Button>
           </div>
         )}
@@ -875,12 +876,12 @@ const CreatePostPage = () => {
                 <Button
                 sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
                 variant="contained"
-                color="error" // This will style the button in red
-                className="delete-post-button"
-                onClick={handleDeleteClick}
-                startIcon={<DeleteIcon />}
+                color="success" // This will style the button in red
+                className="update-post-button"
+                onClick={handleSubmit}
+                startIcon={<SaveIcon/>}
                 >
-                  Delete
+                  Update
                 </Button>
               
               ) : (
