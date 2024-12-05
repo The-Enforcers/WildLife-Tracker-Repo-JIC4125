@@ -444,18 +444,22 @@ const CreatePostPage = () => {
 
     if (!scientificName || !commonName || !recommendations) {
       setError("All fields are required.");
+      showSnackbar("All fields are required.", "error");
+      console.log("AHHHHH");
       return;
     }
 
     if (!images.mainImage) {
       setError(`Main image required`);
+      showSnackbar("Main image required.", "error");
       return;
     }
 
     try {
+      // Map and upload images
       const imageUploads = Object.entries(images).map(async ([key, image]) => {
         if (image instanceof File) {
-          const filename = await uploadImage(image);
+          const filename = await uploadImage(image); // Upload the image and get the filename
           return { [key]: filename };
         }
         if (typeof image === "string") {
@@ -464,11 +468,27 @@ const CreatePostPage = () => {
           const filename = parts[parts.length - 1];
           return { [key]: filename };
         }
-        return { [key]: null };
+        return { [key]: null }; // Leave as null if no image was provided for this key
       });
-
+    
       const uploadedImages = await Promise.all(imageUploads);
+    
+      // Combine uploaded image filenames into a single object
       const imageFilenames = Object.assign({}, ...uploadedImages);
+    
+      // Check if there are unexpected null values (optional)
+      const requiredImageKeys = ['mainImage', 'trackerType', 'enclosureType', 'attachmentType']; // Add required keys here
+      const missingRequiredImages = requiredImageKeys.filter(
+        key => imageFilenames[key] === null && images[key] !== null
+      );
+    
+      if (missingRequiredImages.length > 0) {
+        throw new Error(
+          `The following required images failed to upload: ${missingRequiredImages.join(", ")}.`
+        );
+      }
+    
+      // Prepare the post data
       const postData = {
         postImage: imageFilenames.mainImage,
         title,
@@ -488,7 +508,8 @@ const CreatePostPage = () => {
         authorImage: user.picture,
         lastUpdated: new Date().toISOString(),
       };
-
+    
+      // Update or create post
       if (isEditing) {
         await updatePost(id, postData);
         showSnackbar("Updated!", "success");
@@ -500,10 +521,13 @@ const CreatePostPage = () => {
         navigate("/posts/" + saved_post._id);
       }
     } catch (error) {
+      // Handle errors
       showSnackbar("Error creating/updating post", "error");
       console.error("Error creating/updating post:", error);
       setError("An error occurred while saving the post. Please try again.");
     }
+    
+    
   };
 
   return (
@@ -578,11 +602,11 @@ const CreatePostPage = () => {
           </Typography>
         )}
 
-        {error && (
+        {/* {error && (
           <Typography color="error" className="error-text">
             {error}
           </Typography>
-        )}
+        )} */}
 
         <Box component="form" onSubmit={handleSubmit} className="form-container">
           <TopImageUploadArea

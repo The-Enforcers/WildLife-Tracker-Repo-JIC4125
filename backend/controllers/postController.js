@@ -153,14 +153,17 @@ function build_search_terms(query) {
     sort
   } = query;
 
-  const search_requirements = {};
+  const search_requirements = {}
 
   if (title) {
+
+    var title2 = title == 'nut muncher' ? 'squirrel' : title;
+
     search_requirements.$or = [
-      { title: new RegExp(title, "i") },
-      { scientificName: new RegExp(title, "i") },
-      { commonName: new RegExp(title, "i") },
-      { author: new RegExp(title, "i") },
+      { title: new RegExp(title2, "i") },
+      { scientificName: new RegExp(title2, "i") },
+      { commonName: new RegExp(title2, "i") },
+      { author: new RegExp(title2, "i") },
     ];
   }
 
@@ -187,6 +190,8 @@ function build_search_terms(query) {
   if (recommendations) {
     search_requirements.recommendations = new RegExp(recommendations, "i");
   }
+
+  console.log(search_requirements);
 
   return search_requirements;
 }

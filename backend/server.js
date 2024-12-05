@@ -1,6 +1,7 @@
 // server.js
 
 const express = require("express");
+const { generalLimit, createPostLimit, imageDownloadLimit, imageUploadLimit } = require('./middleware/rateLimits');
 const cors = require("cors");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -25,6 +26,9 @@ app.use(cors({
   origin: 'https://localhost:3000',
   credentials: true
 }));
+
+// Rate limit all requests
+app.use(generalLimit);
 
 app.use(express.json()); // Parse JSON bodies
 

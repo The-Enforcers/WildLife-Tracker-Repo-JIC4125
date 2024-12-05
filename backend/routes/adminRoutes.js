@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { generalLimit, createPostLimit, imageDownloadLimit, imageUploadLimit } = require('../middleware/rateLimits');
 const verifyToken = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const Post = require('../models/Post');
