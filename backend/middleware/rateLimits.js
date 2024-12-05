@@ -16,8 +16,8 @@ const createPostLimit = rateLimit({
 
 // Define the rate limit rules
 const imageDownloadLimit = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 10, // Limit each IP to 10 requests per windowMs
+    windowMs: 30 * 1000, // 30 seconds
+    max: 100, // Limit each IP to 10 requests per windowMs
     message: "Too many requests, please try again later."
 });
 

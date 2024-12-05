@@ -153,10 +153,6 @@ const Sidebar = () => {
                   <DashboardIcon style={{ marginRight: "10px" }} />
                   Admin Dashboard
                 </MenuItem>
-                <MenuItem onClick={() => handleNavigation("/admin/manage")}>
-                  <ManageAccountsIcon style={{ marginRight: "10px" }} />
-                  User Management
-                </MenuItem>
               </>
             )}
           </Menu>
@@ -223,20 +219,11 @@ const Sidebar = () => {
               <>
                 <div
                   onClick={() => handleNavigation("/admin")}
-                  className="admin-dashboard"
+                  className={`admin-dashboard ${currentStep === 2 ? "highlight" : ""}`}
                 >
                   <DashboardIcon />
                   <Tooltip id="admin-dashboard" place="bottom" />
                   {extended && <p>Admin Dashboard</p>}
-                </div>
-
-                <div
-                  onClick={() => handleNavigation("/admin/manage")}
-                  className="admin-manage"
-                >
-                  <ManageAccountsIcon />
-                  <Tooltip id="admin-manage" place="bottom" />
-                  {extended && <p>User Management</p>}
                 </div>
               </>
             )}

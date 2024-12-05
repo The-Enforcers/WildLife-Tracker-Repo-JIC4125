@@ -30,7 +30,9 @@
 }
 
 .sidebar .new-post,
-.sidebar .search-posts {
+.sidebar .search-posts,
+.sidebar .admin-dashboard,
+.sidebar .admin-manage {
   margin-top: 20px;
   height: 40px;
   width: 100%;
@@ -50,13 +52,17 @@
 }
 
 .sidebar .new-post:hover,
-.sidebar .search-posts:hover {
+.sidebar .search-posts:hover,
+.sidebar .admin-dashboard:hover,
+.sidebar .admin-manage:hover {
   background-color: #cfd5db;
   transform: translateX(5px);
 }
 
 .sidebar .new-post p,
-.sidebar .search-posts p {
+.sidebar .search-posts p,
+.sidebar .admin-dashboard p,
+.sidebar .admin-manage p {
   text-wrap: nowrap;
   opacity: 1;
   transition: opacity 0.3s ease;
@@ -64,13 +70,17 @@
 }
 
 .sidebar.collapsed .new-post p,
-.sidebar.collapsed .search-posts p {
+.sidebar.collapsed .search-posts p,
+.sidebar.collapsed .admin-dashboard p,
+.sidebar.collapsed .admin-manage p {
   opacity: 0;
   width: 0;
 }
 
 .sidebar .new-post img,
-.sidebar .search-posts img {
+.sidebar .search-posts img,
+.sidebar .admin-dashboard img,
+.sidebar .admin-manage img {
   width: 16px;
   filter: brightness(0);
 }

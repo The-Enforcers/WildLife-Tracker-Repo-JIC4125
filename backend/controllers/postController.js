@@ -10,16 +10,24 @@ exports.getAllPosts = async (req, res) => {
   try {
     const { page, limit, skip } = getPaginationParams(req.query);
     
+    // Fetch posts, excluding posts whose authors are banned
     const posts = await Post.find()
+      .populate("authorId", "isBanned")  // Populate to get the isBanned status of the author
       .sort({ date: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
-    const total = await Post.countDocuments();
+    // Filter out posts from banned users
+    const filteredPosts = posts.filter(post => !post.authorId.isBanned);
+
+    // Get total count of posts excluding banned users
+    const total = await Post.countDocuments({
+      "authorId.isBanned": false,
+    });
 
     res.status(200).json({
-      posts,
+      posts: filteredPosts,
       pagination: {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -65,6 +73,7 @@ exports.getPostsByAuthorId = async (req, res) => {
 exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (err) {
@@ -190,8 +199,6 @@ function build_search_terms(query) {
   if (recommendations) {
     search_requirements.recommendations = new RegExp(recommendations, "i");
   }
-
-  console.log(search_requirements);
 
   return search_requirements;
 }

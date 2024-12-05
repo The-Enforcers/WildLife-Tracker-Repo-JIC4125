@@ -31,6 +31,8 @@ import { quillModules, quillFormats } from './QuillConfig';
 import UploadIcon from "@mui/icons-material/Upload";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from '@mui/icons-material/Delete';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SaveIcon from '@mui/icons-material/Save';
 
 import {
   createPost,
@@ -232,6 +234,10 @@ const CreatePostPage = () => {
   const handleCancelDelete = () => {
     console.log("Cancel delete clicked. Closing confirmation dialog.");
     setOpenConfirmDialog(false);
+  };
+
+  const handleCancelEdit = () => {
+    navigate(`/posts/${id}`);
   };
 
   const handleResizeStart = useCallback(
@@ -570,16 +576,29 @@ const CreatePostPage = () => {
 
       <Paper elevation={0} className="paper-form">
         {isEditing && (
-          <Button
-          sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
-          variant="contained"
-          color="error" // This will style the button in red
-          className="delete-post-button"
-          onClick={handleDeleteClick}
-          startIcon={<DeleteIcon />}
-        >
-          Delete
-        </Button>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <Button
+            sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
+            variant="contained"
+            color="success" // This will style the button in red
+            className="update-post-button"
+            onClick={handleSubmit}
+            startIcon={<SaveIcon/>}
+            >
+              Update
+            </Button>
+
+            <Button
+            sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
+            variant="contained"
+            color="error" // This will style the button in red
+            className="cancel-edit-post-button"
+            onClick={handleCancelEdit}
+            startIcon={<CancelIcon />}
+            >
+              Cancel
+            </Button>
+          </div>
         )}
 
         <Typography variant="h4" gutterBottom className="form-title">
@@ -850,14 +869,33 @@ const CreatePostPage = () => {
             </Grid>
 
             <Grid item xs={12}  ref={submitButtonRef}>
-              <Button
+
+              {isEditing ? (
+
+                <Button
+                sx={{borderRadius: "25px", color: "white", fontWeight: "bold"}}
+                variant="contained"
+                color="error" // This will style the button in red
+                className="delete-post-button"
+                onClick={handleDeleteClick}
+                startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+              
+              ) : (
+
+                <Button
                 variant="contained"
                 color="primary"
                 type="submit"
                 sx={{borderRadius: "25px", color: "white", fontWeight: "bold", background: "#212e38"}}
-              >
-                {isEditing ? "Update" : "Submit"}
-              </Button>
+                >
+                  Submit
+                </Button>
+
+              )}
+              
             </Grid>
           </Grid>
         </Box>

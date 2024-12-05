@@ -12,16 +12,35 @@ router.use(verifyToken, adminMiddleware);
 // Get reported posts
 router.get('/reported-posts', async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, search = '', limit = 10 } = req.query;
     const skip = (page - 1) * limit;
 
-    const posts = await Post.find({ reportCount: { $gt: 0 } })
+    // Construct a case-insensitive regex search for the title and author's displayName
+    const searchRegex = new RegExp(search, 'i');
+
+    // Find posts that match the search criteria
+    const posts = await Post.find({
+      reportCount: { $gt: 0 },
+      $or: [
+        { title: { $regex: searchRegex } }, // Search by title
+        { authorId: { $in: await User.find({ displayName: { $regex: searchRegex } }).select('_id') } } // Search by author's displayName
+      ]
+    })
       .sort({ reportCount: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('authorId', 'displayName email isBanned');
+      .populate('authorId', 'displayName email isBanned'); // Populate the author details
 
-    const total = await Post.countDocuments({ reportCount: { $gt: 0 } });
+    // console.log(posts);
+
+    // Get the total number of posts matching the search
+    const total = await Post.countDocuments({
+      reportCount: { $gt: 0 },
+      $or: [
+        { title: { $regex: searchRegex } },
+        { authorId: { $in: await User.find({ displayName: { $regex: searchRegex } }).select('_id') } }
+      ]
+    });
 
     res.status(200).json({
       posts,
@@ -29,6 +48,7 @@ router.get('/reported-posts', async (req, res) => {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / limit),
         totalPosts: total,
+        totalResults: total,
         postsPerPage: parseInt(limit)
       }
     });
@@ -37,6 +57,8 @@ router.get('/reported-posts', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 // Ban user
 router.post('/users/:userId/ban', async (req, res) => {
@@ -85,13 +107,44 @@ router.post('/users/:userId/unban', async (req, res) => {
 });
 
 
-// Backend route to add to adminRoutes.js
 router.get('/users', async (req, res) => {
   try {
-    const users = await User.find({}, 'displayName email role');
-    res.status(200).json(users);
+    const { page = 1, search = '', role = '' } = req.query; // Get query parameters
+    const limit = 10; // Number of users per page
+    const skip = (page - 1) * limit; // Calculate the number of documents to skip
+
+    // Create a filter object based on search and role
+    const filter = {};
+    if (search) {
+      filter.displayName = { $regex: search, $options: 'i' }; // Case-insensitive search
+    }
+    if (role) {
+      filter.role = role; // Exact match for role
+    }
+
+    // Fetch the filtered and paginated users
+    const users = await User.find(filter)
+      .select('displayName email role') // Select only necessary fields
+      .skip(skip)
+      .limit(limit);
+
+    // Get the total count of users matching the filter
+    const totalUsers = await User.countDocuments(filter);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).json({
+      users,
+      pagination: {
+        totalPages,
+        currentPage: parseInt(page, 10),
+        totalResults: totalUsers
+      },
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch users' });
   }
 });
 
