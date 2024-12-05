@@ -139,7 +139,7 @@ const AdminManage = () => {
         <Typography variant="h4" align="center" gutterBottom>Admin Dashboard</Typography>
         <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} centered>
           <Tab label="User Management" />
-          <Tab label="Reported Posts" />
+          <Tab label="Reported Animal Profiles" />
         </Tabs>
 
         {/* User Management */}
@@ -230,7 +230,7 @@ const AdminManage = () => {
                           color="error"
                           onClick={() => handleDeletePost(post._id)}
                         >
-                          Delete Post
+                          Delete Animal Profile
                         </Button>
                         <Box mt={1}>
                           <Button color="error" style={{borderRadius: "5px", border: "1px error solid"}} onClick={() => handleBanUser(post.authorId._id)}>Ban Author</Button>
