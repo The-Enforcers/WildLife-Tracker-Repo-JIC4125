@@ -11,6 +11,7 @@ import {
   Button,
   styled,
   CircularProgress,
+  Pagination
 } from "@mui/material";
 import { DateRange, CameraAlt, Bookmark } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
@@ -77,6 +78,19 @@ export default function ProfilePage() {
   const [isEditingOccupation, setIsEditingOccupation] = useState(false);
   const [occupationText, setOccupationText] = useState("");
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
+  const [postsCurrentPage, setPostsCurrentPage] = useState(1);
+  const [postsPagination, setPostsPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalPosts: 0,
+    postsPerPage: 2
+  });
+
+  
+
+  const handlePostsPageChange = (event, value) => {
+    setPostsCurrentPage(value);
+  };
 
 
 
@@ -136,7 +150,8 @@ export default function ProfilePage() {
         setOccupationText(userData.occupation || "Wildlife Enthusiast");
 
         // Fetch posts
-        const postsResponse = await getPostsByAuthor(id);
+        const postsResponse = await getPostsByAuthor(id, postsCurrentPage, 24);
+        setPostsPagination(postsResponse.pagination);
         setAuthorPosts(postsResponse.posts);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -414,7 +429,7 @@ export default function ProfilePage() {
           ) : (
             <Box sx={{ overflow: "auto" }}>
               <ThemeProvider theme={gridTheme}>
-                <div className="animal-cards-box">
+                <div className="animal-cards-box" style={{marginBottom: "100px"}}>
                   <div className="animal-cards-box-inner">
                     <Grid
                       container
@@ -460,7 +475,7 @@ export default function ProfilePage() {
                               trackerType={animal.trackerType}
                               enclosureType={animal.enclosureType}
                               likeCount={animal.likeCount || 0}
-                              showDetails={false}
+                              showDetails={true}
                             />
                           </Grid>
                         );
@@ -469,6 +484,40 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </ThemeProvider>
+              <Box
+                sx={{
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 50,
+                  left: 0,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "10px 0",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "10px",
+                    backgroundColor: "#f0f4f9",
+                    borderRadius: "25px",
+                    border: "1px solid lightgray",
+                  }}
+                >
+                  <Pagination 
+                    count={postsPagination.totalPages}
+                    page={postsCurrentPage}
+                    onChange={handlePostsPageChange}
+                    color="primary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                  />
+                </Box>
+              </Box>
             </Box>
           )}
         </TabPanel>
@@ -526,7 +575,7 @@ export default function ProfilePage() {
                                 trackerType={animal.trackerType}
                                 enclosureType={animal.enclosureType}
                                 likeCount={animal.likeCount || 0}
-                                showDetails={false}
+                                showDetails={true}
                               />
                             </Grid>
                           );
