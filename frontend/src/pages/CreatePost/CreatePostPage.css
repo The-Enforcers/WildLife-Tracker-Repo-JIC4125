@@ -14,11 +14,20 @@
     margin: 0 auto;
 }
 
-.delete-post-button {
+.update-post-button {
     position: absolute !important;
     top: 16px !important;
     right: 16px !important;
     z-index: 10 !important;
+}
+
+.cancel-edit-post-button {
+
+    position: absolute !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 10 !important;
+
 }
 
 @media(max-width: 1500px) {

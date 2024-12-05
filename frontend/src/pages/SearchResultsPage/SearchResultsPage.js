@@ -45,7 +45,7 @@ const SearchResultsPage = () => {
   // Get initial values from URL query params (or defaults)
   const initialInput = searchParams.get("search") || "";
   const initialPage = parseInt(searchParams.get("page")) || 1;
-  const [isLoadingDelayed, setIsLoadingDelayed] = useState(false);
+  const [isLoadingDelayed, setIsLoadingDelayed] = useState(true);
   const [input, setInput] = useState(initialInput);
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [animals, setAnimals] = useState([]);
@@ -54,7 +54,7 @@ const SearchResultsPage = () => {
     currentPage: initialPage,
     totalPages: 1,
     totalPosts: 0,
-    postsPerPage: 12,
+    postsPerPage: 24,
   });
 
   // New state variable to track view mode
@@ -147,12 +147,12 @@ const SearchResultsPage = () => {
       // Start a timer for showing loading state
       const loadingTimer = setTimeout(() => {
         setIsLoadingDelayed(true);
-      }, 500); // Only show loading if the request takes more than 500ms
+      }, 250); // Only show loading if the request takes more than 500ms
 
       try {
         const response = await searchPosts({
           page: currentPage,
-          limit: 12,
+          limit: 24,
           search: input,
           filters: filters,
         });
@@ -615,256 +615,251 @@ const SearchResultsPage = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   height: "100%",
+                  width: "100%"
                 }}
               >
-                <CircularProgress />
+                <CircularProgress sx={{margin: "0px auto"}}/>
               </Box>
             ) : (
               <>
-                {/* Conditional Rendering based on viewMode */}
-                {viewMode ? (
+                {animals.length === 0 ? (
                   <Box
                     sx={{
-                      marginBottom: pagination.totalPages > 1 ? "24px" : "64px",
-                      width: { xs: "100%", sm: "70%" },
-                      margin: "0 auto",
-                      overflowY: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
+                      width: "100%"
                     }}
                   >
-                    {animals.map((animal, index) => (
-                      <Box
-                        key={index}
-                        onClick={() => navigate(`/posts/${animal._id}`)} // Navigate to post on card click
-                        sx={{
-                          display: "flex",
-                          flexDirection: { xs: "column", sm: "row" },
-                          marginBottom: 2,
-                          gap: 6,
-                          padding: 2,
-                          backgroundColor: "#f9f9f9",
-                          borderRadius: "25px",
-                          alignItems: "center",
-                          width: "100%",
-                          cursor: "pointer",
-                          transition:
-                            "transform 0.3s ease, box-shadow 0.3s ease",
-                          "&:hover": {
-                            transform: "scale(1.03)",
-                          },
-                        }}
-                      >
-                        {/* Post Image */}
-                        <img
-                          src={`https://${window.location.hostname}:5001/api/posts/image/${animal.postImage}`}
-                          alt={animal.title}
-                          style={{
-                            width: "170px",
-                            height: "auto",
-                            marginRight: "16px",
-                            borderRadius: "8px",
-                            objectFit: "cover",
-                          }}
-                        />
-
-                        {/* Content Section */}
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="h5" gutterBottom>
-                            <strong>{animal.title}</strong>
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            <strong>Scientific Name:</strong>{" "}
-                            {animal.scientificName}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            <strong>Common Name:</strong> {animal.commonName}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            <strong>Tracker Type:</strong> {animal.trackerType}
-                          </Typography>
-
-                          {/* Author Section */}
-                          <Box
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/user/${animal.authorId}`);
-                            }}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              marginTop: "10px",
-                              background: "#f0f4f9",
-                              width: "fit-content",
-                              padding: "5px",
-                              borderRadius: "30px",
-                              paddingRight: "60px",
-                              backgroundColor: "#D5D5D5",
-                              transition:
-                                "transform 0.3s ease, box-shadow 0.3s ease",
-                              "&:hover": {
-                                transform: "scale(1.01)",
-                                boxShadow: 3,
-                              },
-                            }}
-                          >
-                            {/* Author Image */}
-                            <img
-                              src={`${animal.authorImage}`}
-                              alt={animal.author}
-                              style={{
-                                width: "45px",
-                                height: "45px",
-                                borderRadius: "50%", // Circle shape for author image
-                                objectFit: "cover",
-                                marginRight: "8px", // Space between image and name
-                                cursor: "pointer", // Indicate that the image is clickable
-                              }}
-                            />
-
-                            {/* Author Name */}
-                            <Typography variant="body2" color="textSecondary">
-                              <strong>{animal.author}</strong>
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Box>
-                    ))}
-                    <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          padding: "10px 0",
-                          bottom: 0,
-                          backgroundColor: "rgba(0, 0, 0, 0)",
-                          zIndex: 1,
-                          flex: "1 0 80px",
-                          paddingBottom: "50px",
-                        }}
-                      >
-                        <Pagination
-                          count={pagination.totalPages}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                          color="primary"
-                          size="large"
-                          showFirstButton
-                          showLastButton
-                          sx={{
-                            backgroundColor: "#f0f4f9",
-                            padding: "10px",
-                            borderRadius: "25px",
-                            border: "1px solid lightgray",
-                          }}
-                        />
-                      </Box>
+                    <Typography
+                      variant="h6"
+                      color="textSecondary"
+                      sx={{ textAlign: "center", marginTop: "20px", width: "100%"}}
+                    >
+                      No posts found.
+                    </Typography>
                   </Box>
                 ) : (
-                  <div className="animal-cards-box">
-                    <div className="animal-cards-box-inner">
-                      <Grid
-                        container
-                        spacing={2}
-                        sx={{
-                          marginBottom:
-                            pagination.totalPages > 1 ? "24px" : "64px",
-                          maxWidth: "100%",
-                        }}
-                      >
-                        {animals.map((animal, index) => {
-                          const itemCount = animals.length;
-                          let gridProps;
-
-                          if (itemCount === 1) {
-                            gridProps = {
-                              xs: 12,
-                              sm: 12,
-                              md: 12,
-                              lg: 12,
-                            };
-                          } else if (itemCount === 2) {
-                            gridProps = {
-                              xs: 12,
-                              sm: 6,
-                              md: 6,
-                              lg: 6,
-                            };
-                          } else if (itemCount === 3) {
-                            gridProps = {
-                              xs: 12,
-                              sm: 6,
-                              md: 4,
-                              lg: 4,
-                            };
-                          } else {
-                            gridProps = {
-                              xs: 12,
-                              sm: 6,
-                              md: 4,
-                              lg: 3,
-                            };
-                          }
-
-                          return (
-                            <Grid
-                              item
-                              key={index}
-                              {...gridProps}
-                              sx={{ display: "flex" }}
-                            >
-                              <ImageCard
-                                title={animal.title}
-                                description={animal.trackerType}
-                                post_id={animal._id}
-                                image={animal.postImage}
-                                author={animal.author}
-                                authorImage={animal.authorImage}
-                                authorId={animal.authorId}
-                                created={animal.date}
-                                lastUpdated={animal.lastUpdated}
-                                scientificName={animal.scientificName}
-                                commonName={animal.commonName}
-                                animalType={animal.animalType}
-                                trackerType={animal.trackerType}
-                                enclosureType={animal.enclosureType}
-                                likeCount={animal.likeCount || 0}
-                                showDetails={true}
-                              />
-                            </Grid>
-                          );
-                        })}
-                      </Grid>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          bottom: 0,
-                          backgroundColor: "rgba(0, 0, 0, 0)",
-                          zIndex: 1,
-                          flex: "1 0 80px",
-                          paddingBottom: "50px",
-                        }}
-                      >
-                        <Pagination
-                          count={pagination.totalPages}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                          color="primary"
-                          size="large"
-                          showFirstButton
-                          showLastButton
+                  // Conditional Rendering based on viewMode
+                  viewMode ? (
+                    <Box
+                      sx={{
+                        marginBottom: pagination.totalPages > 1 ? "24px" : "64px",
+                        width: { xs: "100%", sm: "70%" },
+                        margin: "0 auto",
+                        overflowY: "auto",
+                      }}
+                    >
+                      {animals.map((animal, index) => (
+                        <Box
+                          key={index}
+                          onClick={() => navigate(`/posts/${animal._id}`)} // Navigate to post on card click
                           sx={{
-                            backgroundColor: "#f0f4f9",
-                            padding: "10px",
+                            display: "flex",
+                            flexDirection: { xs: "column", sm: "row" },
+                            marginBottom: 2,
+                            gap: 6,
+                            padding: 2,
+                            backgroundColor: "#f9f9f9",
                             borderRadius: "25px",
-                            border: "1px solid lightgray",
+                            alignItems: "center",
+                            width: "100%",
+                            cursor: "pointer",
+                            transition:
+                              "transform 0.3s ease, box-shadow 0.3s ease",
+                            "&:hover": {
+                              transform: "scale(1.03)",
+                            },
                           }}
-                        />
-                      </Box>
+                        >
+                          {/* Post Image */}
+                          <img
+                            src={`https://${window.location.hostname}:5001/api/posts/image/${animal.postImage}`}
+                            alt={animal.title}
+                            style={{
+                              width: "170px",
+                              height: "auto",
+                              marginRight: "16px",
+                              borderRadius: "8px",
+                              objectFit: "cover",
+                            }}
+                          />
+
+                          {/* Content Section */}
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="h5" gutterBottom>
+                              <strong>{animal.title}</strong>
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              <strong>Scientific Name:</strong> {animal.scientificName}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              <strong>Common Name:</strong> {animal.commonName}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              <strong>Tracker Type:</strong> {animal.trackerType}
+                            </Typography>
+
+                            {/* Author Section */}
+                            <Box
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/user/${animal.authorId}`);
+                              }}
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                marginTop: "10px",
+                                background: "#f0f4f9",
+                                width: "fit-content",
+                                padding: "5px",
+                                borderRadius: "30px",
+                                paddingRight: "60px",
+                                backgroundColor: "#D5D5D5",
+                                transition:
+                                  "transform 0.3s ease, box-shadow 0.3s ease",
+                                "&:hover": {
+                                  transform: "scale(1.01)",
+                                  boxShadow: 3,
+                                },
+                              }}
+                            >
+                              {/* Author Image */}
+                              <img
+                                src={`${animal.authorImage}`}
+                                alt={animal.author}
+                                style={{
+                                  width: "45px",
+                                  height: "45px",
+                                  borderRadius: "50%", // Circle shape for author image
+                                  objectFit: "cover",
+                                  marginRight: "8px", // Space between image and name
+                                  cursor: "pointer", // Indicate that the image is clickable
+                                }}
+                              />
+
+                              {/* Author Name */}
+                              <Typography variant="body2" color="textSecondary">
+                                <strong>{animal.author}</strong>
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : (
+                    <div className="animal-cards-box">
+                      <div className="animal-cards-box-inner">
+                        <Grid
+                          container
+                          spacing={2}
+                          sx={{
+                            marginBottom:
+                              pagination.totalPages > 1 ? "24px" : "64px",
+                            maxWidth: "100%",
+                            flexGrow: "1"
+                          }}
+                        >
+                          {animals.map((animal, index) => {
+                            const itemCount = animals.length;
+                            let gridProps;
+
+                            if (itemCount === 1) {
+                              gridProps = {
+                                xs: 12,
+                                sm: 12,
+                                md: 12,
+                                lg: 12,
+                              };
+                            } else if (itemCount === 2) {
+                              gridProps = {
+                                xs: 12,
+                                sm: 6,
+                                md: 6,
+                                lg: 6,
+                              };
+                            } else if (itemCount === 3) {
+                              gridProps = {
+                                xs: 12,
+                                sm: 6,
+                                md: 4,
+                                lg: 4,
+                              };
+                            } else {
+                              gridProps = {
+                                xs: 12,
+                                sm: 6,
+                                md: 4,
+                                lg: 3,
+                              };
+                            }
+                            return (
+                              <Grid
+                                item
+                                key={index}
+                                {...gridProps}
+                                sx={{ display: "flex" }}
+                              >
+                                <ImageCard
+                                  title={animal.title}
+                                  description={animal.trackerType}
+                                  post_id={animal._id}
+                                  image={animal.postImage}
+                                  author={animal.author}
+                                  authorImage={animal.authorImage}
+                                  authorId={animal.authorId}
+                                  created={animal.date}
+                                  lastUpdated={animal.lastUpdated}
+                                  scientificName={animal.scientificName}
+                                  commonName={animal.commonName}
+                                  animalType={animal.animalType}
+                                  trackerType={animal.trackerType}
+                                  enclosureType={animal.enclosureType}
+                                  likeCount={animal.likeCount || 0}
+                                  showDetails={true}
+                                />
+                              </Grid>
+                            );
+                          })}
+                        </Grid>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            padding: "10px 0",
+                            position: "sticky",
+                            bottom: 0,
+                            backgroundColor: "rgba(0, 0, 0, 0)",
+                            zIndex: 1,
+                            flex: "1 0 80px",
+                            paddingBottom: "50px",
+                          }}
+                        >
+                          <Pagination
+                            count={pagination.totalPages}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            color="primary"
+                            size="large"
+                            showFirstButton
+                            showLastButton
+                            sx={{
+                              backgroundColor: "#f0f4f9",
+                              padding: "10px",
+                              borderRadius: "25px",
+                              border: "1px solid lightgray",
+                            }}
+                          />
+                        </Box>
+                      </div>
                     </div>
-                  </div>
+                  )
                 )}
               </>
             )}
           </ThemeProvider>
+
         </div>
       </Box>
     </Box>

@@ -1,109 +1,263 @@
-// src/pages/adminmanage/AdminManage.js
 import React, { useState, useEffect } from 'react';
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Typography, Tab, Tabs, Grid, FormControl, InputLabel, Select, MenuItem,
+  TextField, Button, Box, Pagination
+} from '@mui/material';
 
 const AdminManage = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [reportedPosts, setReportedPosts] = useState([]);
+  const [currentPageUsers, setCurrentPageUsers] = useState(1);
+  const [currentPagePosts, setCurrentPagePosts] = useState(1);
+  const [totalPagesUsers, setTotalPagesUsers] = useState(1);
+  const [totalPagesPosts, setTotalPagesPosts] = useState(1);
+  const [totalResultsUsers, setTotalResultsUsers] = useState(0);
+  const [totalResultsPosts, setTotalResultsPosts] = useState(0);
+  const [searchQueryUsers, setSearchQueryUsers] = useState('');
+  const [searchQueryPosts, setSearchQueryPosts] = useState('');
+  const [selectedRole, setSelectedRole] = useState('');
+  const [tabValue, setTabValue] = useState(0);
 
-  const showStatus = (message) => {
-    setStatusMessage(message);
-    setTimeout(() => setStatusMessage(''), 3000);
-  };
-
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1) => {
     try {
-      const response = await fetch('https://localhost:5001/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-        }
+      const query = `page=${page}&search=${searchQueryUsers}&role=${selectedRole}`;
+      const response = await fetch(`https://localhost:5001/api/admin/users?${query}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
       });
-      
       if (!response.ok) throw new Error('Failed to fetch users');
-      
       const data = await response.json();
-      setUsers(data);
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
+      setUsers(data.users);
+      setTotalPagesUsers(data.pagination.totalPages);
+      setTotalResultsUsers(data.pagination.totalResults);
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
-  const handleRoleChange = async (userId, newRole) => {
+  const fetchReportedPosts = async (page = 1) => {
     try {
-      const response = await fetch(`https://localhost:5001/api/admin/users/${userId}/role`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ role: newRole })
+      const query = `page=${page}&search=${searchQueryPosts}`;
+      const response = await fetch(`https://localhost:5001/api/admin/reported-posts?${query}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
       });
-
-      if (!response.ok) throw new Error('Failed to update user role');
-      
-      showStatus('User role updated successfully');
-      fetchUsers();
-    } catch (err) {
-      showStatus('Failed to update user role');
+      if (!response.ok) throw new Error('Failed to fetch reported posts');
+      const data = await response.json();
+      setReportedPosts(data.posts.sort((a, b) => b.reportCount - a.reportCount));
+      setTotalPagesPosts(data.pagination.totalPages);
+      setTotalResultsPosts(data.pagination.totalResults);
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (tabValue === 0) fetchUsers(currentPageUsers);
+    else if (tabValue === 1) fetchReportedPosts(currentPagePosts);
+  }, [tabValue, currentPageUsers, currentPagePosts, searchQueryUsers, searchQueryPosts, selectedRole]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (error) return <div className="text-red-500 p-4">{error}</div>;
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      await fetch(`https://localhost:5001/api/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+      fetchUsers(currentPageUsers);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleSearchChangeUsers = (e) => setSearchQueryUsers(e.target.value);
+  const handleSearchChangePosts = (e) => setSearchQueryPosts(e.target.value);
+  const handleRoleFilterChange = (e) => setSelectedRole(e.target.value);
+
+  const handlePageChangeUsers = (event, value) => {
+    setCurrentPageUsers(value);
+    fetchUsers(value);
+  };
+
+  const handlePageChangePosts = (event, value) => {
+    setCurrentPagePosts(value);
+    fetchReportedPosts(value);
+  };
+
+  const handleBanUser = async (userId) => {
+    try {
+      const response = await fetch(`https://localhost:5001/api/admin/users/${userId}/ban`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to ban user');
+      alert('User banned successfully');
+      fetchUsers(currentPageUsers);
+    } catch (err) {
+      alert('Failed to ban user');
+    }
+  };
+
+  const handleUnbanUser = async (userId) => {
+    try {
+      const response = await fetch(`https://localhost:5001/api/admin/users/${userId}/unban`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to unban user');
+      alert('User unbanned successfully');
+      fetchUsers(currentPageUsers);
+    } catch (err) {
+      alert('Failed to unban user');
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      const response = await fetch(`https://localhost:5001/api/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to delete post');
+      fetchReportedPosts(currentPagePosts);
+    } catch (err) {
+      alert('Failed to delete post');
+    }
+  };
 
   return (
-    <div className="p-4">
-      {statusMessage && (
-        <div className="fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded shadow-lg">
-          {statusMessage}
-        </div>
-      )}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h1 className="text-2xl font-bold mb-4">User Management</h1>
-        
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse table-auto">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.displayName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize">{user.role}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                      className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                      <option value="banned">Banned</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
+      <Box width="60%">
+        <Typography variant="h4" align="center" gutterBottom>Admin Dashboard</Typography>
+        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} centered>
+          <Tab label="User Management" />
+          <Tab label="Reported Posts" />
+        </Tabs>
+
+        {/* User Management */}
+        {tabValue === 0 && (
+          <Box mt={2}>
+            <Grid container spacing={2}>
+              <Grid item xs={9}>
+                <TextField label="Search" fullWidth value={searchQueryUsers} onChange={handleSearchChangeUsers} />
+              </Grid>
+              <Grid item xs={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Role</InputLabel>
+                  <Select value={selectedRole} onChange={handleRoleFilterChange}>
+                    <MenuItem value="">All Roles</MenuItem>
+                    <MenuItem value="user">User</MenuItem>
+                    <MenuItem value="admin">Admin</MenuItem>
+                    <MenuItem value="banned">Banned</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Role</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user._id}>
+                      <TableCell>{user.displayName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={user.role}
+                          onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                        >
+                          <MenuItem value="user">User</MenuItem>
+                          <MenuItem value="admin">Admin</MenuItem>
+                          <MenuItem value="banned">Banned</MenuItem>
+                        </Select>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Pagination and Results below */}
+            <Box mt={2} display="flex" justifyContent="center">
+              <Pagination
+                count={totalPagesUsers}
+                page={currentPageUsers}
+                onChange={handlePageChangeUsers}
+                color="primary"
+              />
+            </Box>
+            <Box mt={2} display="flex" justifyContent="center">
+              <Typography variant="h6">{totalResultsUsers} results found</Typography>
+            </Box>
+          </Box>
+        )}
+
+        {/* Reported Posts Management */}
+        {tabValue === 1 && (
+          <Box mt={2}>
+            <TextField label="Search" fullWidth value={searchQueryPosts} onChange={handleSearchChangePosts} />
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Report Count</TableCell>
+                    <TableCell>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {reportedPosts.map((post) => (
+                    <TableRow key={post._id}>
+                      <TableCell>{post.title}</TableCell>
+                      <TableCell>{post.authorId.displayName}</TableCell>
+                      <TableCell>{post.reportCount}</TableCell>
+                      <TableCell>
+                        <Button
+                          color="error"
+                          onClick={() => handleDeletePost(post._id)}
+                        >
+                          Delete Post
+                        </Button>
+                        <Box mt={1}>
+                          <Button color="error" style={{borderRadius: "5px", border: "1px error solid"}} onClick={() => handleBanUser(post.authorId._id)}>Ban Author</Button>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Pagination and Results below */}
+            <Box mt={2} display="flex" justifyContent="center">
+              <Pagination
+                count={totalPagesPosts}
+                page={currentPagePosts}
+                onChange={handlePageChangePosts}
+                color="primary"
+              />
+            </Box>
+            <Box mt={2} display="flex" justifyContent="center">
+              <Typography variant="h6">{totalResultsPosts} results found</Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 
 export default AdminManage;
-
