@@ -440,7 +440,7 @@ const PostDetailsPage = () => {
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
                 alt="Animal Profile"
                 onClick={handleImageClick}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", aspectRatio: 2/1}}
               />
               <Box mr={2}>
                 <IconButton
