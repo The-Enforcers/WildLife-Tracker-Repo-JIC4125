@@ -13,6 +13,7 @@ import { SnackbarProvider } from "../components/SnackBar/SnackBar.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 import AdminRoute from "./AdminRoute";
 import MunchPage from "../pages/munch/munch.js";
+import CreditsPage from "../pages/Credits/credits.js";
 const AppRoutes = () => {
   
   return (
@@ -30,6 +31,7 @@ const AppRoutes = () => {
                     <Route path="/posts/:id" element={<PostDetailsPage />} />
                     <Route path="/user/:id" element={<ProfilePage />} />
                     <Route path="/munch" element={<MunchPage />} />
+                    <Route path="/credits" element={<CreditsPage />} />
                     {/* Protected Routes */}
                     <Route path="/edit-post/:id" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
                     <Route path="/create" element={<ProtectedRoute><CreatePostPage /></ProtectedRoute>} />
