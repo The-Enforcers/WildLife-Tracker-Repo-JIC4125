@@ -104,6 +104,7 @@ const ImageCard = ({
             WebkitBoxOrient: "vertical",
             WebkitLineClamp: 2,
             lineHeight: "1.5em",
+            height: "3em",
             marginBottom: "10px",
           
           })}
