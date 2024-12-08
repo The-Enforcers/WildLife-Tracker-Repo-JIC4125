@@ -426,48 +426,67 @@ const AdminManage = () => {
                       <TableCell>{post.reportCount}</TableCell>
                       <TableCell>
                         <Box>
-                          {post.reports.map((reporter) => (
+                          {post.reports.map((reporter, index) => (
                             <Box
-                              key={reporter.userId}
+                              key={reporter.userId || `anonymous-${index}`}
                               display="flex"
                               alignItems="center"
                               mb={1}
                             >
-                              <Link to={`/user/${reporter.userId}`}>
-                                <img
-                                  src={
-                                    reporter.picture ||
-                                    "https://via.placeholder.com/40"
-                                  }
-                                  alt={`${reporter.name}'s profile`}
+                              {reporter.userId ? ( 
+                                <Link
+                                  to={`/user/${reporter.userId}`}
                                   style={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: "50%",
-                                    marginRight: "10px",
+                                    textDecoration: "none",
+                                    color: "black",
+                                    cursor: "pointer",
                                   }}
-                                />
-                              </Link>
-                              <Link
-                                to={`/user/${reporter.userId}`}
-                                style={{
-                                  textDecoration: "none",
-                                  color: "black",
-                                  cursor: "pointer",
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.target.style.textDecoration = "underline";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.target.style.textDecoration = "none";
-                                }}
-                              >
-                                {reporter.name}
-                              </Link>
+                                  onMouseEnter={(e) => {
+                                    e.target.style.textDecoration = "underline";
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.textDecoration = "none";
+                                  }}
+                                >
+                                  <Box display="flex" alignItems="center">
+                                    <img
+                                      src={
+                                        reporter.picture ||
+                                        "https://via.placeholder.com/40"
+                                      }
+                                      alt={`${reporter.name}'s profile`}
+                                      style={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: "50%",
+                                        marginRight: "10px",
+                                      }}
+                                    />
+                                    {reporter.name}
+                                  </Box>
+                                </Link>
+                              ) : (
+                                <Box display="flex" alignItems="center">
+                                  <img
+                                    src="https://via.placeholder.com/40" // Placeholder for anonymous users
+                                    alt="Anonymous profile"
+                                    style={{
+                                      width: 40,
+                                      height: 40,
+                                      borderRadius: "50%",
+                                      marginRight: "10px",
+                                    }}
+                                  />
+                                  <Typography color="textSecondary">
+                                    Anonymous
+                                  </Typography>
+                                </Box>
+                              )}
                             </Box>
                           ))}
                         </Box>
                       </TableCell>
+
                       <TableCell>
                         <Button
                           variant="contained"

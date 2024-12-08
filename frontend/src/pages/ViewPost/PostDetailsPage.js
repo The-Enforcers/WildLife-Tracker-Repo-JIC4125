@@ -111,30 +111,37 @@ const PostDetailsPage = () => {
 
   useEffect(() => {
     const checkReportStatus = async () => {
-      if (user && post) {
+      if (post) {
         try {
           const response = await fetch(
             `https://${window.location.hostname}:5001/api/posts/${id}/hasReported`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
+                ...(user && { Authorization: `Bearer ${token}` }), // Include Authorization header only if the user is logged in
               },
             }
           );
           const data = await response.json();
-          setIsReported(data.hasReported);
+  
+          if (response.ok) {
+            setIsReported(data.hasReported);
+          } else {
+            console.error("Failed to fetch report status:", data.message);
+          }
         } catch (error) {
           console.error("Failed to check report status", error);
         }
       }
     };
+  
     checkReportStatus();
-  }, [user, post, id, token]);
-
+  }, [post, id, user, token]);
+  
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
   };
+  
 
   const handleBookmark = async () => {
     try {
@@ -190,11 +197,6 @@ const PostDetailsPage = () => {
   };
 
   const handleReport = async () => {
-    if (!user) {
-      showSnackbar("Please log in to report posts", "error");
-      return;
-    }
-  
     const endpoint = `https://${window.location.hostname}:5001/api/posts/${id}/report`;
     const method = isReported ? "DELETE" : "POST";
   
@@ -202,7 +204,6 @@ const PostDetailsPage = () => {
       const response = await fetch(endpoint, {
         method,
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -211,11 +212,13 @@ const PostDetailsPage = () => {
   
       if (response.ok) {
         setIsReported(!isReported);
-        setReportCount(data.reportCount); // Ensure this updates
+        setReportCount(data.reportCount);
         showSnackbar(
           isReported ? "Post Unreported" : "Post Reported",
           isReported ? "error" : "success"
         );
+      } else if (response.status === 400) {
+        showSnackbar("You have already reported this post", "warning");
       } else {
         showSnackbar("Failed to update report status", "error");
       }
@@ -224,6 +227,8 @@ const PostDetailsPage = () => {
       showSnackbar("Failed to update report status: unexpected error", "error");
     }
   };
+  
+  
   
 
   function handleShare() {

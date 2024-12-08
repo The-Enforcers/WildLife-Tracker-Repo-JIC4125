@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema({
   },
   animalType: {
     type: String,
-        required: true,
+    required: true,
   },
   trackerType: {
     type: String,
@@ -87,18 +87,23 @@ const PostSchema = new mongoose.Schema({
       userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true,
+        default: null, // Allows for anonymous reports
       },
       name: {
         type: String,
-        required: true,
+        default: "Anonymous",
       },
       picture: {
         type: String,
+        default: null,
+      },
+      identifier: {
+        type: String, // Stores an identifier for anonymous users (e.g., IP)
+        default: null,
       },
     },
   ],
-  
+
   reportCount: {
     type: Number,
     default: 0,

@@ -459,36 +459,40 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ message: err.message || "Server error during deletion" });
   }
 };
-
 exports.reportPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.userId;
+    const userId = req.userId; // For logged-in users
+    const anonymousIdentifier = req.ip; // Use IP as a unique identifier for anonymous users
 
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const alreadyReported = post.reports.some(
-      (report) => report.userId.toString() === userId.toString()
-    );
+    // Check for duplicate reports
+    const alreadyReported = post.reports.some((report) => {
+      if (userId) {
+        // For logged-in users, match userId
+        return report.userId && report.userId.toString() === userId.toString();
+      } else {
+        // For anonymous users, match based on identifier (IP here)
+        return report.userId === null && report.identifier === anonymousIdentifier;
+      }
+    });
 
     if (alreadyReported) {
-      return res.status(400).json({ message: "Post already reported by user" });
+      return res.status(400).json({ message: "You have already reported this post" });
     }
 
-    const user = await User.findById(userId); // Fetch user details
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Add the reporter's details to the post
+    // Add the report
     post.reports.push({
-      userId: user._id,
-      name: user.displayName || "Anonymous", // Fallback in case name is not available
-      picture: user.picture || null, // Fallback in case picture is not available
+      userId: userId || null, // Null for anonymous users
+      name: userId ? req.userName || "Anonymous" : "Anonymous",
+      picture: userId ? req.userPicture || null : null,
+      identifier: userId ? null : anonymousIdentifier, // Add identifier for anonymous reports
     });
+
     post.reportCount = post.reports.length;
 
     await post.save();
@@ -496,7 +500,7 @@ exports.reportPost = async (req, res) => {
     res.json({
       message: "Post reported successfully",
       reportCount: post.reportCount,
-      reports: post.reports, // Return updated reports
+      reports: post.reports,
     });
   } catch (err) {
     console.error("Error in reportPost:", err);
@@ -504,26 +508,36 @@ exports.reportPost = async (req, res) => {
   }
 };
 
+
 exports.unreportPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.userId;
+    const userId = req.userId; // For logged-in users
+    const anonymousIdentifier = req.ip; // Use IP address for anonymous users
 
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Remove the reporter's details
-    post.reports = post.reports.filter(
-      (report) => report.userId.toString() !== userId.toString()
-    );
+    if (userId) {
+      // Remove the logged-in user's report
+      post.reports = post.reports.filter(
+        (report) => report.userId && report.userId.toString() !== userId.toString()
+      );
+    } else {
+      // Remove the anonymous user's report based on the identifier
+      post.reports = post.reports.filter(
+        (report) => !(report.userId === null && report.identifier === anonymousIdentifier)
+      );
+    }
+
     post.reportCount = post.reports.length;
 
     await post.save();
 
     res.json({
-      message: "Post unreported successfully",
+      message: "Report removed successfully",
       reportCount: post.reportCount,
     });
   } catch (err) {
@@ -535,16 +549,27 @@ exports.unreportPost = async (req, res) => {
 exports.hasUserReportedPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.userId;
-    const post = await Post.findById(postId);
+    const userId = req.userId; // For logged-in users
+    const anonymousIdentifier = req.ip; // Use IP address as identifier for anonymous users
 
+    const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const hasReported = post.reports.some(
-      (report) => report.userId.toString() === userId.toString()
-    );
+    let hasReported = false;
+
+    if (userId) {
+      // Check if the logged-in user has reported the post
+      hasReported = post.reports.some(
+        (report) => report.userId && report.userId.toString() === userId.toString()
+      );
+    } else {
+      // Check if the anonymous user has reported the post
+      hasReported = post.reports.some(
+        (report) => report.userId === null && report.identifier === anonymousIdentifier
+      );
+    }
 
     res.json({ hasReported });
   } catch (err) {
