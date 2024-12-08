@@ -13,7 +13,6 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -147,7 +146,7 @@ const Sidebar = () => {
               <SearchIcon style={{ marginRight: "10px" }} />
               Search Animal Profiles
             </MenuItem>
-            {user?.role === 'admin' && (
+            {user?.role === "admin" && (
               <>
                 <MenuItem onClick={() => handleNavigation("/admin")}>
                   <DashboardIcon style={{ marginRight: "10px" }} />
@@ -158,14 +157,20 @@ const Sidebar = () => {
           </Menu>
         </>
       ) : (
-        <div className={`sidebar ${extended ? "extended" : "collapsed"}`}
-             style={{ width: extended ? "255px" : "75px" }}>
+        <div
+          className={`sidebar ${extended ? "extended" : "collapsed"}`}
+          style={{ width: extended ? "255px" : "75px" }}
+        >
           <div className="top">
             <div className="toggle-container">
               {extended ? (
                 <>
                   <div className="logo" onClick={() => handleNavigation("/")}>
-                    <img src={logo} alt="Wildlife Movement Institute Logo" className="logo-image" />
+                    <img
+                      src={logo}
+                      alt="Wildlife Movement Institute Logo"
+                      className="logo-image"
+                    />
                   </div>
                   <ChevronLeftIcon
                     onClick={toggleSidebar}
@@ -215,11 +220,13 @@ const Sidebar = () => {
               {extended && <p>Search Animal Profiles</p>}
             </div>
 
-            {user?.role === 'admin' && (
+            {user?.role === "admin" && (
               <>
                 <div
                   onClick={() => handleNavigation("/admin")}
-                  className={`admin-dashboard ${currentStep === 2 ? "highlight" : ""}`}
+                  className={`admin-dashboard ${
+                    currentStep === 2 ? "highlight" : ""
+                  }`}
                 >
                   <DashboardIcon />
                   <Tooltip id="admin-dashboard" place="bottom" />
@@ -231,7 +238,9 @@ const Sidebar = () => {
           <div className="bottom">
             <div
               ref={(el) => (iconRefs.current[3] = el)}
-              className={`bottom-item recent-entry ${currentStep === 3 ? "highlight" : ""}`}
+              className={`bottom-item recent-entry ${
+                currentStep === 3 ? "highlight" : ""
+              }`}
               onClick={() => setTutorialActive(true)}
             >
               <HelpOutlineIcon />
@@ -259,10 +268,15 @@ const Sidebar = () => {
           <div
             className="tutorial-content"
             style={{
-              top: `${getIconPosition().top + getIconPosition().height + 150 > window.innerHeight
-                ? getIconPosition().top - 100
-                : getIconPosition().top + getIconPosition().height + 10}px`,
-              left: `${getIconPosition().left + getIconPosition().width + 20}px`,
+              top: `${
+                getIconPosition().top + getIconPosition().height + 150 >
+                window.innerHeight
+                  ? getIconPosition().top - 100
+                  : getIconPosition().top + getIconPosition().height + 10
+              }px`,
+              left: `${
+                getIconPosition().left + getIconPosition().width + 20
+              }px`,
             }}
           >
             <p>{tutorialSteps[currentStep].text}</p>

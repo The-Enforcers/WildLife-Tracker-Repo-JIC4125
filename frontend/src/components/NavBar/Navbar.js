@@ -76,11 +76,6 @@ const Navbar = ({ breadcrumbs }) => {
     setBookmarkAnchorEl(null);
   };
 
-  const truncateText = (text, maxWords = 3) => {
-    const words = text.split(" ");
-    return words.length > maxWords ? words.slice(0, maxWords).join(" ") + "..." : text;
-  };
-
   const handleRemoveBookmark = async (postId) => {
     if (user) {
       try {
@@ -102,11 +97,18 @@ const Navbar = ({ breadcrumbs }) => {
 
   return (
     <div className="nav">
-      <p>{isSmallScreen ? "Wildlife Institute" : "The Wildlife Movement Institute"}</p>
+      <p>
+        {isSmallScreen
+          ? "Wildlife Institute"
+          : "The Wildlife Movement Institute"}
+      </p>
       {/* empty div used to replace space on smaller screens */}
       <div></div>
       <div className="breadcrumbs-container">
-        <Breadcrumbs aria-label="breadcrumb" sx={{ marginBlock: 1, width: "100%" }}>
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          sx={{ marginBlock: 1, width: "100%" }}
+        >
           {breadcrumbs.map((crumb, index) =>
             index < breadcrumbs.length - 1 ? (
               <Link
@@ -138,7 +140,9 @@ const Navbar = ({ breadcrumbs }) => {
                 aria-haspopup="true"
                 aria-expanded={bookmarkOpen ? "true" : undefined}
               >
-                <BookmarkBorderIcon sx={{ fontSize: 30, color: "black", mt: "1px" }} />
+                <BookmarkBorderIcon
+                  sx={{ fontSize: 30, color: "black", mt: "1px" }}
+                />
               </IconButton>
             </Tooltip>
           )}
@@ -198,52 +202,106 @@ const Navbar = ({ breadcrumbs }) => {
           PaperProps={{
             elevation: 0,
             sx: {
-              overflow: "auto",
+              overflow: "visible",
               width: 220,
               maxWidth: 220,
-              maxHeight: 215,
+              maxHeight: 300,
               filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
               mt: 1.5,
+              display: "flex",
+              flexDirection: "column", // Arrange items in a column
             },
           }}
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          {bookmarkedPosts.length > 0 ? (
-            bookmarkedPosts.map((post) => (
-              <MenuItem
-                key={post._id}
-                onClick={() => {
-                  handleBookmarkClose();
-                  navigate(`/posts/${post._id}`);
-                }}
-              >
-                <Avatar
-                  src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
-                  alt={post.animalType}
-                  sx={{ width: 32, height: 32, marginRight: 1 }}
-                />
-                <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                  <Typography variant="body2">
-                    {truncateText(post.title)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {truncateText(post.animalType)}
-                  </Typography>
-                </Box>
-                <IconButton
-                  edge="end"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveBookmark(post._id);
+          <Box
+            sx={{
+              maxHeight: 210, // Define the height for the scrollable area
+              overflowY: "auto", // Enable vertical scrolling
+            }}
+          >
+            {bookmarkedPosts.length > 0 ? (
+              bookmarkedPosts.map((post) => (
+                <MenuItem
+                  key={post._id}
+                  onClick={() => {
+                    handleBookmarkClose();
+                    navigate(`/posts/${post._id}`);
                   }}
                 >
-                  <ClearIcon fontSize="small" sx={{ color: "black" }} />
-                </IconButton>
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>No bookmarks found</MenuItem>
+                  <Avatar
+                    src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
+                    alt={post.animalType}
+                    sx={{ width: 32, height: 32, marginRight: 1 }}
+                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: 1,
+                      overflow: "hidden", // Ensure child elements respect the parent size
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        whiteSpace: "nowrap", // Prevent text wrapping
+                        overflow: "hidden", // Hide overflow content
+                        textOverflow: "ellipsis", // Show ellipsis for overflowing text
+                      }}
+                    >
+                      {post.title}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {post.animalType}
+                    </Typography>
+                  </Box>
+                  <IconButton
+                    edge="end"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveBookmark(post._id);
+                    }}
+                  >
+                    <ClearIcon fontSize="small" sx={{ color: "black" }} />
+                  </IconButton>
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No bookmarks found</MenuItem>
+            )}
+          </Box>
+          {bookmarkedPosts.length > 0 && <Divider color={"lightgray"} />}
+          {/* Always visible View All */}
+          {bookmarkedPosts.length > 0 && (
+            <Box
+              sx={{
+                padding: "7px 15px",
+                textAlign: "center",
+                cursor: "pointer",
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  handleBookmarkClose();
+                  navigate(`/user/${user._id}?tab=bookmarks`);
+                }}
+              >
+                View All
+              </Typography>
+            </Box>
           )}
         </Menu>
 

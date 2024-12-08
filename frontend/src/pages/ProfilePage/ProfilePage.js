@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -11,7 +11,7 @@ import {
   Button,
   styled,
   CircularProgress,
-  Pagination
+  Pagination,
 } from "@mui/material";
 import { DateRange, CameraAlt, Bookmark } from "@mui/icons-material";
 import { UserContext } from "../../context/UserContext";
@@ -66,6 +66,7 @@ function TabPanel(props) {
 
 export default function ProfilePage() {
   const { id } = useParams(); // Get id from URL
+  const [searchParams] = useSearchParams(); 
   const { user: currentUser } = useContext(UserContext);
   const [profileUser, setProfileUser] = useState(null);
   const [value, setValue] = useState(0);
@@ -83,20 +84,15 @@ export default function ProfilePage() {
     currentPage: 1,
     totalPages: 1,
     totalPosts: 0,
-    postsPerPage: 2
+    postsPerPage: 2,
   });
-
-  
 
   const handlePostsPageChange = (event, value) => {
     setPostsCurrentPage(value);
   };
 
-
-
   // Check if current user is viewing their own profile
   const isOwnProfile = currentUser ? currentUser._id === id : false;
-
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -166,12 +162,13 @@ export default function ProfilePage() {
     if (id) {
       fetchData();
     }
-  }, [id]);
+  }, [id, postsCurrentPage]);
 
   // Fetch bookmarked posts when the profile is viewed
   useEffect(() => {
     const fetchBookmarkedPosts = async () => {
-      if (isOwnProfile && currentUser) { // Ensure currentUser exists
+      if (isOwnProfile && currentUser) {
+        // Ensure currentUser exists
         try {
           const bookmarks = await getBookmarkedPosts(currentUser._id);
           setBookmarkedPosts(bookmarks);
@@ -180,10 +177,17 @@ export default function ProfilePage() {
         }
       }
     };
-  
+
     fetchBookmarkedPosts();
   }, [isOwnProfile, currentUser]);
-  
+
+  useEffect(() => {
+    // Check the tab query parameter and update the value state
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "bookmarks" && currentUser?._id === id) {
+      setValue(1); // Select the Bookmarks tab
+    }
+  }, [searchParams, currentUser, id]);
 
   if (loading) {
     return (
@@ -421,23 +425,19 @@ export default function ProfilePage() {
           </Tabs>
         </Box>
 
-        {/* Rest of the component remains the same... */}
         {/* TabPanel and Grid components for displaying posts */}
         <TabPanel value={value} index={0}>
           {loading ? (
             <Typography>Loading...</Typography>
-          ) : (
+          ) : authorPosts.length > 0 ? (
             <Box sx={{ overflow: "auto" }}>
               <ThemeProvider theme={gridTheme}>
-                <div className="animal-cards-box" style={{marginBottom: "100px"}}>
+                <div
+                  className="animal-cards-box"
+                  style={{ marginBottom: "25px" }}
+                >
                   <div className="animal-cards-box-inner">
-                    <Grid
-                      container
-                      spacing={2}
-                      sx={{
-                        marginBottom: "100px",
-                      }}
-                    >
+                    <Grid container spacing={2}>
                       {authorPosts.map((animal, index) => {
                         const itemCount = authorPosts.length;
                         let gridProps;
@@ -484,43 +484,47 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </ThemeProvider>
-              <Box
-                sx={{
-                  width: "100%",
-                  position: "absolute",
-                  bottom: 50,
-                  left: 0,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "10px 0",
-                }}
-              >
+              {postsPagination.totalPosts > 0 && (
                 <Box
                   sx={{
+                    width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    padding: "10px",
-                    backgroundColor: "#f0f4f9",
-                    borderRadius: "25px",
-                    border: "1px solid lightgray",
+                    paddingBottom: "50px",
                   }}
                 >
-                  <Pagination 
-                    count={postsPagination.totalPages}
-                    page={postsCurrentPage}
-                    onChange={handlePostsPageChange}
-                    color="primary"
-                    size="large"
-                    showFirstButton
-                    showLastButton
-                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "10px",
+                      backgroundColor: "#f0f4f9",
+                      borderRadius: "25px",
+                      border: "1px solid lightgray",
+                    }}
+                  >
+                    <Pagination
+                      count={postsPagination.totalPages}
+                      page={postsCurrentPage}
+                      onChange={handlePostsPageChange}
+                      color="primary"
+                      size="large"
+                      showFirstButton
+                      showLastButton
+                    />
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </Box>
+          ) : (
+            <Typography align="center" sx={{ mt: 1, color: "gray" }}>
+              No posts found.
+            </Typography>
           )}
         </TabPanel>
+
         {isOwnProfile && (
           <TabPanel value={value} index={1}>
             {loading ? (
@@ -534,7 +538,7 @@ export default function ProfilePage() {
                         container
                         spacing={2}
                         sx={{
-                          marginBottom: "200px",
+                          marginBottom: "70px",
                           maxWidth: "100%",
                         }}
                       >
