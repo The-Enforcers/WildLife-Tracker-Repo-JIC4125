@@ -462,84 +462,97 @@ exports.deletePost = async (req, res) => {
 
 exports.reportPost = async (req, res) => {
   try {
-      const { postId } = req.params;
-      const userId = req.userId;
+    const { postId } = req.params;
+    const userId = req.userId;
 
-      const post = await Post.findById(postId);
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
 
-      if (!post) {
-          return res.status(404).json({ message: "Post not found" });
-      }
+    const alreadyReported = post.reports.some(
+      (report) => report.userId.toString() === userId.toString()
+    );
 
-      const alreadyReported = post.reports
-          .map((id) => id.toString())
-          .includes(userId.toString());
+    if (alreadyReported) {
+      return res.status(400).json({ message: "Post already reported by user" });
+    }
 
-      if (alreadyReported) {
-          return res.status(400).json({ message: "Post already reported by user" });
-      }
+    const user = await User.findById(userId); // Fetch user details
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-      // Add report to post
-      post.reports.push(userId);
-      post.reportCount = post.reports.length;
-      await post.save();
+    // Add the reporter's details to the post
+    post.reports.push({
+      userId: user._id,
+      name: user.displayName || "Anonymous", // Fallback in case name is not available
+      picture: user.picture || null, // Fallback in case picture is not available
+    });
+    post.reportCount = post.reports.length;
 
-      res.json({ message: "Post reported successfully", reportCount: post.reportCount });
+    await post.save();
+
+    res.json({
+      message: "Post reported successfully",
+      reportCount: post.reportCount,
+      reports: post.reports, // Return updated reports
+    });
   } catch (err) {
-      console.error("Error in reportPost:", err);
-      res.status(500).json({ message: err.message });
+    console.error("Error in reportPost:", err);
+    res.status(500).json({ message: err.message });
   }
 };
 
 exports.unreportPost = async (req, res) => {
   try {
-      const { postId } = req.params;
-      const userId = req.userId;
+    const { postId } = req.params;
+    const userId = req.userId;
 
-      const post = await Post.findById(postId);
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
 
-      if (!post) {
-          return res.status(404).json({ message: "Post not found" });
-      }
+    // Remove the reporter's details
+    post.reports = post.reports.filter(
+      (report) => report.userId.toString() !== userId.toString()
+    );
+    post.reportCount = post.reports.length;
 
-      // Remove report from post
-      post.reports = post.reports.filter(
-          (id) => id.toString() !== userId.toString()
-      );
-      post.reportCount = post.reports.length;
-      await post.save();
+    await post.save();
 
-      res.json({
-          message: "Post unreported successfully",
-          reportCount: post.reportCount,
-      });
+    res.json({
+      message: "Post unreported successfully",
+      reportCount: post.reportCount,
+    });
   } catch (err) {
-      console.error("Error in unreportPost:", err);
-      res.status(500).json({ message: err.message });
+    console.error("Error in unreportPost:", err);
+    res.status(500).json({ message: err.message });
   }
 };
 
 exports.hasUserReportedPost = async (req, res) => {
   try {
-      const { postId } = req.params;
-      const userId = req.userId;
-      const post = await Post.findById(postId);
+    const { postId } = req.params;
+    const userId = req.userId;
+    const post = await Post.findById(postId);
 
-      if (!post) {
-          console.log('Post not found');
-          return res.status(404).json({ message: "Post not found" });
-      }
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
 
-      const hasReported = post.reports
-          .map((id) => id.toString())
-          .includes(userId.toString());
+    const hasReported = post.reports.some(
+      (report) => report.userId.toString() === userId.toString()
+    );
 
-      res.json({ hasReported });
+    res.json({ hasReported });
   } catch (err) {
-      console.error("Error in hasUserReportedPost:", err);
-      res.status(500).json({ message: err.message });
+    console.error("Error in hasUserReportedPost:", err);
+    res.status(500).json({ message: err.message });
   }
 };
+
 
 
 

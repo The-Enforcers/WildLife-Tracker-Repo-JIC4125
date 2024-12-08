@@ -84,10 +84,21 @@ const PostSchema = new mongoose.Schema({
   },
   reports: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      picture: {
+        type: String,
+      },
     },
   ],
+  
   reportCount: {
     type: Number,
     default: 0,

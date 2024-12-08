@@ -174,7 +174,7 @@ const PostDetailsPage = () => {
         setIsLiked(!isLiked);
         setLikeCount(data.likeCount);
         showSnackbar(
-          isLiked ? "Animal profile unliked" : "Animal profile liked",
+          isLiked ? "Profile Unliked" : "Profile Liked",
           isLiked ? "error" : "success"
         );
       } else {
@@ -194,40 +194,37 @@ const PostDetailsPage = () => {
       showSnackbar("Please log in to report posts", "error");
       return;
     }
+  
+    const endpoint = `https://${window.location.hostname}:5001/api/posts/${id}/report`;
+    const method = isReported ? "DELETE" : "POST";
+  
     try {
-      const response = await fetch(
-        `https://${window.location.hostname}:5001/api/posts/${id}/report`,
-        {
-          method: isReported ? "DELETE" : "POST", // Toggle between report and unreport
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         setIsReported(!isReported);
-        setReportCount(data.reportCount);
+        setReportCount(data.reportCount); // Ensure this updates
         showSnackbar(
-          isReported ? "Post unreported" : "Post reported",
+          isReported ? "Post Unreported" : "Post Reported",
           isReported ? "error" : "success"
         );
       } else {
-        showSnackbar(
-          "Failed to update report status: invalid response",
-          "error"
-        );
+        showSnackbar("Failed to update report status", "error");
       }
     } catch (error) {
       console.error("Failed to toggle report status", error);
-      showSnackbar(
-        "Failed to update report status: an unexpected error occurred",
-        "error"
-      );
+      showSnackbar("Failed to update report status: unexpected error", "error");
     }
   };
+  
 
   function handleShare() {
     const url = window.location.href; // Get the current URL
@@ -440,7 +437,7 @@ const PostDetailsPage = () => {
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
                 alt="Animal Profile"
                 onClick={handleImageClick}
-                style={{ cursor: "pointer", aspectRatio: 2/1}}
+                style={{ cursor: "pointer"}}
               />
               <Box mr={2}>
                 <IconButton

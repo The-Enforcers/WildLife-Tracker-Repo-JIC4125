@@ -20,7 +20,7 @@ import {
   Pagination,
 } from "@mui/material";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
-
+import { Link } from "react-router-dom";
 const AdminManage = () => {
   const [users, setUsers] = useState([]);
   const [reportedPosts, setReportedPosts] = useState([]);
@@ -50,7 +50,6 @@ const AdminManage = () => {
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();
       setUsers(data.users);
-      console.log(data.users);
       setTotalPagesUsers(data.pagination.totalPages);
       setTotalResultsUsers(data.pagination.totalResults);
     } catch (error) {
@@ -71,6 +70,7 @@ const AdminManage = () => {
       );
       if (!response.ok) throw new Error("Failed to fetch reported posts");
       const data = await response.json();
+      console.log(data);
       setReportedPosts(
         data.posts.sort((a, b) => b.reportCount - a.reportCount)
       );
@@ -128,7 +128,7 @@ const AdminManage = () => {
 
   const handleBanUser = async (userId) => {
     const isConfirmed = window.confirm(
-      "Are you sure you want to ban this user? This action cannot be undone."
+      "Are you sure you want to ban the author of this post?"
     );
 
     if (!isConfirmed) {
@@ -204,8 +204,8 @@ const AdminManage = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" mt={4}>
-      <Box width="60%">
+    <Box display="flex" justifyContent="center">
+      <Box width={"75%"}>
         <Typography variant="h4" align="center" gutterBottom>
           Admin Dashboard
         </Typography>
@@ -245,7 +245,7 @@ const AdminManage = () => {
                 </FormControl>
               </Grid>
             </Grid>
-            <TableContainer>
+            <TableContainer style={{ maxHeight: "450px", overflow: "auto" }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -258,7 +258,6 @@ const AdminManage = () => {
                   {users.map((user) => (
                     <TableRow key={user._id}>
                       <TableCell>
-                        {/* Display user's profile picture */}
                         <Box display="flex" alignItems="center">
                           <img
                             src={
@@ -272,7 +271,6 @@ const AdminManage = () => {
                               marginRight: "10px",
                             }}
                           />
-                          {/* Make user's name a link */}
                           <Typography
                             component="a"
                             href={`/user/${user._id}`}
@@ -280,7 +278,7 @@ const AdminManage = () => {
                               textDecoration: "none",
                               color: "black",
                               cursor: "pointer",
-                              fontWeight: 500, // Slightly bold to enhance visibility
+                              fontWeight: 500,
                             }}
                             onMouseEnter={(e) => {
                               e.target.style.textDecoration = "underline";
@@ -337,47 +335,167 @@ const AdminManage = () => {
               value={searchQueryPosts}
               onChange={handleSearchChangePosts}
             />
-            <TableContainer>
+            <TableContainer style={{ maxHeight: "450px", overflow: "auto" }}>
               <Table>
                 <TableHead>
                   <TableRow>
                     <TableCell>Title</TableCell>
                     <TableCell>Author</TableCell>
                     <TableCell>Report Count</TableCell>
+                    <TableCell>Reporters</TableCell>
                     <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reportedPosts.map((post) => (
-                    <TableRow key={post._id}>
-                      <TableCell>{post.title}</TableCell>
-                      <TableCell>{post.authorId.displayName}</TableCell>
-                      <TableCell>{post.reportCount}</TableCell>
-                      <TableCell>
-                        <Button
-                          color="error"
-                          onClick={() => handleDeletePost(post._id)}
-                        >
-                          Delete Animal Profile
-                        </Button>
-                        <Box mt={1}>
-                          <Button
-                            color="error"
-                            style={{
-                              borderRadius: "5px",
-                              border: "1px error solid",
-                            }}
-                            onClick={() => handleBanUser(post.authorId._id)}
-                          >
-                            Ban Author
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
+  {reportedPosts.map((post) => (
+    <TableRow key={post._id}>
+      {/* Ensure key is unique */}
+      <TableCell>
+        <Box display="flex" alignItems="center">
+          <Link to={`/posts/${post._id}`}>
+            <img
+              src={
+                `https://${window.location.hostname}:5001/api/posts/image/${post.postImage}` ||
+                "https://via.placeholder.com/60"
+              }
+              alt={`${post.title}`}
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: "5px",
+                marginRight: "10px",
+              }}
+            />
+          </Link>
+          <Link
+            to={`/posts/${post._id}`}
+            style={{
+              textDecoration: "none",
+              color: "black",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.textDecoration = "underline";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.textDecoration = "none";
+            }}
+          >
+            {post.title}
+          </Link>
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Box display="flex" alignItems="center">
+          <Link to={`/user/${post.authorId._id}`}>
+            <img
+              src={
+                post.authorImage || "https://via.placeholder.com/40"
+              }
+              alt={`${post.authorId.displayName}'s profile`}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                marginRight: "10px",
+              }}
+            />
+          </Link>
+          <Link
+            to={`/user/${post.authorId._id}`}
+            style={{
+              textDecoration: "none",
+              color: "black",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.textDecoration = "underline";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.textDecoration = "none";
+            }}
+          >
+            {post.authorId.displayName}
+          </Link>
+        </Box>
+      </TableCell>
+      <TableCell>{post.reportCount}</TableCell>
+      <TableCell>
+        <Box>
+          {post.reports.map((reporter) => (
+            <Box
+              key={reporter.userId}
+              display="flex"
+              alignItems="center"
+              mb={1}
+            >
+              <Link to={`/user/${reporter.userId}`}>
+                <img
+                  src={
+                    reporter.picture || "https://via.placeholder.com/40"
+                  }
+                  alt={`${reporter.name}'s profile`}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                  }}
+                />
+              </Link>
+              <Link
+                to={`/user/${reporter.userId}`}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.textDecoration = "underline";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.textDecoration = "none";
+                }}
+              >
+                {reporter.name}
+              </Link>
+            </Box>
+          ))}
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Button
+          variant="contained"
+          fullWidth
+          color="error"
+          onClick={() => handleDeletePost(post._id)}
+        >
+          Delete 
+        </Button>
+        <Box mt={1}>
+          <Button
+          variant="outlined"
+          fullWidth
+            color="error"
+            style={{
+              borderRadius: "5px",
+              border: "1px error solid",
+            }}
+            onClick={() => handleBanUser(post.authorId._id)}
+          >
+            Ban
+          </Button>
+        </Box>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
               </Table>
             </TableContainer>
+
             {/* Pagination and Results below */}
             <Box mt={2} display="flex" justifyContent="center">
               <Pagination
