@@ -249,11 +249,12 @@ const AdminManage = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Role</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Role</TableCell>
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user._id}>
@@ -278,7 +279,6 @@ const AdminManage = () => {
                               textDecoration: "none",
                               color: "black",
                               cursor: "pointer",
-                              fontWeight: 500,
                             }}
                             onMouseEnter={(e) => {
                               e.target.style.textDecoration = "underline";
@@ -339,160 +339,162 @@ const AdminManage = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Title</TableCell>
-                    <TableCell>Author</TableCell>
-                    <TableCell>Report Count</TableCell>
-                    <TableCell>Reporters</TableCell>
-                    <TableCell>Action</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Title</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Author</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Report Count
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Reporters</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Action</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-  {reportedPosts.map((post) => (
-    <TableRow key={post._id}>
-      {/* Ensure key is unique */}
-      <TableCell>
-        <Box display="flex" alignItems="center">
-          <Link to={`/posts/${post._id}`}>
-            <img
-              src={
-                `https://${window.location.hostname}:5001/api/posts/image/${post.postImage}` ||
-                "https://via.placeholder.com/60"
-              }
-              alt={`${post.title}`}
-              style={{
-                width: 60,
-                height: 60,
-                borderRadius: "5px",
-                marginRight: "10px",
-              }}
-            />
-          </Link>
-          <Link
-            to={`/posts/${post._id}`}
-            style={{
-              textDecoration: "none",
-              color: "black",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.textDecoration = "underline";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.textDecoration = "none";
-            }}
-          >
-            {post.title}
-          </Link>
-        </Box>
-      </TableCell>
-      <TableCell>
-        <Box display="flex" alignItems="center">
-          <Link to={`/user/${post.authorId._id}`}>
-            <img
-              src={
-                post.authorImage || "https://via.placeholder.com/40"
-              }
-              alt={`${post.authorId.displayName}'s profile`}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                marginRight: "10px",
-              }}
-            />
-          </Link>
-          <Link
-            to={`/user/${post.authorId._id}`}
-            style={{
-              textDecoration: "none",
-              color: "black",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.textDecoration = "underline";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.textDecoration = "none";
-            }}
-          >
-            {post.authorId.displayName}
-          </Link>
-        </Box>
-      </TableCell>
-      <TableCell>{post.reportCount}</TableCell>
-      <TableCell>
-        <Box>
-          {post.reports.map((reporter) => (
-            <Box
-              key={reporter.userId}
-              display="flex"
-              alignItems="center"
-              mb={1}
-            >
-              <Link to={`/user/${reporter.userId}`}>
-                <img
-                  src={
-                    reporter.picture || "https://via.placeholder.com/40"
-                  }
-                  alt={`${reporter.name}'s profile`}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    marginRight: "10px",
-                  }}
-                />
-              </Link>
-              <Link
-                to={`/user/${reporter.userId}`}
-                style={{
-                  textDecoration: "none",
-                  color: "black",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.textDecoration = "underline";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.textDecoration = "none";
-                }}
-              >
-                {reporter.name}
-              </Link>
-            </Box>
-          ))}
-        </Box>
-      </TableCell>
-      <TableCell>
-        <Button
-          variant="contained"
-          fullWidth
-          color="error"
-          onClick={() => handleDeletePost(post._id)}
-        >
-          Delete 
-        </Button>
-        <Box mt={1}>
-          <Button
-          variant="outlined"
-          fullWidth
-            color="error"
-            style={{
-              borderRadius: "5px",
-              border: "1px error solid",
-            }}
-            onClick={() => handleBanUser(post.authorId._id)}
-          >
-            Ban
-          </Button>
-        </Box>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
 
+                <TableBody>
+                  {reportedPosts.map((post) => (
+                    <TableRow key={post._id}>
+                      {/* Ensure key is unique */}
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Link to={`/posts/${post._id}`}>
+                            <img
+                              src={
+                                `https://${window.location.hostname}:5001/api/posts/image/${post.postImage}` ||
+                                "https://via.placeholder.com/60"
+                              }
+                              alt={`${post.title}`}
+                              style={{
+                                width: 60,
+                                height: 60,
+                                borderRadius: "5px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          </Link>
+                          <Link
+                            to={`/posts/${post._id}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              cursor: "pointer",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.textDecoration = "underline";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.textDecoration = "none";
+                            }}
+                          >
+                            {post.title}
+                          </Link>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Link to={`/user/${post.authorId._id}`}>
+                            <img
+                              src={
+                                post.authorImage ||
+                                "https://via.placeholder.com/40"
+                              }
+                              alt={`${post.authorId.displayName}'s profile`}
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: "50%",
+                                marginRight: "10px",
+                              }}
+                            />
+                          </Link>
+                          <Link
+                            to={`/user/${post.authorId._id}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              cursor: "pointer",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.textDecoration = "underline";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.textDecoration = "none";
+                            }}
+                          >
+                            {post.authorId.displayName}
+                          </Link>
+                        </Box>
+                      </TableCell>
+                      <TableCell>{post.reportCount}</TableCell>
+                      <TableCell>
+                        <Box>
+                          {post.reports.map((reporter) => (
+                            <Box
+                              key={reporter.userId}
+                              display="flex"
+                              alignItems="center"
+                              mb={1}
+                            >
+                              <Link to={`/user/${reporter.userId}`}>
+                                <img
+                                  src={
+                                    reporter.picture ||
+                                    "https://via.placeholder.com/40"
+                                  }
+                                  alt={`${reporter.name}'s profile`}
+                                  style={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: "50%",
+                                    marginRight: "10px",
+                                  }}
+                                />
+                              </Link>
+                              <Link
+                                to={`/user/${reporter.userId}`}
+                                style={{
+                                  textDecoration: "none",
+                                  color: "black",
+                                  cursor: "pointer",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.textDecoration = "underline";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.textDecoration = "none";
+                                }}
+                              >
+                                {reporter.name}
+                              </Link>
+                            </Box>
+                          ))}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          color="error"
+                          onClick={() => handleDeletePost(post._id)}
+                        >
+                          Delete
+                        </Button>
+                        <Box mt={1}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            color="error"
+                            style={{
+                              borderRadius: "5px",
+                              border: "1px error solid",
+                            }}
+                            onClick={() => handleBanUser(post.authorId._id)}
+                          >
+                            Ban
+                          </Button>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
               </Table>
             </TableContainer>
 
