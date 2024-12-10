@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import { useSnackbar } from "../../components/SnackBar/SnackBar";
 import { Link } from "react-router-dom";
+import userAvatar from "../../assets/Avatar.png";
+
 const AdminManage = () => {
   const [users, setUsers] = useState([]);
   const [reportedPosts, setReportedPosts] = useState([]);
@@ -262,7 +264,7 @@ const AdminManage = () => {
                         <Box display="flex" alignItems="center">
                           <img
                             src={
-                              user.picture || "https://via.placeholder.com/40"
+                              user.picture || userAvatar
                             }
                             alt={`${user.displayName}'s profile`}
                             style={{
@@ -394,7 +396,7 @@ const AdminManage = () => {
                             <img
                               src={
                                 post.authorImage ||
-                                "https://via.placeholder.com/40"
+                                userAvatar
                               }
                               alt={`${post.authorId.displayName}'s profile`}
                               style={{
@@ -452,7 +454,7 @@ const AdminManage = () => {
                                     <img
                                       src={
                                         reporter.picture ||
-                                        "https://via.placeholder.com/40"
+                                        userAvatar
                                       }
                                       alt={`${reporter.name}'s profile`}
                                       style={{
@@ -468,7 +470,7 @@ const AdminManage = () => {
                               ) : (
                                 <Box display="flex" alignItems="center">
                                   <img
-                                    src="https://via.placeholder.com/40" // Placeholder for anonymous users
+                                    src={userAvatar}
                                     alt="Anonymous profile"
                                     style={{
                                       width: 40,

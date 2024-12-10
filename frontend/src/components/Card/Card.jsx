@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for programmatic navigation
+import userAvatar from "../../assets/Avatar.png";
 
 const ImageCard = ({
   title,
@@ -179,7 +180,7 @@ const ImageCard = ({
           >
             <img
               className="authorImage"
-              src={authorImage || "https://via.placeholder.com/150"}
+              src={authorImage || userAvatar}
               alt="Author"
               style={{ width: "50px", borderRadius: "50px" }}
             />

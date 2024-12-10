@@ -48,7 +48,7 @@
 
 .post-author {
   display: flex;
-  padding: 20px 0px 20px 0px;
+  padding: 65px 0px 20px 0px;
 }
 
 .profile-picture {
@@ -249,6 +249,12 @@
     margin-bottom: 10px;
   }
   .post-image {
-    margin-bottom: 5px;
+    margin-block: 10px;  
+  }
+  .post-author {
+    padding: 20px 0px 10px 0px;
+  }
+  .post-picture {
+    align-items: start;
   }
 }
