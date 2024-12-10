@@ -242,7 +242,7 @@ export default function ProfilePage() {
             sx={{ margin: "25px" }}
             alt={profileUser?.displayName || "User Avatar"}
             src={
-           userAvatar
+              profileUser?.picture || userAvatar
             }
           />
           <div
