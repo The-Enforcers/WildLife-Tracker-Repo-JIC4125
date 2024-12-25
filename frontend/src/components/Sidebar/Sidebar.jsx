@@ -140,11 +140,11 @@ const Sidebar = () => {
             </MenuItem>
             <MenuItem onClick={() => handleNavigation("/create")}>
               <AddIcon style={{ marginRight: "10px" }} />
-              New Animal Profile
+              Create Profile
             </MenuItem>
             <MenuItem onClick={() => handleNavigation("/posts")}>
               <SearchIcon style={{ marginRight: "10px" }} />
-              Search Animal Profiles
+              Search Profiles
             </MenuItem>
             {user?.role === "admin" && (
               <>
@@ -207,7 +207,7 @@ const Sidebar = () => {
             >
               <AddIcon />
               <Tooltip id="new-post" place="bottom" />
-              {extended && <p>New Animal Profile</p>}
+              {extended && <p>Create Profile</p>}
             </div>
 
             <div
@@ -217,7 +217,7 @@ const Sidebar = () => {
             >
               <SearchIcon />
               <Tooltip id="search-posts" place="bottom" />
-              {extended && <p>Search Animal Profiles</p>}
+              {extended && <p>Search Profiles</p>}
             </div>
 
             {user?.role === "admin" && (

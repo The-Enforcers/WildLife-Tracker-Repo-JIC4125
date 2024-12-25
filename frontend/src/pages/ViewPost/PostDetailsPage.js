@@ -42,7 +42,7 @@ const PostDetailsPage = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
-  const [expandedBox, setExpandedBox] = useState(null);
+  const [expandedBox, setExpandedBox] = useState("tracker");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
