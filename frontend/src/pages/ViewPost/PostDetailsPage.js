@@ -20,6 +20,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ReportIcon from "@mui/icons-material/Report";
 import ShareIcon from "@mui/icons-material/Share";
 import CloseIcon from "@mui/icons-material/Close";
+import userAvatar from "../../assets/Avatar.png";
 
 import {
   Button,
@@ -123,7 +124,7 @@ const PostDetailsPage = () => {
             }
           );
           const data = await response.json();
-  
+
           if (response.ok) {
             setIsReported(data.hasReported);
           } else {
@@ -134,14 +135,13 @@ const PostDetailsPage = () => {
         }
       }
     };
-  
+
     checkReportStatus();
   }, [post, id, user, token]);
-  
+
   const handleEdit = () => {
     navigate(`/edit-post/${id}`);
   };
-  
 
   const handleBookmark = async () => {
     try {
@@ -199,7 +199,7 @@ const PostDetailsPage = () => {
   const handleReport = async () => {
     const endpoint = `https://${window.location.hostname}:5001/api/posts/${id}/report`;
     const method = isReported ? "DELETE" : "POST";
-  
+
     try {
       const response = await fetch(endpoint, {
         method,
@@ -207,9 +207,9 @@ const PostDetailsPage = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setIsReported(!isReported);
         setReportCount(data.reportCount);
@@ -227,9 +227,6 @@ const PostDetailsPage = () => {
       showSnackbar("Failed to update report status: unexpected error", "error");
     }
   };
-  
-  
-  
 
   function handleShare() {
     const url = window.location.href; // Get the current URL
@@ -394,11 +391,11 @@ const PostDetailsPage = () => {
               >
                 <img
                   className="profile-picture"
-                  src={post.authorImage || "https://via.placeholder.com/150"} // Placeholder if author image is null
+                  src={post.authorImage || userAvatar}
                   alt="Author"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/150"; // Fallback image if the primary fails to load
+                    e.target.src = { userAvatar };
                   }}
                 />
                 <p className="author-name">{post.author}</p>
@@ -442,9 +439,13 @@ const PostDetailsPage = () => {
                 src={`https://${window.location.hostname}:5001/api/posts/image/${post.postImage}`}
                 alt="Animal Profile"
                 onClick={handleImageClick}
-                style={{ cursor: "pointer"}}
+                style={{ cursor: "pointer" }}
               />
-              <Box mr={2}>
+              <Box
+                sx={{
+                  mr: { xs: 0, sm: 2 },
+                }}
+              >
                 <IconButton
                   onClick={handleShare}
                   aria-label="Share animal profile"

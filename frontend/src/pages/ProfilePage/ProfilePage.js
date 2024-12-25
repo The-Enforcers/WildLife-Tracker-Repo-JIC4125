@@ -24,6 +24,7 @@ import {
 } from "../../services/postService";
 
 import ImageCard from "../../components/Card/Card";
+import userAvatar from "../../assets/Avatar.png";
 
 // Keep existing styled components and theme...
 const gridTheme = createTheme({
@@ -241,7 +242,7 @@ export default function ProfilePage() {
             sx={{ margin: "25px" }}
             alt={profileUser?.displayName || "User Avatar"}
             src={
-              profileUser?.picture || "/placeholder.svg?height=200&width=200"
+              profileUser?.picture || userAvatar
             }
           />
           <div
